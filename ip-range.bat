@@ -135,6 +135,7 @@ for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WI
 type xxZhPuG.progress.mac_cat.txt 2>NUL
 
 set test_ip=0
+echo %Skip_count% >NUL
 if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od xxZhPuG.online.ip.*.txt 2^>NUL') do for /f "delims=" %%a in ('type %%i') do echo:&echo:-----&echo:FOUND&echo %%a&echo:------&echo:&set /a skip_count+=1
 if %skip_count% GEQ 1 goto skip_ip
 if %skip_count% == 0 for /f "delims=" %%i in ('dir /b xxZhPuG.online.ip.*.txt 2^>NUL') do  for /f "delims=" %%a in ('type %%i') do echo:&echo:-----&echo:FOUND&echo %%a&echo:------&echo:&set /a skip_count+=1
