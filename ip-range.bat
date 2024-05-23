@@ -3,7 +3,6 @@ mode 40,20
 color 1F
 
 :Y
-if not exist mac_add.print_troubleshoot_from_github set mac_add=1&set check_repository=1&set file_not_exist=       file&goto display_macadd_ismissing
 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set sample_ip=(Guess? Press Enter %%a.%%b.%%c)
 :input
 mode 60,40
