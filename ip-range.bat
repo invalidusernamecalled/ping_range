@@ -122,7 +122,7 @@ echo:
 echo:ping wait time: %wait% ms
 echo:
 del xxZhPuG.online.ip.*.txt 2>NUL
-title Main Window
+title Main Window: Pinger
 set skip_count=0
 
 
@@ -183,7 +183,12 @@ if %errorlevel% == 0 echo:---
 if %errorlevel% == 0 echo:#means, found in the network
 if %repeat% LSS 2 if %errorlevel% NEQ 0 echo:xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt:&echo:Error reading file...  & echo:& timeout 5 & cls & goto repeat
 echo:
-pause >NUL
+:input_file_name
+set /p input_file_name=Enter file name to save:
+if exist %input_file_name% echo: File name already exists. & goto input_file_name
+start cmd /c "(if "%input_file_name%" NEQ "" rename xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt "%input_file_name%.txt")&del xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt"
+choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
+if %errorlevel%==1 start cmd /c "mode 20,5&echo off & cls & echo: "Notepad list" & notepad xxZhPuG1000.list.ping.print_troubleshoot_from_github.txt"&echo:Press to start pinging......&pause >NUL&start cmd /c "echo off & cls & for /f "delims=" %%i in (xxZhPuG1000.list.ping.print_troubleshoot_from_github.txt) do ping -n 1 %%i&echo:&Pause"
 goto input
 if exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt set arp_done=0&echo:Would u like to ping these devices found in the logbook? Press N to skip
 if exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt choice /c Nabcdefghijklmopqrstuvwxyz0123456789 /m "Press any (letter/number) key to continue to ping.." /n
