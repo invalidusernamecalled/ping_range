@@ -1,11 +1,19 @@
-@echo off
-mode 40,20
+@echo off 
+mode 30,40
 color 1F
+setlocal enabledelayedexpansion
+set pings=255
+set ping_batch=3
+
+del "xxZhPuG.progress.mac_cat.txt" 2>NUL
+del xxZhPuG.online.ip.*.txt 2>NUL
+
+
 
 :Y
 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set sample_ip=(Guess? Press Enter %%a.%%b.%%c)
 :input
-mode 60,40
+
 color 7
 cls
 title Main Ping Script
@@ -110,60 +118,62 @@ echo:                  please come back in few mins. ^|
 echo:                 ^|______________________________^|
 echo:
 echo:press key
-pause >nul
-echo|set /p= >xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
+timeout 1 >nul
 set ping_no=1
 echo|set/p=>xxZhPuG.progress.mac_cat.txt
 ECHO:
-ECHO:Set %prefix_range%
+
 echo:
-echo:i.p upper range (integer):%RANGE%
+
 echo:
-echo:ping wait time: %wait% ms
+
 echo:
 del xxZhPuG.online.ip.*.txt 2>NUL
 title Main Window: Pinger
 set skip_count=0
-
-
-set present=255
+set found_ip=
+set present=%pings%
+set found=0
 :there
-set /a absent=present-5
-echo Pinging Ip s : %PREFIX_RANGE%.%present%
+set /a clearcounter+=1
+(set /a absent=present-ping_batch)
+if %absent% LSS 0 set absent=0
 for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&(echo|set/p=*)>>xxZhPuG.progress.mac_cat.txt&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>xxZhPuG.online.ip.%%i.txt"
 
-type xxZhPuG.progress.mac_cat.txt 2>NUL
 
-set test_ip=0
-echo %Skip_count% >NUL
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od xxZhPuG.online.ip.*.txt 2^>NUL') do for /f "delims=" %%a in ('type %%i') do echo:&echo:-----&echo:FOUND&echo %%a&echo:------&echo:&set /a skip_count+=1
-if %skip_count% GEQ 1 goto skip_ip
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b xxZhPuG.online.ip.*.txt 2^>NUL') do  for /f "delims=" %%a in ('type %%i') do echo:&echo:-----&echo:FOUND&echo %%a&echo:------&echo:&set /a skip_count+=1
+for /f "delims=" %%i in ('type xxZhPuG.progress.mac_cat.txt 2^>NUL') do for  %%a in (xxZhPuG.progress.mac_cat.txt) do cls & echo %%~ta & echo %%i
+echo:&echo:&echo:Pinging Ip s : %PREFIX_RANGE%.%absent%-%present%
+if %found% GEQ 1 echo ---------&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m
+set test_ip=0&echo I.P(s) found = %skip_count%
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od xxZhPuG.online.ip.*.txt 2^>NUL') do for /f "delims=" %%a in ('type %%i') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b xxZhPuG.online.ip.*.txt 2^>NUL') do  for /f "delims=" %%a in ('type %%i') do set /a skip_count+=1&call :setfound %%a
+set /a present=absent
 echo:
+goto skip_ip
+:setfound
+set /a found+=1&echo:FOUND %~1
+set found_ip=%found_ip% %~1,
+exit /b
 :skip_ip
-REM if %test_ip%==1 ping -n 2 %ip_to_test% | findstr /i "[<=>][0-9]*ms" >NUL&&(set /a skip_count+=1) || del %ip_file%
-REM if %test_ip%==1 set /a skip_count+=1
-REM if %test_ip%==1 if exist %ip_file% for /f "delims=" %%a in ("%ip_file%") do echo:&echo:-----&echo:FOUND&type %%a&echo:------&echo:
+
 echo:
-if %present% GTR 0 set /a present=present-5
-if %present% GTR 0 goto there
+if %absent% == 0 goto wait
+if %present% GTR 0 set /a absent=present-5
+if %present% GEQ 0 goto there
 :wait
-del xxZhPuG.progress.mac_cat.txt 1>NUL 2>NUL
+del "xxZhPuG.progress.mac_cat.txt" 1>NUL 2>NUL
+del "xxZhPuG1000.list.ping.print_troubleshoot_from_github.txt" 1>NUL 2>NUL
+
+
 timeout 1 >NUL
+
 set /a rund+=1
 if %rund%==3 echo:Waiting for All ping Windows to complete and close....&set /a rund=1
 tasklist /fi "windowtitle eq xGUHHEJ-Ping_WINDOW*"|find /i "cmd.exe" >NUL&&goto wait || echo: >NUL
-for /f "delims=" %%i in ('dir /b xxZhPuG.online.ip.*.txt 2^>NUL') do for /f "delims=" %%a in ('type %%i') do echo %%a>>xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od xxZhPuG.online.ip.*.txt 2^>NUL') do for /f "delims=" %%a in ('type %%i') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b xxZhPuG.online.ip.*.txt 2^>NUL') do  for /f "delims=" %%a in ('type %%i') do set /a skip_count+=1&call :setfound %%a
 del xxZhPuG.online.ip.*.txt 2>NUL
 :ping
-echo|set/p=>xxZhPuG1000.sort_path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-echo|set/p=>xxZhPuG1000.sort.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-for /f "tokens=4 delims=." %%i in ('type xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt') do echo %%i >>xxZhPuG1000.sort_path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-type xxZhPuG1000.sort_path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt | sort /+3 >> xxZhPuG1000.sort.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-del xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-del xxZhPuG1000.sort_path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-for /f "tokens=1 delims= " %%i  in ('type xxZhPuG1000.sort.LOGBOOK.BOOK.print_troubleshoot_from_github.txt') do echo %PREFIX_RANGE%.%%i >> xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-del xxZhPuG1000.sort.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
 :ping_only
 set repeat=0
 :repeat
@@ -171,25 +181,47 @@ set ip_online_disclaimer=
 set /a repeat+=1
 set initial_messages=0
 :choose_ping
+:testing
 set /a initial_messages+=1
 echo:
-if %initial_messages% GEQ 2 set ip_online_disclaimer= (*According to last scan)
-type xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt 1>NUL 2>NUL
-if %errorlevel% == 0 echo:List of i.p. addresses online#%ip_online_disclaimer%
-if %errorlevel% NEQ 0 echo:
-if %errorlevel% == 0 echo:---
-type xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt 2>NUL
-if %errorlevel% == 0 echo:--- 
-if %errorlevel% == 0 echo:#means, found in the network
-if %repeat% LSS 2 if %errorlevel% NEQ 0 echo:xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt:&echo:Error reading file...  & echo:& timeout 5 & cls & goto repeat
+echo:List of i.p. addresses online#%ip_online_disclaimer%
 echo:
+set found_ip=%found_ip: =%
+echo:---
+powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses;" 2>NUL
+if  %ERRORLEVEL% neq 0 for %%a in (%found_ip%) do echo %%a 
+echo:--- 
+echo:#means, found in the network
+echo:
+REM goto testing
 :input_file_name
-set /p input_file_name=Enter file name to save:
-if exist %input_file_name% echo: File name already exists. & goto input_file_name
-start cmd /c "(if "%input_file_name%" NEQ "" rename xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt "%input_file_name%.txt")&del xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt"
+
+start cmd /v:on /c "mode 75,25&cls&set /p input_file_name=Enter file name to save:&call echo Press a key to save !input_file_name!.txt&pause&(if exist "!input_file_name!.txt" echo: File name already exists.&pause&exit) & (for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\";" 2>NUL)"
 choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
-if %errorlevel%==1 start cmd /c "mode 20,5&echo off & cls & echo: "Notepad list" & notepad xxZhPuG1000.list.ping.print_troubleshoot_from_github.txt"&echo:Press to start pinging......&pause >NUL&start cmd /c "echo off & cls & for /f "delims=" %%i in (xxZhPuG1000.list.ping.print_troubleshoot_from_github.txt) do ping -n 1 %%i&echo:&Pause"
-goto input
+if %errorlevel% NEQ 1 goto input
+:ping_list
+echo:paste the list here
+echo:Then, Write `ping` to start pinging..
+for /l %%i in (1,1,200) do CALL set /p name%%i=&CALL :checkname %%i&if "!temp!"=="ping" set temp=%%i&goto strtpng
+goto :eof
+:strtpng
+echo **********************************************
+echo beginning pings................
+echo ((((((((((((((((((((((((((((((((((((((((((((((
+echo:
+echo:
+for /l %%i in (1,1,!temp!) do CALL CALL :ping_param %%name%%i%%
+:checkname
+CALL set temp=%%name%1%%
+exit /b
+:ping_param
+set temp_ping_name=%1
+set temp_ping_name=!temp_ping_name: =!
+if "!temp_ping_name!"=="ping" echo End--&PAUSE&goto :eof
+echo !temp_ping_name!|findstr /r "[0-9]*[.][0-9]*[.][0-9]*[.][0-9]*"&&(echo pinging ..&ping -n 1 !temp_ping_name!&echo:&echo:-------press a key to continue pinging--------&pause >NUL)
+echo:
+exit /b
+pause
 if exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt set arp_done=0&echo:Would u like to ping these devices found in the logbook? Press N to skip
 if exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt choice /c Nabcdefghijklmopqrstuvwxyz0123456789 /m "Press any (letter/number) key to continue to ping.." /n
 if not exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt goto print_ip_lists
