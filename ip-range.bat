@@ -95,25 +95,21 @@ cls
 echo:
 echo:
 echo:
-echo:                  
-echo:                  _______________________________
-echo:                 ^|Warning:                      ^|
-echo:                 ^|%range% new Windows will be
-echo:                 ^|spawned   to Run Ping         ^|
-echo:                 ^|                              ^|
-echo:                 ^|                              ^|
-echo:                 ^|            ~                 ^|
-echo:       000000000 ^|      wait patiently          ^|000000000
-echo:       000000000 ^|Windows close by themselves   ^|000000000
-echo:       000000000  Do not interrupt or close them^|000000000
-echo:                  Do Increase the batch size for^| 
-echo:                 ^|faster processing             ^|
-echo:                  more Windows open if u do that^|
-echo:                 ^|
-echo:                  This process automates itself ^|
-echo:                  please come back in few mins. ^|
-echo:                 ^|______________________________^|
-echo:                       
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+                       
 
 
 
@@ -207,8 +203,9 @@ REM goto testing
 set /p input_file_name=Enter file name to save:
 echo Press a key to save !input_file_name!.txt
 pause >NUL
-(if exist "!input_file_name!.txt" echo: File name already exists.&pause&exit) 
-for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\";" 2>NUL
+(if exist "!input_file_name!.txt" echo: File name already exists.&pause&goto input) 
+for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
+
 goto input
 choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
 if %errorlevel% NEQ 1 goto input
