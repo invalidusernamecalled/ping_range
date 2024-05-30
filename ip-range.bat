@@ -3,8 +3,8 @@ setlocal enabledelayedexpansion
 :start
 set pings=255
 set ping_batch=3
-del "xxZhPuG.progress.mac_cat.txt" 2>NUL
-del xxZhPuG.online.ip.*.txt 2>NUL
+del "%TMP%\xxZhPuG.progress.mac_cat.txt" 2>NUL
+del "%TMP%\xxZhPuG.online.ip.*.txt" 2>NUL
 :Y
 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 :input
@@ -118,10 +118,10 @@ echo:
 
 
 set ping_no=1
-echo|set/p=>xxZhPuG.progress.mac_cat.txt
+echo|set/p=>"%TMP%\xxZhPuG.progress.mac_cat.txt"
 ECHO:
 
-del xxZhPuG.online.ip.*.txt 2>NUL
+del "%TMP%\xxZhPuG.online.ip.*.txt" 2>NUL
 title Main Window: Pinger
 set skip_count=0
 set found_ip=
@@ -135,24 +135,25 @@ set /a clearcounter+=1
 set /a clearcountermodulus=clearcounter %% 20
 set /a absent=present-ping_batch
 if %absent% LSS 0 set absent=0
-for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>xxZhPuG.online.ip.%%i.txt&(echo|set/p=.)>>xxZhPuG.progress.mac_cat.txt&if %clearcountermodulus% == 0 (echo|set/p=)>xxZhPuG.progress.mac_cat.txt"
-for /f "delims=" %%i in ('type xxZhPuG.progress.mac_cat.txt 2^>NUL') do set begun=0&for  %%a in (xxZhPuG.progress.mac_cat.txt) do cls & echo %date%%time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo  %%i
+for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%TMP%\xxZhPuG.online.ip.%%i.txt"&(echo|set/p=.)>>"%TMP%\xxZhPuG.progress.mac_cat.txt""
+if %clearcountermodulus% == 0 (echo|set/p=)>"%TMP%\xxZhPuG.progress.mac_cat.txt"
+for /f "delims=" %%i in ('type "%TMP%\xxZhPuG.progress.mac_cat.txt" 2^>NUL') do set begun=0&cls & echo %date%%time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo  %%i
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 
 if not defined begun cls&echo %date%%time%   & echo:&echo:Pinging to Ip  : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo spawning ping Windows ...
 set test_ip=0
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od xxZhPuG.online.ip.*.txt 2^>NUL') do for /f "delims=" %%a in ('type %%i') do set /a skip_count+=1&call :setfound %%a
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b xxZhPuG.online.ip.*.txt 2^>NUL') do  for /f "delims=" %%a in ('type %%i') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%TMP%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%TMP%\%%i"') do set /a skip_count+=1&call :setfound %%a
 set /a present=absent
 echo:
 goto skip_ip
 :setfound
-start cmd /c "color 3e&mode 20,10&echo off & cls & echo:IP : %~1 & timeout 1 >NUL"
+
 set /a found+=1&echo:FOUND %~1
 set found_ip=%found_ip% %~1,
 exit /b
 :update_screen_display
-for /f "delims=" %%i in ('type xxZhPuG.progress.mac_cat.txt 2^>NUL') do set begun=0&for  %%a in (xxZhPuG.progress.mac_cat.txt) do cls & echo %date%%time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo  %%i
+for /f "delims=" %%i in ('type "%TMP%\xxZhPuG.progress.mac_cat.txt" 2^>NUL') do set begun=0&cls & echo %date%%time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo  %%i
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 exit /b
 :set_batch_size
@@ -171,17 +172,16 @@ if %absent% == 0 goto wait
 if %present% GTR 0 set /a absent=present-5
 if %present% GEQ 0 goto there
 :wait
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od xxZhPuG.online.ip.*.txt 2^>NUL') do for /f "delims=" %%a in ('type %%i') do set /a skip_count+=1&call :setfound %%a
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b xxZhPuG.online.ip.*.txt 2^>NUL') do  for /f "delims=" %%a in ('type %%i') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%TMP%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%TMP%\%%i"') do set /a skip_count+=1&call :setfound %%a
 call :update_screen_display
 timeout 1 >NUL
 set /a rund+=1
 if %rund%==3 echo:Waiting for All ping Windows to complete and close....&set /a rund=0
 if not defined dontholdon if %rund%==4 echo:Waiting for the final result,&set dontholdon=0
 tasklist /fi "windowtitle eq xGUHHEJ-Ping_WINDOW*"|find /i "cmd.exe" >NUL&&goto wait || echo: >NUL
-del "xxZhPuG.progress.mac_cat.txt" 1>NUL 2>NUL
-del xxZhPuG.online.ip.*.txt 2>NUL
-del "xxZhPuG1000.list.ping.print_troubleshoot_from_github.txt" 1>NUL 2>NUL
+rem del "%TMP%\xxZhPuG.progress.mac_cat.txt" 1>NUL 2>NUL
+rem del "%TMP%\xxZhPuG.online.ip.*.txt" 2>NUL
 :ping
 :ping_only
 set repeat=0
@@ -194,7 +194,6 @@ set initial_messages=0
 set /a initial_messages+=1
 echo:
 echo:List of i.p. addresses online#%ip_online_disclaimer%
-echo:
 set found_ip=%found_ip: =%
 echo:---
 powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses;" 2>NUL
@@ -210,6 +209,7 @@ echo Press a key to save !input_file_name!.txt
 pause >NUL
 (if exist "!input_file_name!.txt" echo: File name already exists.&pause&exit) 
 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\";" 2>NUL
+goto input
 choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
 if %errorlevel% NEQ 1 goto input
 :ping_list
