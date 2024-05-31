@@ -117,20 +117,20 @@ cls
 echo:
 echo:
 echo:
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * 
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
                        
 
 
@@ -151,22 +151,23 @@ set pings_actual=0
 set updatevariable=0
 set percentage=0
 set ping_batch_var=0
+set begun=1
 :there
 set /a clearcounter+=1
 set /a clearcountermodulus=clearcounter %% 20
 set /a absent=present-ping_batch
-if %absent% LSS 0 set absent=0
+if %absent% LSS 1 set absent=1
 set /a ping_batch_var=(present-absent)+ping_batch_var
-for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\xxZhPuG.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\xxZhPuG.online._.%%i.txt""
-for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date%%time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Pings Requested: %ping_batch_var%&echo:Pings Actualized:%%i&set /a updatevariable=clearcounter %% 2
 
+if %begun% NEQ 0 cls&echo %date%%time%   & echo:&echo:Pinging to Ip  : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo spawning ping Windows ...
+for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\xxZhPuG.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\xxZhPuG.online._.%%i.txt""
+call :updatevars
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 if %percentage% LSS 80 (if %updatevariable% == 1 call :update_screen) else (call :update_screen)
-if not defined begun cls&echo %date%%time%   & echo:&echo:Pinging to Ip  : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo spawning ping Windows ...
 set test_ip=0
 if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
 if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i" 2^>NUL') do set /a skip_count+=1&call :setfound %%a
-set /a present=absent
+set /a present=absent-1
 echo:
 goto skip_ip
 :update_screen
@@ -175,14 +176,18 @@ set var=Main Window: Pinger Zzz:: [pings sent]                       ++++ + + + 
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
+:updatevars
+if %present% LEQ %pings% set /a ping_batch_var=pings
+for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Pings Requested: %ping_batch_var%&echo:Pings Actualized:%%i&set /a updatevariable=clearcounter %% 2
+exit /b
 :setfound
 set /a found+=1
-if %skip_count% NEQ 2500 echo:FOUND %~1
+if %present% LSS 1 echo:FOUND %~1
 set found_ip=%found_ip% %~1,
 exit /b
 :update_screen_title
 for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
-set /a percentage=pings_actual*100/(pings+1)
+set /a percentage=pings_actual*100/(pings)
 set var=Main Window: Pinger Zzz:: [pings sent]                       ++++ + + + +++ %percentage% %%
 REM set var=!var:~0,%percentage%!
 title !var!
@@ -200,11 +205,9 @@ goto set_batch_size
 
 echo:
 if %absent% == 0 goto wait
-if %present% GTR 0 set /a absent=present-5
-if %present% GEQ 0 goto there
+if %present% GEQ 1 goto there
+if %present% == 0 set /a present=pings
 :wait
-call :update_screen_title
-set skip_count=2500
 if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
 if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
 timeout 1 >NUL
@@ -212,7 +215,8 @@ set /a rund+=1
 if %rund%==3 echo:Windows closing....waiting&set /a rund=0
 if not defined dontholdon if %rund%==4 echo:Waiting for the final result,&set dontholdon=0
 tasklist /fi "windowtitle eq xGUHHEJ-Ping_WINDOW*"|find /i "cmd.exe" >NUL&&goto wait || echo: >NUL
-
+call :updatevars
+call :update_screen_title
 del "%write_dir%\xxZhPuG.online._.*.txt" 1>NUL 2>NUL
 
 :ping
@@ -239,7 +243,7 @@ echo:#means, found in the network
 echo:
 REM goto testing
 :input_file_name
-
+set input_file_name=
 set /p input_file_name=Enter file name to save:
 echo Press a key to save !input_file_name!.txt
 pause >NUL
