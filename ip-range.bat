@@ -1,15 +1,32 @@
 @echo off
 mode 120,30
 setlocal enabledelayedexpansion
+set /a revelation=%RANDOM%*2000/32767
+REM LIST OF POSSIBLE WRITE LOCATIONS
+set writeing_dir="%TMP%" "%SystemRoot%\Temp" "%USERPROFILE%\AppData\Local\Temp" "%homedrive%\Users\%username%\AppData\Local"
+
+:check
+set start=0
+for %%a in (%writeing_dir%) do call :testdir %%a
+if %start%==0 echo Not found write directory
+if %start%==0 set /p writeing_dir=Please provide directory(in quotes):
+if %start%==0 goto :check
+goto start
+:testdir
+if %start%==1 exit /b
+echo:>%1\xxZhPuG.write.-.test.txt
+if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set write_dir=%1&set start=1
+Exit /B
 :start
+REM PING BATCH SIZE,
 set pings=254
 set ping_batch=3
 :Y
 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 :input
 
-del "%TMP%\xxZhPuG.online._.*.txt" 
-del "%TMP%\xxZhPuG.online.ip.*.txt" 2>NUL
+del "%write_dir%\xxZhPuG.online._.*.txt" 
+del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
 
 cls
 title Main Ping Script
@@ -18,6 +35,8 @@ echo:................                          + i::o::p
 echo:Press S to scan                           %pings% :::::
 echo:------ --------                           - j:k:l
 echo:                                                          
+echo:     (Please use Windows Console Host as your default terminal.)
+if %revelation% == 666 echo:                   i thanks Jesus for the strength to make this.
 choice /c s0ijokpl  /n 
 if %errorlevel%==3 set /a pings +=25
 if %errorlevel%==4 set /a pings -=25
@@ -119,7 +138,7 @@ echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOG
 set ping_no=1
 ECHO:
 
-del "%TMP%\xxZhPuG.online.ip.*.txt" 2>NUL
+del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
 title Main Window: Pinger
 set skip_count=0
 set found_ip=
@@ -138,15 +157,15 @@ set /a clearcountermodulus=clearcounter %% 20
 set /a absent=present-ping_batch
 if %absent% LSS 0 set absent=0
 set /a ping_batch_var=(present-absent)+ping_batch_var
-for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%TMP%\xxZhPuG.online.ip.%%i.txt"&echo|set/p=>"%TMP%\xxZhPuG.online._.%%i.txt""
-for /f "tokens=1" %%i in ('dir "%TMP%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date%%time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Pings Requested: %ping_batch_var%&echo:Pings Actualized:%%i&set /a updatevariable=clearcounter %% 2
+for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\xxZhPuG.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\xxZhPuG.online._.%%i.txt""
+for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date%%time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Pings Requested: %ping_batch_var%&echo:Pings Actualized:%%i&set /a updatevariable=clearcounter %% 2
 
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 if %percentage% LSS 80 (if %updatevariable% == 1 call :update_screen) else (call :update_screen)
 if not defined begun cls&echo %date%%time%   & echo:&echo:Pinging to Ip  : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo spawning ping Windows ...
 set test_ip=0
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%TMP%\%%i"') do set /a skip_count+=1&call :setfound %%a
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%TMP%\%%i" 2^>NUL') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i" 2^>NUL') do set /a skip_count+=1&call :setfound %%a
 set /a present=absent
 echo:
 goto skip_ip
@@ -162,7 +181,7 @@ if %skip_count% NEQ 2500 echo:FOUND %~1
 set found_ip=%found_ip% %~1,
 exit /b
 :update_screen_title
-for /f "tokens=1" %%i in ('dir "%TMP%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
+for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
 set /a percentage=pings_actual*100/(pings+1)
 set var=Main Window: Pinger Zzz:: [pings sent]                       ++++ + + + +++ %percentage% %%
 REM set var=!var:~0,%percentage%!
@@ -186,15 +205,15 @@ if %present% GEQ 0 goto there
 :wait
 call :update_screen_title
 set skip_count=2500
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%TMP%\%%i"') do set /a skip_count+=1&call :setfound %%a
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%TMP%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
 timeout 1 >NUL
 set /a rund+=1
 if %rund%==3 echo:Windows closing....waiting&set /a rund=0
 if not defined dontholdon if %rund%==4 echo:Waiting for the final result,&set dontholdon=0
 tasklist /fi "windowtitle eq xGUHHEJ-Ping_WINDOW*"|find /i "cmd.exe" >NUL&&goto wait || echo: >NUL
 
-del "%TMP%\xxZhPuG.online._.*.txt" 1>NUL 2>NUL
+del "%write_dir%\xxZhPuG.online._.*.txt" 1>NUL 2>NUL
 
 :ping
 :ping_only
@@ -208,7 +227,7 @@ set initial_messages=0
 set /a initial_messages+=1
 :set_repeat_count
 set found_ip=
-for /f "delims=" %%i in ('dir /b "%TMP%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%TMP%\%%i"') do call :setfound %%a
+for /f "delims=" %%i in ('dir /b "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do call :setfound %%a
 echo:
 echo:List of i.p. addresses online#%ip_online_disclaimer%
 set found_ip=%found_ip: =%
@@ -226,7 +245,7 @@ echo Press a key to save !input_file_name!.txt
 pause >NUL
 (if exist "!input_file_name!.txt" echo: File name already exists.&pause&goto input) 
 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
-del "%TMP%\xxZhPuG.online.ip.*.txt" 2>NUL
+del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
 goto input
 choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
 if %errorlevel% NEQ 1 goto input
