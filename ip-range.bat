@@ -19,7 +19,8 @@ if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set write_d
 Exit /B
 :start
 rem start of program ****************************************************************************************
-REM PING BATCH SIZE,
+REM 
+ SIZE,
 rem set default variables ***********************************************************************************
 set pings=254
 set ping_batch=3
@@ -158,7 +159,7 @@ set /a clearcountermodulus=clearcounter %% 20
 set /a absent=present-ping_batch
 if %absent% LSS 1 set absent=1
 call :updatevars
-if %begun% NEQ 0 cls&echo %date%%time%   & echo:&echo:Pinging to Ip  : %PREFIX_RANGE%.%absent%-%present% &  echo:&echo spawning ping Windows ...
+if %begun% NEQ 0 cls&echo %date%%time%   & echo:&echo:Sending Requests:%PREFIX_RANGE%.%absent%-%present% &  echo:&echo spawning ping Windows ...
 for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\xxZhPuG.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\xxZhPuG.online._.%%i.txt""
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 if %percentage% LSS 80 (if %updatevariable% == 1 call :update_screen) else (call :update_screen)
@@ -170,13 +171,13 @@ echo:
 goto skip_ip
 :update_screen
 set /a percentage=pings_actual*100/(pings)
-set var=Main Window: pinger                  +%percentage% %%
+set var=Main Window: pinger                  (%percentage% %%)
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Ping batch size: %ping_batch% &echo:Pings (to be requested): %ping_batch_var% &echo:Pings Actualized:        %%i&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Ping batch size: %ping_batch% &echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Pings (to be requested): %ping_batch_var% &echo:Pings Completed:         %%i&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
@@ -186,7 +187,7 @@ exit /b
 :update_screen_title
 for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
 set /a percentage=pings_actual*100/(pings)
-set var=Main Window: pinger                  +%percentage% %%
+set var=Main Window: pinger                  (%percentage% %%)
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
