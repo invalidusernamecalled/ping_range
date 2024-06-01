@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 set /a revelation=%RANDOM%*2000/32767
 
 :checkduplicate
-for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto :eof
+for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto :eof
 
 REM LIST OF POSSIBLE WRITE LOCATIONS
 set writeing_dir="%TMP%" "%SystemRoot%\Temp" "%USERPROFILE%\AppData\Local\Temp" "%homedrive%\Users\%username%\AppData\Local"
