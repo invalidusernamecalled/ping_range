@@ -42,7 +42,7 @@ echo:Press S to scan                           [ %pings% ]
 echo:------ --------                           - j:k:l
 echo:                                                          
 echo:     (Please use Windows Console Host as your default terminal.)
-if %revelation% == 666 echo:                   i thanks Jesus for the strength to make this.
+if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
 choice /c s0ijokpl  /n 
 if %errorlevel%==3 set /a pings +=25
 if %errorlevel%==4 set /a pings -=25
