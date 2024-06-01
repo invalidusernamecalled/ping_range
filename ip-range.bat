@@ -2,6 +2,10 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set /a revelation=%RANDOM%*2000/32767
+
+:checkduplicate
+for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto :eof
+
 REM LIST OF POSSIBLE WRITE LOCATIONS
 set writeing_dir="%TMP%" "%SystemRoot%\Temp" "%USERPROFILE%\AppData\Local\Temp" "%homedrive%\Users\%username%\AppData\Local"
 
@@ -20,7 +24,6 @@ Exit /B
 :start
 rem start of program ****************************************************************************************
 REM 
- SIZE,
 rem set default variables ***********************************************************************************
 set pings=254
 set ping_batch=3
@@ -32,7 +35,7 @@ del "%write_dir%\xxZhPuG.online._.*.txt"
 del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
 
 cls
-title Main Ping Script
+title xxZhPuG.Pinger Main Ping Script 
 echo:                                        
 echo:................                          + i::o::p
 echo:Press S to scan                           [ %pings% ]
@@ -54,7 +57,7 @@ cls
 goto input
 :get_mac.py
 color 2
-title Ping...
+title xxZhPuG.Pinger Ping... 
 cls
 if not exist get_mac.py set check_repository=1&set file_not_exist= get_mac.py&goto display_macadd_ismissing
 for /f "tokens=*" %%i in ('where python 2^>NUL') do set python_path=%%i
@@ -94,7 +97,7 @@ goto input
 :scan
 call :flash ca
 cls
-title Pinger ... 
+title xxZhPuG.Pinger Pinger ... 
 echo:                       
 if not defined PREFIX_RANGE goto enter_subnet
 echo:           -----------------------------------
@@ -140,7 +143,7 @@ set ping_no=1
 ECHO:
 
 del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
-title Main Window: Pinger
+title xxZhPuG.Pinger Main Window: Pinger
 set skip_count=0
 set found_ip=
 set present=%pings%
@@ -159,7 +162,7 @@ set /a clearcountermodulus=clearcounter %% 20
 set /a absent=present-ping_batch
 if %absent% LSS 1 set absent=1
 call :updatevars
-if %begun% NEQ 0 cls&echo %date%%time%   & echo:&echo:Sending Requests:%PREFIX_RANGE%.%absent%-%present% &  echo:&echo spawning ping Windows ...
+if %begun% NEQ 0 cls&echo %date%%time%   & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &  echo:&echo spawning ping Windows ...
 for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\xxZhPuG.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\xxZhPuG.online._.%%i.txt""
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 if %percentage% LSS 80 (if %updatevariable% == 1 call :update_screen) else (call :update_screen)
@@ -171,13 +174,13 @@ echo:
 goto skip_ip
 :update_screen
 set /a percentage=pings_actual*100/(pings)
-set var=Main Window: pinger                  (%percentage% %%)
+set var=xxZhPuG.Pinger Main Window: pinger        (%percentage% %%)
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Ping batch size: %ping_batch% &echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Pings (to be requested): %ping_batch_var% &echo:Pings Completed:         %%i&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &  echo:Pings (to be requested): %ping_batch_var% &echo:Pings Completed:         %%i&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
@@ -187,7 +190,7 @@ exit /b
 :update_screen_title
 for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
 set /a percentage=pings_actual*100/(pings)
-set var=Main Window: pinger                  (%percentage% %%)
+set var=xxZhPuG.Pinger Main Window: pinger        (%percentage% %%)
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
