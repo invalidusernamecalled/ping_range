@@ -34,7 +34,7 @@ cls
 title Main Ping Script
 echo:                                        
 echo:................                          + i::o::p
-echo:Press S to scan                           %pings% :::::
+echo:Press S to scan                           [ %pings% ]
 echo:------ --------                           - j:k:l
 echo:                                                          
 echo:     (Please use Windows Console Host as your default terminal.)
@@ -119,19 +119,17 @@ cls
 echo:
 echo:
 echo:
+echo:GOGI TECH *                  TECH               GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TE          TECH         ECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH        TECH        TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH * GOGI TECH        TECH *   GI TECH * GOGI TECH * GOGI TECH *
 echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
 echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
 echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TECH *      TECH * GOGI TECH *      TECH * GOGI TECH * GOGI TECH *
+echo:GOGI TEC       I TECH * GOGI TECH * GO        * GOGI TECH * GOGI TECH *
+echo:GOGI TE        I TECH * GOGI TECH * GOG           GI TECH * GOGI TECH *
+echo:          * GOGI TECH * GOGI TECH * GOGI         OGI TECH * GOGI TECH *
 echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
                        
 
@@ -172,13 +170,13 @@ echo:
 goto skip_ip
 :update_screen
 set /a percentage=pings_actual*100/(pings)
-set var=Main Window: Pinger Zzz:: [pings sent]                       ++++ + + + +++ %percentage% %%
+set var=Main Window: pinger                  +%percentage% %%
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Ping batch size (per request): %ping_batch% &echo:Pings (to be requested): %ping_batch_var% &echo:Pings Actualized:        %%i&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Sending pings to Ip s : %PREFIX_RANGE%.%absent%-%present% &  echo:Ping batch size: %ping_batch% &echo:Pings (to be requested): %ping_batch_var% &echo:Pings Actualized:        %%i&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
@@ -188,7 +186,7 @@ exit /b
 :update_screen_title
 for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
 set /a percentage=pings_actual*100/(pings)
-set var=Main Window: Pinger Zzz:: [pings sent]                       ++++ + + + +++ %percentage% %%
+set var=Main Window: pinger                  +%percentage% %%
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
