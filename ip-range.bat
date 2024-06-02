@@ -2,7 +2,6 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set /a revelation=%RANDOM%*2000/32767
-
 :checkduplicate
 for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto :eof
 
@@ -15,12 +14,16 @@ for %%a in (%writeing_dir%) do call :testdir %%a
 if %start%==0 echo Not found write directory
 if %start%==0 set /p writeing_dir=Please provide directory(in quotes):
 if %start%==0 goto :check
-goto start
+goto checkpwsh
 :testdir
 if %start%==1 exit /b
 echo:>%1\xxZhPuG.write.-.test.txt
 if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set write_dir=%1&set start=1
 Exit /B
+:checkpwsh
+set powershellavlable=0
+powershell -c "write-host \" \""
+if %errorlevel% NEQ 0 set powershellavlable=0
 :start
 rem start of program ****************************************************************************************
 REM 
@@ -114,7 +117,8 @@ set PREFIX_RANGE=
 echo: Enter Subnet
 set /p PREFIX_RANGE=Subnet X.X.X:
 if "%PREFIX_RANGE%"=="" set PREFIX_RANGE=192.168.1
-for /f %%i in ('powershell -c "'%PREFIX_RANGE%' -match '^\d{0,1}\d{0,1}\d{0,1}[.]\d{0,1}\d{0,1}\d{0,1}\.\d{0,1}\d{0,1}\d{0,1}$'"') do set state=%%i
+if %powershellavlable%==1 for /f %%i in ('powershell -c "'%PREFIX_RANGE%' -match '^\d{0,1}\d{0,1}\d{0,1}[.]\d{0,1}\d{0,1}\d{0,1}\.\d{0,1}\d{0,1}\d{0,1}$'"') do set state=%%i
+if %powershellavlable%==0 echo %PREFIX_RANGE%|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$"&& (goto loop) || (echo:bad format&goto :enter_subnet)
 if "%state%"=="False"  powershell -c "write-host -nonewline TRY AGAIN!`r"&TIMEOUT 1 >nul & goto :enter_subnet
 ECHO:
 :loop
@@ -180,7 +184,7 @@ title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &  echo:Pings (to be requested): %ping_batch_var% &echo:Pings Completed:         %%i&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &echo:&  echo:Pings requested: %ping_batch_var% &echo:      Completed: %%i&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
@@ -238,8 +242,8 @@ echo:
 echo:List of i.p. addresses online#%ip_online_disclaimer%
 set found_ip=%found_ip: =%
 echo:---
-powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses;" 2>NUL
-if  %ERRORLEVEL% neq 0 for %%a in (%found_ip%) do echo %%a 
+if %powershellavlable%==1 powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses;" 2>NUL
+if %powershellavlable%==0 for %%a in (%found_ip%) do echo %%a 
 echo:--- 
 echo:#means, found in the network
 echo:
@@ -250,7 +254,8 @@ set /p input_file_name=Enter file name to save:
 echo Press a key to save !input_file_name!.txt
 pause >NUL
 (if exist "!input_file_name!.txt" echo: File name already exists.&pause&goto input) 
-for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
+if %powershellavlable%==1 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
+if %powershellavlable%==0 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >>"%%i.txt")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
 del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
 goto input
 choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
