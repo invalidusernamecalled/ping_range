@@ -7,6 +7,7 @@ Press E to Edit Subnet
 O = Additional Options
 -----------------------------
 ```
-<p align=right>Live in Peace<sup>##</sup>
-Non-Commercial Use License
-(C) invalidusernamecalled, 2024
+<p align=right>Live in Peace<sup>##</sup></p>
+
+`Non-Commercial Use License
+(C) invalidusernamecalled, 2024`
