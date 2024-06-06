@@ -2,13 +2,19 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set /a revelation=%RANDOM%*2000/32767
+set last_error=0
+set gotrange=0
+set gotsubnet=0
+Set error=0
+set prefix_range=
 :checkduplicate
-for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto :eof
+REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
 
 REM LIST OF POSSIBLE WRITE LOCATIONS
 set writeing_dir="%TMP%" "%SystemRoot%\Temp" "%USERPROFILE%\AppData\Local\Temp" "%homedrive%\Users\%username%\AppData\Local"
-
+title STARTUP: Checking directory permissions..
 :check
+echo|set/p=.temp dir permission.
 set start=0
 for %%a in (%writeing_dir%) do call :testdir %%a
 if %start%==0 echo Not found write directory
@@ -18,35 +24,250 @@ goto checkpwsh
 :testdir
 if %start%==1 exit /b
 echo:>%1\xxZhPuG.write.-.test.txt
-if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set write_dir=%1&set start=1
+if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set write_dir=%1&set start=1&title 
+echo:   [OK]
+title STARTUP: Using write_dir %1
 Exit /B
 :checkpwsh
+echo|set/p=.powershell available.
 set powershellavlable=0
-powershell -c "write-host \" \""
+powershell -c "write-host \" \"" >NUL
+if %errorlevel% == 0 echo:  [OK]
 if %errorlevel% NEQ 0 set powershellavlable=0
+:getsettings
+title STARTUP: Checking settings file..
+if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
+
+if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
+
+set settings=1
+if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         [%%i]&title STARTUP: Initializing settings..&call :init
+if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
+goto start
+:setuid
+set make_me_a_string=a b c d e f g h i j k l m o p A B C D E F G I J K L 1 2 3 4 5 6
+set resultstr=
+set times=0
+:times
+set /a counter=0
+set /a cchar=(%random%*32/32767)+1
+for %%a in (%make_me_a_string%) DO set /a counter+=1&if !counter!==!cchar! set resultstr=!resultstr!%%a
+set /a times+=1
+if %times% LEQ 6 goto times
+exit /b
+:createoptions
+echo:File not exists
+echo:create settings file?
+choice /c yn
+if %errorlevel%==2 exit /b
+echo|set/p=>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+set options="profiles:" "filename:" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:" "saverange:"
+for %%a in (%options%) do echo %%~a>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
+:init
+
+for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%"') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
+
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find "profiles:"') do set current_profile=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "powershell:"') do set powershell_or_not=%%i
+
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "savesubnet:"') do set save_subnet=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "save_range:"') do set save_range=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "uuid:"') do set lastuuid=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "file:"') do set file_status=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename=%%i
+exit /b
+
+:init_options_file
+
+if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
+
+Exit /b
+:delete_options_file
+choice /c yn /m "Are you sure? yn" /n
+if %errorlevel%==2 exit /b
+del "%write_dir%\%options_file%"
+timeout 1 >NUL
+exit /b
+:options
+cls
+if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
+if not exist "%write_dir%\xxZhPuG.*.options.txt" call :createoptions&goto input
+for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%"') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
+
+set powershell_or_not=
+set save_subnet=
+set save_range=
+set lastuuid=
+set filename=
+set file_status=
+set powershell_tick=  &echo: >NUL
+set multi-file=  &echo: >NUL
+set subnettick=  &echo: >NUL
+set rangetick=  &echo: >NUL
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find "profiles:"') do set current_profile=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "powershell:"') do set powershell_or_not=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "savesubnet:"') do set save_subnet=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "save_range:"') do set save_range=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "uuid:"') do set lastuuid=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "file:"') do set file_status=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename=%%i
+
+if "%powershell_or_not%" NEQ "" call :powershelltick
+if "%file_status%" NEQ ""  call :filetick
+if "%save_subnet%" NEQ "" call :savesubnettick
+if "%save_range%" NEQ "" calL :saverangetick
+rem if "%powershell_or_not%" NEQ "" 
+rem if "%powershell_or_not%" NEQ ""
+:reprintoptions
+set special_symbol=---:
+if %error% NEQ 6 if %error% NEQ 0 CALL set highlight%error%=%special_symbol%
+echo                                                   {OPTIONS_FILE} %options_file%
+echo:           -----------------------------------
+echo:            S = Scan
+echo:            E to Edit Subnet = %prefix_range%
+echo:            O Additional Options H= Change Range
+echo:          ------------------------------------
+echo:     Enter Choice No.#                       0=Tick/Untick
+echo:
+echo:%highlight1%1.[%multi-file%] enable default save file name (multiple files generated)
+echo:%highlight2%2.[%single-file%] enable default save file name (OVERWRITE^^^!)
+echo:%highlight3%3.[%rangetick%] Remember Range
+echo:%highlight4%4.[%subnettick%] Remember Subnet
+echo:%highlight5%5.[%powershell_tick%] enable powershell
+for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
+echo:     Press C to Change filename
+echo:  (D) Delete settings file, Reset settings
+for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
+choice /c 123450seoDH /n
+set error=%errorlevel%
+if %error% == 10 call :delete_options_file&goto input
+if %error% == 7 goto loop
+if %error% == 8 goto enter_subnet
+if %error% == 6 if %error% == 0 goto options
+if %error% == 11 goto input
+if %error%==6 if %last_error% GTR 0 if %last_error% == 1 call :addfile 2&goto options
+if %error%==6 if %last_error% GTR 0 if %last_error% == 2 call :addfile 1&goto options
+if %error%==6 if %last_error% GTR 0 if %last_error% == 3 call :saverange&goto options
+if %error%==6 if %last_error% GTR 0 if %last_error% == 4 call :savesubnet&goto options
+if %error%==6 if %last_error% GTR 0 if %last_error% == 5 call :setpowershell&goto options
+set last_error=%error%
+if %error% LEQ 5 if %error% NEQ 0 cls&goto reprintoptions
+cls&goto reprintoptions
+:powershelltick
+if %powershell_or_not%==1 (set powershell_tick=\/) else (set powershell_tick=  &echo: >NUL)
+exit /b
+:filetick
+if %file_status%==2 (set multi-file=\/) else (set multi-file=  &echo: >NUL)
+if %file_status%==1 (set single-file=\/) else (set single-file=  &echo: >NUL)
+exit /b
+:savesubnettick
+if %save_subnet%==1 (set subnettick=\/) else (set subnettick=  &echo: >NUL)
+exit /b
+:saverangetick
+if %save_range%==1 (set rangetick=\/) else (set rangetick=  &echo: >NUL)
+exit /b
+
+:setpowershell
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "powershell:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+if "%powershell_or_not%" == "" set powershell_or_not=0
+if %powershell_or_not%==1 (set powershell_status=0) else (set powershell_status=1)
+echo powershell: %powershell_status% >>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
+:saverange
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "save_range:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+if "%save_range%" == "" set save_range=0
+if %save_range%==0 (set save_range=1) else (set save_range=0)
+echo save_range:%save_range%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
+:getsubnet
+set gotsubnet=0
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| findstr "^subnet:"') do set gotsubnet=1&set prefix_range=%%i
+exit /b
+:getrange
+set gotrange=0
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| findstr "^range:"') do set gotrange=1&set pings=%%i
+exit /b
+
+:savesubnet
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "savesubnet:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+if "%save_subnet%" == "" set save_subnet=0
+if %save_subnet%==0 (set save_subnet=1) else (set save_subnet=0)
+echo savesubnet:%save_subnet%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
+:subnet
+echo I will save the subnet...Pls don't worry
+Pause
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| findstr /v "^subnet:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+echo subnet:%prefix_range%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
+:range
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| findstr /v "^range:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+echo range:%pings%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
+:addfilename
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "filename:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+echo filename:"%~1.txt">>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
+:addfile
+if "%file_status%" == "" set file_status=0&goto skip_check_file_status
+if %file_status% == 0 (set file_status=%1) else (set file_status=0)
+:add_file_input_name
+if %file_status% NEQ 0 if "%filename%" == "" set /p filename=Enter a file name:&(if exist "%write_dir%\!filename!.txt" echo File exist already ^^^! & goto add_file_input_name)& call :addfilename "!filename!"&exit /b
+:skip_check_file_status
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "file:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+echo file:%file_status%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
 :start
+del "%write_dir%\%totaluid%.online._.*.txt" 2>NUL
+del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
+call :setuid
+if "%powershell_or_not%" == "" goto skip_check_powershell_status
+if %powershell_or_not%==0 set powershellavlable=0
+if %powershell_or_not%==1 set powershellavlable=1
+:skip_check_powershell_status
+set totaluid=xxZhPuG.!resultstr!
 rem start of program ****************************************************************************************
 REM 
 rem set default variables ***********************************************************************************
-set pings=254
-set ping_batch=3
 :Y
-for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
+if "%save_range%" == "" goto skip_save_range_2
+if %save_range% == 1 call :getrange
+:skip_save_range_2
+if "%save_subnet%" == "" goto skip_save_subnet_2
+if %save_subnet% == 1 call :getsubnet
+:skip_save_subnet_2
+if %gotrange%==0 set pings=254
+set ping_batch=3
+if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 :input
-
-del "%write_dir%\xxZhPuG.online._.*.txt" 
-del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
-
 cls
-title xxZhPuG.Pinger Main Ping Script 
+title Ping Master
 echo:                                        
-echo:................                          + i::o::p
-echo:Press S to scan                           [ %pings% ]
-echo:------ --------                           - j:k:l
-echo:                                                          
+echo:          -------------------------------- +123
+echo:          Press S to scan                  [ %pings% ]
+echo:          E to Edit Subnet                 -zxc
+echo:          O Additional Options      
+echo:          --------------------------------                      
+echo:
 echo:     (Please use Windows Console Host as your default terminal.)
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
-choice /c s0ijokpl  /n 
+choice /c s03z2x1coe  /n 
 if %errorlevel%==3 set /a pings +=25
 if %errorlevel%==4 set /a pings -=25
 if %errorlevel%==5 set /a pings +=12
@@ -56,11 +277,13 @@ if %errorlevel%==8 set /a pings -=2
 if %pings% GEQ 255 set pings=254
 if %pings% LSS 1 set pings=1
 if %errorlevel%==1 goto scan
+if %errorlevel%==9 goto options
+if %errorlevel%==10 goto enter_subnet
 cls
 goto input
 :get_mac.py
 color 2
-title xxZhPuG.Pinger Ping... 
+title Ping Master
 cls
 if not exist get_mac.py set check_repository=1&set file_not_exist= get_mac.py&goto display_macadd_ismissing
 for /f "tokens=*" %%i in ('where python 2^>NUL') do set python_path=%%i
@@ -100,15 +323,17 @@ goto input
 :scan
 call :flash ca
 cls
-title xxZhPuG.Pinger Pinger ... 
+title  Ping Master
 echo:                       
 if not defined PREFIX_RANGE goto enter_subnet
 echo:           -----------------------------------
 echo:            S to Scan
 echo:            E to Edit Subnet = %prefix_range%
+echo:            O Additional Options
 echo:          ------------------------------------
-choice /c se /m "" /n
+choice /c seO /m "" /n
 if %errorlevel%==1 goto loop
+if %errorlevel%==3 goto options
 :enter_subnet
 cls
 echo:press /enter\ for the default value
@@ -122,6 +347,8 @@ if %powershellavlable%==0 echo %PREFIX_RANGE%|findstr /r "^[0-9]*[.][0-9]*[.][0-
 if "%state%"=="False"  powershell -c "write-host -nonewline TRY AGAIN!`r"&TIMEOUT 1 >nul & goto :enter_subnet
 ECHO:
 :loop
+del "%write_dir%\%totaluid%.online._.*.txt" 2>NUL
+del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
 timeout 1 >NUL
 cls
 echo:
@@ -146,8 +373,7 @@ echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
 set ping_no=1
 ECHO:
 
-del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
-title xxZhPuG.Pinger Main Window: Pinger
+title Pinger Main Window: Pinger
 set skip_count=0
 set found_ip=
 set present=%pings%
@@ -167,24 +393,24 @@ set /a absent=present-ping_batch
 if %absent% LSS 1 set absent=1
 call :updatevars
 if %begun% NEQ 0 cls&echo %date%%time%   & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &  echo:&echo spawning ping Windows ...
-for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\xxZhPuG.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\xxZhPuG.online._.%%i.txt""
+for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title %totaluid%xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\%totaluid%.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\%totaluid%.online._.%%i.txt""
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 if %percentage% LSS 80 (if %updatevariable% == 1 call :update_screen) else (call :update_screen)
 set test_ip=0
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i" 2^>NUL') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i" 2^>NUL') do set /a skip_count+=1&call :setfound %%a
 set /a present=absent-1
 echo:
 goto skip_ip
 :update_screen
 set /a percentage=pings_actual*100/(pings)
-set var=xxZhPuG.Pinger Main Window: pinger        (%percentage% %%)
+set var=Pinger Main Window: pinger        (%percentage% %%)
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &echo:&  echo:Pings requested: %ping_batch_var% &echo:      Completed: %%i&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &echo:&  echo:Pings requested: %ping_batch_var% &echo:      Completed: %%i&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
@@ -192,38 +418,28 @@ if %present% LSS 1 echo:FOUND %~1
 set found_ip=%found_ip% %~1,
 exit /b
 :update_screen_title
-for /f "tokens=1" %%i in ('dir "%write_dir%\xxZhPuG.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
+for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
 set /a percentage=pings_actual*100/(pings)
-set var=xxZhPuG.Pinger Main Window: pinger        (%percentage% %%)
+set var=Pinger Main Window: pinger        (%percentage% %%)
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
-:set_batch_size
-echo:Press S to Save
-choice /c ijS /m "+i -j ping batch size:(%ping_batch%)" /n
-if %errorlevel%==1 set /a ping_batch+=3
-if %errorlevel%==2 set /a ping_batch-=2
-if %errorlevel%==3 exit /b
-if %ping_batch% GTR 20 set ping_batch=20
-if %ping_batch% LSS 1 set ping_batch=1
-goto set_batch_size
 :skip_ip
-
 echo:
 if %absent% == 0 goto wait
 if %present% GEQ 1 goto there
 if %present% == 0 set /a present=pings
 :wait
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
 timeout 1 >NUL
 set /a rund+=1
 if %rund%==3 echo:Windows closing....waiting&set /a rund=0
 if not defined dontholdon if %rund%==4 echo:Waiting for the final result,&set dontholdon=0
-tasklist /fi "windowtitle eq xGUHHEJ-Ping_WINDOW*"|find /i "cmd.exe" >NUL&&goto wait || echo: >NUL
+tasklist /fi "windowtitle eq %totaluid%xGUHHEJ-Ping_WINDOW*"|find /i "cmd.exe" >NUL&&goto wait || echo: >NUL
 call :updatevars
 call :update_screen_title
-del "%write_dir%\xxZhPuG.online._.*.txt" 1>NUL 2>NUL
+del "%write_dir%\%totaluid%.online._.*.txt" 1>NUL 2>NUL
 
 :ping
 :ping_only
@@ -237,7 +453,7 @@ set initial_messages=0
 set /a initial_messages+=1
 :set_repeat_count
 set found_ip=
-for /f "delims=" %%i in ('dir /b "%write_dir%\xxZhPuG.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do call :setfound %%a
+for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do call :setfound %%a
 echo:
 echo:List of i.p. addresses online#%ip_online_disclaimer%
 set found_ip=%found_ip: =%
@@ -247,17 +463,49 @@ if %powershellavlable%==0 for %%a in (%found_ip%) do echo %%a
 echo:--- 
 echo:#means, found in the network
 echo:
-REM goto testing
+if "%save_range%" == "" goto skip_save_range
+if %save_range% == 1 call :range&call :init_options_file
+:skip_save_range
+if "%save_subnet%" == "" goto skip_save_subnet
+if %save_subnet% == 1 call :subnet&call :init_options_file
+:skip_save_subnet
+del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
+if "%file_status%" == "" goto skip_check_file_status
+if "%filename%" == "" goto skip_check_file_status
+if %file_status% NEQ 0 goto save_file_default_file_name
+:skip_check_file_status
 :input_file_name
 set input_file_name=
 set /p input_file_name=Enter file name to save:
 echo Press a key to save !input_file_name!.txt
 pause >NUL
-(if exist "!input_file_name!.txt" echo: File name already exists.&pause&goto input) 
-if %powershellavlable%==1 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
-if %powershellavlable%==0 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >>"%%i.txt")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
-del "%write_dir%\xxZhPuG.online.ip.*.txt" 2>NUL
+(if exist "!input_file_name!.txt" echo: File name already exists.&pause&goto input)
+(if "!input_file_name!" NEQ "" echo: Writing to file......)
+:save_input_file_name
+if %powershellavlable%==1 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
+if %powershellavlable%==0 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >"%%i.txt")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
+echo:&echo Written [error_code:%errorlevel%]
+if "%file_status%" == "" goto :skip_check_file_status2
+if %file_status% NEQ 0 echo:&pause >NUL
+:skip_check_file_status2
 goto input
+:save_file_default_file_name
+if %file_status%==2 call :check_file_name_multiple
+for /f "tokens=*" %%i in ("!filename!") do set input_file_name=%%~ni
+for /f "tokens=*" %%i in ("!input_file_name!") do echo:Enter file name to save: %%i.txt
+goto save_input_file_name
+:check_file_name_multiple
+if %file_status%==1 for /f "tokens=*" %%i in ("!filename!") do set input_file_name="%%~i"&goto :save_input_file_name
+for /f "tokens=*" %%i in ("!filename!") do if exist !filename! call :check_file_name_exist & exit /b
+exit /b
+:check_file_name_exist
+set inverted_comma=0
+for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if %inverted_comma% NEQ 1 if not exist "%%~ni%%d.txt"  set filename="%%~ni%%d.txt" & set inverted_comma=1
+:check_file_name_exist_over
+exit /b
+:save_me_from_this
+echo:you got saved
+exit /b
 choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
 if %errorlevel% NEQ 1 goto input
 :ping_list
