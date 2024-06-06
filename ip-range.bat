@@ -7,11 +7,13 @@ set gotrange=0
 set gotsubnet=0
 Set error=0
 set prefix_range=
+set label1={+}123
+set label2={-}zxc
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
 
 REM LIST OF POSSIBLE WRITE LOCATIONS
-set writeing_dir="%TMP%" "%SystemRoot%\Temp" "%USERPROFILE%\AppData\Local\Temp" "%homedrive%\Users\%username%\AppData\Local"
+set writeing_dir="%TMP%" "%USERPROFILE%\AppData\Local\Temp" "%homedrive%\Users\%username%\AppData\Local"
 title STARTUP: Checking directory permissions..
 :check
 echo|set/p=.temp dir permission.
@@ -35,13 +37,12 @@ powershell -c "write-host \" \"" >NUL
 if %errorlevel% == 0 echo:  [OK]
 if %errorlevel% NEQ 0 set powershellavlable=0
 :getsettings
-title STARTUP: Checking settings file..
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
-
+title STARTUP: Reading options {%options_file%}
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
 
 set settings=1
-if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         [%%i]&title STARTUP: Initializing settings..&call :init
+if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         {%%i}&call :init
 if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
 goto start
 :setuid
@@ -91,6 +92,7 @@ del "%write_dir%\%options_file%"
 timeout 1 >NUL
 exit /b
 :options
+set choose=0
 cls
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
 if not exist "%write_dir%\xxZhPuG.*.options.txt" call :createoptions&goto input
@@ -129,7 +131,7 @@ echo:            S = Scan
 echo:            E to Edit Subnet = %prefix_range%
 echo:            O Additional Options H= Change Range
 echo:          ------------------------------------
-echo:     Enter Choice No.#                       0=Tick/Untick
+echo:     Enter Choice No.#                       T=Tick/Untick
 echo:
 echo:%highlight1%1.[%multi-file%] enable default save file name (multiple files generated)
 echo:%highlight2%2.[%single-file%] enable default save file name (OVERWRITE^^^!)
@@ -140,7 +142,7 @@ for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
 for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
-choice /c 123450seoDH /n
+choice /c 12345TseoDH /n
 set error=%errorlevel%
 if %error% == 10 call :delete_options_file&goto input
 if %error% == 7 goto loop
@@ -234,6 +236,7 @@ echo file:%file_status%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
 
 :start
+Set choose=0
 del "%write_dir%\%totaluid%.online._.*.txt" 2>NUL
 del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
 call :setuid
@@ -257,17 +260,22 @@ set ping_batch=3
 if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 :input
 cls
-title Ping Master
+title ping master  ^^(*(oo)*)^^
+if %choose% LEQ 5 goto :skipsetlabel
+if %pings% LSS 254 (set label1={+}123) else (set label1=)
+if %pings% == 1 (set label2=) else (set label2={-}zxc)
+:skipsetlabel
 echo:                                        
-echo:          -------------------------------- +123
+echo:          -------------------------------- %label1%
 echo:          Press S to scan                  [ %pings% ]
-echo:          E to Edit Subnet                 -zxc
+echo:          E to Edit Subnet                 %label2%
 echo:          O Additional Options      
 echo:          --------------------------------                      
 echo:
 echo:     (Please use Windows Console Host as your default terminal.)
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
 choice /c s03z2x1coe  /n 
+set /a choose+=1
 if %errorlevel%==3 set /a pings +=25
 if %errorlevel%==4 set /a pings -=25
 if %errorlevel%==5 set /a pings +=12
@@ -283,7 +291,7 @@ cls
 goto input
 :get_mac.py
 color 2
-title Ping Master
+title ping master  ^^(*(oo)*)^^
 cls
 if not exist get_mac.py set check_repository=1&set file_not_exist= get_mac.py&goto display_macadd_ismissing
 for /f "tokens=*" %%i in ('where python 2^>NUL') do set python_path=%%i
@@ -323,7 +331,7 @@ goto input
 :scan
 call :flash ca
 cls
-title  Ping Master
+title  ping master  ^^(*(oo)*)^^
 echo:                       
 if not defined PREFIX_RANGE goto enter_subnet
 echo:           -----------------------------------
@@ -335,6 +343,7 @@ choice /c seO /m "" /n
 if %errorlevel%==1 goto loop
 if %errorlevel%==3 goto options
 :enter_subnet
+set choose=0
 cls
 echo:press /enter\ for the default value
 echo:..
@@ -354,18 +363,18 @@ cls
 echo:
 echo:
 echo:
-echo:GOGI TECH *                  TECH               GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TE          TECH         ECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH        TECH        TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH        TECH *   GI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TECH *      TECH * GOGI TECH *      TECH * GOGI TECH * GOGI TECH *
-echo:GOGI TEC       I TECH * GOGI TECH * GO        * GOGI TECH * GOGI TECH *
-echo:GOGI TE        I TECH * GOGI TECH * GOG           GI TECH * GOGI TECH *
-echo:          * GOGI TECH * GOGI TECH * GOGI         OGI TECH * GOGI TECH *
-echo:GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH * GOGI TECH *
+echo:**** ---- *                  ----               **** ---- * **** ---- *
+echo:**** ---- * **** TE          ----         ECH * **** ---- * **** ---- *
+echo:**** ---- * **** ----        ----        ---- * **** ---- * **** ---- *
+echo:**** ---- * **** ----        ---- *   GI ---- * **** ---- * **** ---- *
+echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
+echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
+echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
+echo:**** ---- *      ---- * **** ---- *      ---- * **** ---- * **** ---- *
+echo:**** TEC       I ---- * **** ---- * GO        * **** ---- * **** ---- *
+echo:**** TE        I ---- * **** ---- * GOG           GI ---- * **** ---- *
+echo:          * **** ---- * **** ---- * ****         OGI ---- * **** ---- *
+echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
                        
 
 
@@ -392,7 +401,7 @@ set /a clearcountermodulus=clearcounter %% 20
 set /a absent=present-ping_batch
 if %absent% LSS 1 set absent=1
 call :updatevars
-if %begun% NEQ 0 cls&echo %date%%time%   & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &  echo:&echo spawning ping Windows ...
+if %begun% NEQ 0 cls&echo:            ----------------------------------&echo:            [%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%]&echo:            Status: Sending requests..
 for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title %totaluid%xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\%totaluid%.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\%totaluid%.online._.%%i.txt""
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 if %percentage% LSS 80 (if %updatevariable% == 1 call :update_screen) else (call :update_screen)
@@ -410,7 +419,7 @@ title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo %date% X %time%  & echo:&echo:Ping batch size: %ping_batch% &echo:Sending Requests:[%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%] &echo:&  echo:Pings requested: %ping_batch_var% &echo:      Completed: %%i&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo:&echo:            ----------------------------------&echo:            [%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%]&echo:            Status: Sending ping requests..&echo:            Completed:%%i&echo:&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
