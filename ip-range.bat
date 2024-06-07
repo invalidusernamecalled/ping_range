@@ -272,7 +272,8 @@ echo:          E to Edit Subnet                 %label2%
 echo:          O Additional Options      
 echo:          --------------------------------                      
 echo:
-echo:     (Please use Windows Console Host as your default terminal.)
+if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
+
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
 choice /c s03z2x1coe  /n 
 set /a choose+=1
