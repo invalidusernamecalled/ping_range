@@ -20,7 +20,7 @@ and then choose the subnet to start pinging
 
 I oppose War generally, and I hate any body who has even a twiddled tid or cent of any of these venomous ideologies. I am Christian. If you are a christian you can not have any cent of these in you.
 
-I will War against you, if you are any of these.
+I will War against you, if you have got any of these.
 
 
 `Non-Commercial Use License
