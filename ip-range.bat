@@ -509,6 +509,7 @@ pause >NUL
 :save_input_file_name
 if %powershellavlable%==1 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
 if %powershellavlable%==0 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >"%%i.txt")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
+:after_save
 echo:&echo Written [error_code:%errorlevel%]
 if "%file_status%" == "" goto :skip_check_file_status2
 if %file_status% NEQ 0 echo:&pause >NUL
@@ -516,7 +517,9 @@ if %file_status% NEQ 0 echo:&pause >NUL
 call :init
 goto input
 :save_file_default_file_name
+set no_save=1
 if %file_status%==2 call :check_file_name_multiple
+if %no_save%==0 echo:Unable to write Unique Filename.&goto after_save
 for /f "tokens=*" %%i in ("!filename!") do set input_file_name=%%~ni
 for /f "tokens=*" %%i in ("!input_file_name!") do echo:Enter file name to save: %%i.txt
 goto save_input_file_name
@@ -528,9 +531,9 @@ exit /b
 set inverted_comma=0
 for /f "delims=" %%i in ('wmic os get localdatetime') do echo %%i|find "+" >NUL&&set trailer=%%i
 set trailer=%trailer:~0,7%
-for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if !inverted_comma! NEQ 1 if not exist "%%~ni%trailer%_%%d.txt"  set filename="%%~ni%trailer%_%%d.txt" & set inverted_comma=1
+for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if !inverted_comma! NEQ 1 if not exist "%%~ni%trailer%_%%d.txt"  set filename="%%~ni%trailer%_%%d.txt" & set inverted_comma=1&exit /b
 :check_file_name_exist_over
-exit /b
+set no_save=0
 :save_me_from_this
 echo:you got saved
 exit /b
