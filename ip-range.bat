@@ -79,12 +79,17 @@ for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%"') do for /f "tokens
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find "profiles:"') do set current_profile=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "powershell:"') do set powershell_or_not=%%i
 
+if "%powershell_or_not%" == "" goto skip_check_powershell_status2
+if %powershell_or_not%==0 set powershellavlable=0
+if %powershell_or_not%==1 set powershellavlable=1
+:skip_check_powershell_status2
+
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "savesubnet:"') do set save_subnet=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "save_range:"') do set save_range=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "uuid:"') do set lastuuid=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "file:"') do set file_status=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename=%%i
-del "init.xxZhPuG.lock.1.conf.bak"
+for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename="%%~i"
+if exist "init.xxZhPuG.lock.1.conf.bak" del "init.xxZhPuG.lock.1.conf.bak"
 color 7
 exit /b
 
@@ -118,13 +123,8 @@ set powershell_tick=  &echo: >NUL
 set multi-file=  &echo: >NUL
 set subnettick=  &echo: >NUL
 set rangetick=  &echo: >NUL
-for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find "profiles:"') do set current_profile=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "powershell:"') do set powershell_or_not=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "savesubnet:"') do set save_subnet=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "save_range:"') do set save_range=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "uuid:"') do set lastuuid=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "file:"') do set file_status=%%i
-for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename="%%~i"
+
+call :init
 
 if "%powershell_or_not%" NEQ "" call :powershelltick
 if "%file_status%" NEQ ""  call :filetick
@@ -510,7 +510,8 @@ pause >NUL
 if %powershellavlable%==1 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
 if %powershellavlable%==0 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >"%%i.txt")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
 :after_save
-echo:&echo Written [error_code:%errorlevel%]
+if %powershellavlable%==1 echo:&echo Written [error_code:%errorlevel%]
+if %powershellavlable%==0 if exist "!input_file_name!.txt" echo Written
 if "%file_status%" == "" goto :skip_check_file_status2
 if %file_status% NEQ 0 echo:&pause >NUL
 :skip_check_file_status2
