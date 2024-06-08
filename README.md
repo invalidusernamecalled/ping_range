@@ -15,5 +15,12 @@ and then choose the subnet to start pinging
 
 #### If you are on Windows 11, please set your default terminal as "Windows Console Host" for a pleasant experience. Thank you!
 
+I oppose the following ideas/ideologies
+- Western supremacy/hegemony/exceptionalism/hypocrisy/convenience
+- Hindu political fascist parties
+- Zionist racism and Zionism
+
+I oppose War generally, and I hate any body who has even a twiddled tid or cent of any of these venomous ideologies.
+
 `Non-Commercial Use License
 (C) invalidusernamecalled, 2024`
