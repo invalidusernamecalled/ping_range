@@ -9,6 +9,7 @@ Set error=0
 set prefix_range=
 set label1={+}123
 set label2={-}zxc
+for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
 
@@ -34,15 +35,16 @@ Exit /B
 echo|set/p=.powershell available.
 set powershellavlable=0
 powershell -c "write-host \" \"" >NUL
-if %errorlevel% == 0 echo:  [OK]
+if %errorlevel% == 0 echo:  [OK]&set powershellavlable=1
 if %errorlevel% NEQ 0 set powershellavlable=0
 :getsettings
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
+if defined options_file if exist "init.xxZhPuG.dot.1.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
 title STARTUP: Reading options {%options_file%}
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
 
 set settings=1
-if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         {%%i}&call :init
+if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.dot.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         {%%i}&call :init
 if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
 goto start
 :setuid
@@ -78,6 +80,7 @@ for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "uuid:"') do set lastuuid=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "file:"') do set file_status=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename=%%i
+del "init.xxZhPuG.dot.1.conf.bak"
 exit /b
 
 :init_options_file
@@ -89,6 +92,7 @@ Exit /b
 choice /c yn /m "Are you sure? yn" /n
 if %errorlevel%==2 exit /b
 del "%write_dir%\%options_file%"
+del "init.xxZhPuG.dot.1.conf.bak"
 timeout 1 >NUL
 exit /b
 :options
@@ -114,7 +118,7 @@ for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "save_range:"') do set save_range=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "uuid:"') do set lastuuid=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "file:"') do set file_status=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename=%%i
+for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename="%%~i"
 
 if "%powershell_or_not%" NEQ "" call :powershelltick
 if "%file_status%" NEQ ""  call :filetick
@@ -142,8 +146,9 @@ for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
 for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
-choice /c 12345TseoDH /n
+choice /c 12345TseoDHC /n
 set error=%errorlevel%
+if %error% == 12  set /p filename=Enter a file name:&for /f "tokens=*" %%i in ("!filename!") do (if exist ".\%%~ni.txt" echo File exist already ^^^! & timeout 1 >NUL)&if not exist ".\%%~ni.txt" call :addfilename %%~ni&goto options
 if %error% == 10 call :delete_options_file&goto input
 if %error% == 7 goto loop
 if %error% == 8 goto enter_subnet
@@ -205,8 +210,8 @@ echo savesubnet:%save_subnet%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
 
 :subnet
-echo I will save the subnet...Pls don't worry
-Pause
+REM ..echo I will save the subnet...Pls don't worry
+Rem m Pause
 call :setuid
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| findstr /v "^subnet:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 echo subnet:%prefix_range%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
@@ -219,16 +224,18 @@ echo range:%pings%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
 
 :addfilename
+rem echo just received a parcel for "%~1"
+for /f "tokens=*" %%i in ("%~1") do set filename="%%~ni.txt"&if exist ".\%%~ni.txt" echo EXISTS^^^! ".\%%ni.txt" & timeout 4 >NUL & exit /b
 call :setuid
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "filename:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
-echo filename:"%~1.txt">>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+echo filename:!filename!>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
 
 :addfile
 if "%file_status%" == "" set file_status=0&goto skip_check_file_status
 if %file_status% == 0 (set file_status=%1) else (set file_status=0)
 :add_file_input_name
-if %file_status% NEQ 0 if "%filename%" == "" set /p filename=Enter a file name:&(if exist "%write_dir%\!filename!.txt" echo File exist already ^^^! & goto add_file_input_name)& call :addfilename "!filename!"&exit /b
+if %file_status% NEQ 0 if "%filename%" == "" set /p filename=Enter a file name:&(if exist ".\!filename!.txt" echo File exist already ^^^! & goto add_file_input_name)& call :addfilename !filename!&exit /b
 :skip_check_file_status
 call :setuid
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "file:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
