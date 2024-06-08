@@ -68,7 +68,7 @@ echo:create settings file?
 choice /c yn
 if %errorlevel%==2 exit /b
 echo|set/p=>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
-set options="profiles:" "filename:" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:" "saverange:"
+set options="profiles:" "filename:00" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:" "saverange:"
 for %%a in (%options%) do echo %%~a>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
 
@@ -98,7 +98,7 @@ color 7
 choice /c yn /m "Are you sure? yn" /n
 if %errorlevel%==2 exit /b
 del "%write_dir%\%options_file%"
-del "init.xxZhPuG.lock.1.conf.bak"
+del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
 timeout 1 >NUL
 exit /b
 :options
@@ -141,7 +141,7 @@ echo:            S = Scan
 echo:            E to Edit Subnet = %prefix_range%
 echo:            O Additional Options H= Change Range
 echo:          ------------------------------------
-echo:     Enter Choice No.#                       T=Tick/Untick
+echo:     Enter Choice No.#                       Tk=Tick/Untick
 echo:
 echo:%highlight1%1.[%multi-file%] enable default save file name (multiple files generated)
 echo:%highlight2%2.[%single-file%] enable default save file name (OVERWRITE^^^!)
@@ -152,12 +152,13 @@ for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
 for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
-choice /c 12345TseoDHC /n
+choice /c 12345TseoDHCk /n
 set error=%errorlevel%
-if %error% == 12  set /p filename=Enter a file name:&for /f "tokens=*" %%i in ("!filename!") do (if exist ".\%%~ni.txt" echo File exist already ^^^! & timeout 1 >NUL)&if not exist ".\%%~ni.txt" call :addfilename %%~ni&goto options
+if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
 if %error% == 10 call :delete_options_file&goto input
 if %error% == 7 goto loop
 if %error% == 8 goto enter_subnet
+if %error% == 13 set error=6
 if %error% == 6 if %error% == 0 goto options
 if %error% == 11 goto input
 if %error%==6 if %last_error% GTR 0 if %last_error% == 1 call :addfile 2&goto options
@@ -241,7 +242,7 @@ exit /b
 if "%file_status%" == "" set file_status=0&goto skip_check_file_status
 if %file_status% == 0 (set file_status=%1) else (set file_status=0)
 :add_file_input_name
-if %file_status% NEQ 0 if "%filename%" == "" set /p filename=Enter a file name:&(if exist ".\!filename!.txt" echo File exist already ^^^! & goto add_file_input_name)& call :addfilename !filename!&exit /b
+if %file_status% NEQ 0 if %filename% == "00" set /p filename=Enter a file name:&(if exist .\!filename! echo File exist already ^^^! & goto add_file_input_name)& call :addfilename !filename!&exit /b
 :skip_check_file_status
 call :setuid
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "file:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
