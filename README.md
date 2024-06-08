@@ -13,8 +13,6 @@ and then choose the subnet to start pinging
 ```
 <p align=right>Live in Peace<sup>##</sup></p>
 
-#### If you are on Windows 11, please set your default terminal as "Windows Console Host" for a pleasant experience. Thank you!
-
 ##I oppose the following ideas/ideologies
 - Western supremacy/hegemony/exceptionalism/hypocrisy/convenience
 - Hindu political fascist parties
