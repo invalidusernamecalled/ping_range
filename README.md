@@ -14,7 +14,7 @@ and then choose the subnet to start pinging
 <p align=center>Live in Peace<sup>##</sup></p>
 
 ##I oppose the following ideas/ideologies
-- Western supremacy/hegemony/exceptionalism/hypocrisy/convenience/first-world-privelge
+- Western supremacy/hegemony/exceptionalism/hypocrisy/convenience/first-world-privelege
 - Hindu political fascist parties
 - Zionist racist Zionism
 
