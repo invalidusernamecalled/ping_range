@@ -11,7 +11,7 @@ and then choose the subnet to start pinging
 
 * Keep results in a named log
 ```
-<p align=right>Live in Peace<sup>##</sup></p>
+<p align=center>Live in Peace<sup>##</sup></p>
 
 ##I oppose the following ideas/ideologies
 - Western supremacy/hegemony/exceptionalism/hypocrisy/convenience
