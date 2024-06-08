@@ -9,6 +9,7 @@ Set error=0
 set prefix_range=
 set label1={+}123
 set label2={-}zxc
+set cchar=0
 for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
@@ -28,23 +29,26 @@ goto checkpwsh
 if %start%==1 exit /b
 echo:>%1\xxZhPuG.write.-.test.txt
 if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set write_dir=%1&set start=1&title 
+color F
 echo:   [OK]
 title STARTUP: Using write_dir %1
 Exit /B
 :checkpwsh
 echo|set/p=.powershell available.
+color 7
 set powershellavlable=0
 powershell -c "write-host \" \"" >NUL
-if %errorlevel% == 0 echo:  [OK]&set powershellavlable=1
+if %errorlevel% == 0 color F&echo:  [OK]&set powershellavlable=1
 if %errorlevel% NEQ 0 set powershellavlable=0
 :getsettings
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
-if defined options_file if exist "init.xxZhPuG.dot.1.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
-title STARTUP: Reading options {%options_file%}
+if defined options_file if exist "init.xxZhPuG.lock.1.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
+color 7
+title STARTUP: Reading options %options_file%
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
 
 set settings=1
-if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.dot.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         {%%i}&call :init
+if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         -%%i-&call :init
 if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
 goto start
 :setuid
@@ -80,7 +84,8 @@ for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "uuid:"') do set lastuuid=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "file:"') do set file_status=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename=%%i
-del "init.xxZhPuG.dot.1.conf.bak"
+del "init.xxZhPuG.lock.1.conf.bak"
+color 7
 exit /b
 
 :init_options_file
@@ -89,10 +94,11 @@ if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /
 
 Exit /b
 :delete_options_file
+color 7
 choice /c yn /m "Are you sure? yn" /n
 if %errorlevel%==2 exit /b
 del "%write_dir%\%options_file%"
-del "init.xxZhPuG.dot.1.conf.bak"
+del "init.xxZhPuG.lock.1.conf.bak"
 timeout 1 >NUL
 exit /b
 :options
@@ -274,13 +280,13 @@ if %pings% == 1 (set label2=) else (set label2={-}zxc)
 :skipsetlabel
 echo:                                        
 echo:          -------------------------------- %label1%
-echo:          Press S to scan                  [ %pings% ]
+echo:          Press S to scan                   -%pings%-
 echo:          E to Edit Subnet                 %label2%
 echo:          O Additional Options      
 echo:          --------------------------------                      
 echo:
 if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
-
+if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
 choice /c s03z2x1coe  /n 
 set /a choose+=1
@@ -337,7 +343,6 @@ pause
 for /l %%i in (1,1,5) do pause >NUl
 goto input
 :scan
-call :flash ca
 cls
 title  ping master  ^^(*(oo)*)^^
 echo:                       
@@ -347,6 +352,7 @@ echo:            S to Scan
 echo:            E to Edit Subnet = %prefix_range%
 echo:            O Additional Options
 echo:          ------------------------------------
+
 choice /c seO /m "" /n
 if %errorlevel%==1 goto loop
 if %errorlevel%==3 goto options
@@ -472,14 +478,15 @@ set /a initial_messages+=1
 set found_ip=
 for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do call :setfound %%a
 echo:
-echo:List of i.p. addresses online#%ip_online_disclaimer%
+echo: * List of I.P Addresses *%ip_online_disclaimer%
+echo:that responded to requests
 set found_ip=%found_ip: =%
 echo:---
 if %powershellavlable%==1 powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses;" 2>NUL
 if %powershellavlable%==0 for %%a in (%found_ip%) do echo %%a 
 echo:--- 
-echo:#means, found in the network
-echo:
+echo:Save list
+echo:.......................................
 if "%save_range%" == "" goto skip_save_range
 if %save_range% == 1 call :range&call :init_options_file
 :skip_save_range
