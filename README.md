@@ -1,4 +1,3 @@
-#### If you are on Windows 11, please set your default terminal as "Windows Console Host" for a pleasant experience. Thank you!
 
 ```
 Ping Master - Command Prompt 
@@ -13,6 +12,8 @@ and then choose the subnet to start pinging
 * Keep results in a named log
 ```
 <p align=right>Live in Peace<sup>##</sup></p>
+
+#### If you are on Windows 11, please set your default terminal as "Windows Console Host" for a pleasant experience. Thank you!
 
 `Non-Commercial Use License
 (C) invalidusernamecalled, 2024`
