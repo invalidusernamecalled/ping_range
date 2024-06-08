@@ -513,6 +513,7 @@ echo:&echo Written [error_code:%errorlevel%]
 if "%file_status%" == "" goto :skip_check_file_status2
 if %file_status% NEQ 0 echo:&pause >NUL
 :skip_check_file_status2
+call :init
 goto input
 :save_file_default_file_name
 if %file_status%==2 call :check_file_name_multiple
@@ -525,7 +526,9 @@ for /f "tokens=*" %%i in ("!filename!") do if exist !filename! call :check_file_
 exit /b
 :check_file_name_exist
 set inverted_comma=0
-for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if %inverted_comma% NEQ 1 if not exist "%%~ni%%d.txt"  set filename="%%~ni%%d.txt" & set inverted_comma=1
+for /f "delims=" %%i in ('wmic os get localdatetime') do echo %%i|find "+" >NUL&&set trailer=%%i
+set trailer=%trailer:~0,7%
+for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if !inverted_comma! NEQ 1 if not exist "%%~ni%trailer%_%%d.txt"  set filename="%%~ni%trailer%_%%d.txt" & set inverted_comma=1
 :check_file_name_exist_over
 exit /b
 :save_me_from_this
