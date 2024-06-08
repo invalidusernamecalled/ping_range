@@ -3,8 +3,8 @@
 ```
 Ping Master - Command Prompt 
 -----------------------------
-Press S to Scan
-Press E to Edit Subnet
+Press S to Scan                               press i to increase [254]
+Press E to Edit Subnet                              j to decrease
 O = Additional Options
 -----------------------------
 ```
