@@ -16,7 +16,7 @@ Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file
 ```
 
 
-<p align=center>Live in Peace<sup>##</sup></p>
+<p align=center><strong></b>Live in Peace!!</strong></p>
 
 ##I oppose the following ideas/ideologies
 - Western supremacy/hegemony/exceptionalism/hypocrisy/convenience/first-world-privelege
