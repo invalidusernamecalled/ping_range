@@ -496,7 +496,7 @@ if %save_subnet% == 1 call :subnet&call :init_options_file
 :skip_save_subnet
 del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
 if "%file_status%" == "" goto skip_check_file_status
-if "%filename%" == "" goto skip_check_file_status
+if %filename% == "" goto skip_check_file_status
 if %file_status% NEQ 0 goto save_file_default_file_name
 :skip_check_file_status
 :input_file_name
