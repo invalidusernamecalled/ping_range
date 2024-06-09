@@ -1,5 +1,6 @@
 
 ```
+*******************************************************************************
 Ping Master - Command Prompt 
 -----------------------------
 Press S to Scan                               press i to increase [254]
@@ -10,6 +11,7 @@ O = Additional Options
 and then choose the subnet to start pinging
 
 * Keep results in a named log
+*******************************************************************************
 ```
 <p align=center>Live in Peace<sup>##</sup></p>
 
