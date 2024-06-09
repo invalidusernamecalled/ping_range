@@ -532,7 +532,7 @@ exit /b
 set inverted_comma=0
 for /f "delims=" %%i in ('wmic os get localdatetime') do echo %%i|find "+" >NUL&&set trailer=%%i
 set trailer=%trailer:~0,7%
-for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if !inverted_comma! NEQ 1 if not exist "%%~ni%trailer%_%%d.txt"  set filename="%trailer%%%d_%%~ni_.txt" & set inverted_comma=1&exit /b
+for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if !inverted_comma! NEQ 1 if not exist "%%~ni (%trailer%_%%d).txt"  set filename="%%~ni (%trailer%_%%d).txt" & set inverted_comma=1&exit /b
 :check_file_name_exist_over
 set no_save=0
 :save_me_from_this
