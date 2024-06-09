@@ -28,5 +28,6 @@ I oppose War generally, and I hate any body who has even a twiddled tid or cent 
 I will War against them, if you have got any of these.
 
 
-`Non-Commercial Use License
-(C) invalidusernamecalled, 2024`
+_Non-Commercial Use License
+(C) invalidusernamecalled, 2024_
+
