@@ -502,16 +502,21 @@ if %file_status% NEQ 0 goto save_file_default_file_name
 :input_file_name
 set input_file_name=
 set /p input_file_name=Enter file name to save:
-echo Press a key to save !input_file_name!.txt
+set input_file_name="%input_file_name%.txt"
+echo Press a key to save !input_file_name!
 pause >NUL
-(if exist "!input_file_name!.txt" echo: File name already exists.&pause&goto input)
+(if exist !input_file_name! echo: File name already exists.&pause&goto input)
 (if "!input_file_name!" NEQ "" echo: Writing to file......)
 :save_input_file_name
-if %powershellavlable%==1 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses ^| Sort-Object { Get-LastOctet $_ };$sortedIpAddresses ^| Out-File -FilePath \"!input_file_name!.txt\" -Encoding utf8;" 2>NUL & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
-if %powershellavlable%==0 for /f "tokens=*" %%i in ("%input_file_name%") do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >"%%i.txt")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i.txt"&echo:==============>>"%%i.txt"&echo:Generated on: %date% %time% by %%a>>"%%i.txt"&echo:==============>>"%%i.txt"
+
+if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses"
+
+
+if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses" >"%%i" & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
+if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >"%%i")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
 :after_save
 if %powershellavlable%==1 echo:&echo Written [error_code:%errorlevel%]
-if %powershellavlable%==0 if exist "!input_file_name!.txt" echo Written
+if %powershellavlable%==0 if exist !input_file_name! echo Written
 if "%file_status%" == "" goto :skip_check_file_status2
 if %file_status% NEQ 0 echo:&pause >NUL
 :skip_check_file_status2
@@ -521,8 +526,8 @@ goto input
 set no_save=1
 if %file_status%==2 call :check_file_name_multiple
 if %no_save%==0 echo:Unable to write Unique Filename.&goto after_save
-for /f "tokens=*" %%i in ("!filename!") do set input_file_name=%%~ni
-for /f "tokens=*" %%i in ("!input_file_name!") do echo:Enter file name to save: %%i.txt
+set input_file_name=!filename!
+for %%i in (!input_file_name!) do echo:Enter file name to save: %%~i
 goto save_input_file_name
 :check_file_name_multiple
 if %file_status%==1 for /f "tokens=*" %%i in ("!filename!") do set input_file_name="%%~i"&goto :save_input_file_name
@@ -538,6 +543,15 @@ set no_save=0
 :save_me_from_this
 echo:you got saved
 exit /b
+if %powershellavlable%==1 set filename=%filename:@=`@%
+if %powershellavlable%==1 set filename=%filename:#=`#%
+if %powershellavlable%==1 set filename=%filename:{=`{%
+if %powershellavlable%==1 set filename=%filename:}=`}%
+if %powershellavlable%==1 set filename=%filename:(=`(%
+if %powershellavlable%==1 set filename=%filename:)=`)%
+if %powershellavlable%==1 set filename=%filename:'=`'%
+if %powershellavlable%==1 set filename=%filename:;=`;%
+if %powershellavlable%==1 set filename=%filename:|=`|%
 choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
 if %errorlevel% NEQ 1 goto input
 :ping_list
