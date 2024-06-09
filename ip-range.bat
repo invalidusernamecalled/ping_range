@@ -526,7 +526,7 @@ for /f "tokens=*" %%i in ("!input_file_name!") do echo:Enter file name to save: 
 goto save_input_file_name
 :check_file_name_multiple
 if %file_status%==1 for /f "tokens=*" %%i in ("!filename!") do set input_file_name="%%~i"&goto :save_input_file_name
-for /f "tokens=*" %%i in ("!filename!") do if exist !filename! call :check_file_name_exist & exit /b
+call :check_file_name_exist & exit /b
 exit /b
 :check_file_name_exist
 set inverted_comma=0
