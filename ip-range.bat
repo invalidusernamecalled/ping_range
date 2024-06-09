@@ -155,7 +155,7 @@ for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
 choice /c 12345TseoDHCk /n
 set error=%errorlevel%
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
-if %error% == 10 call :delete_options_file&goto input
+if %error% == 10 call :delete_options_file&call :init_options_file&call :init&goto input
 if %error% == 7 goto loop
 if %error% == 8 goto enter_subnet
 if %error% == 13 set error=6
@@ -532,7 +532,7 @@ exit /b
 set inverted_comma=0
 for /f "delims=" %%i in ('wmic os get localdatetime') do echo %%i|find "+" >NUL&&set trailer=%%i
 set trailer=%trailer:~0,7%
-for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if !inverted_comma! NEQ 1 if not exist "%%~ni%trailer%_%%d.txt"  set filename="%%~ni%trailer%_%%d.txt" & set inverted_comma=1&exit /b
+for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if !inverted_comma! NEQ 1 if not exist "%%~ni%trailer%_%%d.txt"  set filename="%trailer%%%d_%%~ni_.txt" & set inverted_comma=1&exit /b
 :check_file_name_exist_over
 set no_save=0
 :save_me_from_this
