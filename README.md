@@ -12,7 +12,10 @@ and then choose the subnet to start pinging
 
 * Keep results in a named log
 *******************************************************************************
+Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file names.
 ```
+
+
 <p align=center>Live in Peace<sup>##</sup></p>
 
 ##I oppose the following ideas/ideologies
