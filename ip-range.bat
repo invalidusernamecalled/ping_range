@@ -11,7 +11,7 @@ set label1={+}123
 set label2={-}zxc
 set cchar=0
 set choose=0
-for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
+for /l %%i in (1,1,6) do CALL set highlight%%i=    &echo: >NUL
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
 
@@ -81,18 +81,19 @@ echo:create settings file?
 choice /c yn
 if %errorlevel%==2 exit /b
 echo|set/p=>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
-set options="profiles:" "filename:00" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:" "saverange:"
+set options="profiles:" "filename:00" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:0" "saverange:0" "execute:0"
 for %%a in (%options%) do echo %%~a>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
 
 :init
 
-set powershell_or_not=
-set save_subnet=
-set save_range=
+set powershell_or_not=0
+set save_subnet=0
+set save_range=0
 set lastuuid=
-set filename=
-set file_status=
+set filename=""
+set file_status=0
+set script_execute=0
 
 for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%" 2^>NUL') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
 
@@ -109,6 +110,7 @@ for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^|
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "uuid:"') do set lastuuid=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "file:"') do set file_status=%%i
 for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "filename:"') do set filename="%%~i"
+for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "execute:"') do set script_execute=%%i
 if exist "init.xxZhPuG.lock.1.conf.bak" del "init.xxZhPuG.lock.1.conf.bak"
 color 7
 exit /b
@@ -123,6 +125,7 @@ color 7
 choice /c yn /m "Are you sure? yn" /n
 if %errorlevel%==2 exit /b
 del "%write_dir%\%options_file%"
+if exist "%write_dir%\%options_file%" echo File not deleted.&PAUSE
 del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
 timeout 1 >NUL
 exit /b
@@ -134,29 +137,34 @@ if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /
 if not exist "%write_dir%\xxZhPuG.*.options.txt" call :createoptions&goto input
 for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%"') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
 
-set powershell_or_not=
-set save_subnet=
-set save_range=
+set powershell_or_not=0
+set save_subnet=0
+set save_range=0
 set lastuuid=
-set filename=
-set file_status=
+set filename=""
+set file_status=0
+set script_execute=0
+
 set powershell_tick=  &echo: >NUL
 set single-file=  &echo: >NUL
 set multi-file=  &echo: >NUL
 set subnettick=  &echo: >NUL
 set rangetick=  &echo: >NUL
+set execution_tick=  &echo: >NUL
 
 call :init
 
-if "%powershell_or_not%" NEQ "" call :powershelltick
-if "%file_status%" NEQ ""  call :filetick
-if "%save_subnet%" NEQ "" call :savesubnettick
-if "%save_range%" NEQ "" calL :saverangetick
+call :powershelltick
+call :filetick
+call :savesubnettick
+calL :saverangetick
+call :execute_tick
 rem if "%powershell_or_not%" NEQ "" 
 rem if "%powershell_or_not%" NEQ ""
 :reprintoptions
 set special_symbol=---:
 if %error% NEQ 6 if %error% NEQ 0 CALL set highlight%error%=%special_symbol%
+if %error% NEQ 6 if %error% == 14 CALL set highlight6=%special_symbol%
 echo                                                   {OPTIONS_FILE} %options_file%
 echo:           -----------------------------------
 echo:            S = Scan
@@ -170,12 +178,16 @@ echo:%highlight2%2.[%single-file%] enable default save file name (OVERWRITE^^^!)
 echo:%highlight3%3.[%rangetick%] Remember Range
 echo:%highlight4%4.[%subnettick%] Remember Subnet
 echo:%highlight5%5.[%powershell_tick%] enable powershell
+echo:%highlight6%6.[%execution_tick%] Automatic Script execution
 for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
-for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
-choice /c 12345TseoDHCk /n
+for /l %%i in (1,1,6) do CALL set highlight%%i=    &echo: >NUL
+choice /c 12345TseoDHCk6 /n
+set script_execute=0
 set error=%errorlevel%
+
+
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
 if %error% == 10 call :delete_options_file&call :init_options_file&call :init&goto input
 if %error% == 7 goto scan
@@ -188,6 +200,11 @@ if %error%==6 if %last_error% GTR 0 if %last_error% == 2 call :addfile 1&goto op
 if %error%==6 if %last_error% GTR 0 if %last_error% == 3 call :saverange&goto options
 if %error%==6 if %last_error% GTR 0 if %last_error% == 4 call :savesubnet&goto options
 if %error%==6 if %last_error% GTR 0 if %last_error% == 5 call :setpowershell&goto options
+if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_range% == 0 if %save_subnet% NEQ 0 echo:Both Remember Range and Remember Subnet must be enabled.&PAUSE
+if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% == 0 if %save_range% NEQ 0 echo:Both Remember Range and Remember Subnet must be enabled.&PAUSE
+if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% == 0 if %save_range% == 0 echo:Both Remember Range and Remember Subnet must be enabled.&PAUSE
+if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% neq 0 if %save_range% neq 0 call :setscriptexecute&goto options
+
 set last_error=%error%
 if %error% LEQ 5 if %error% NEQ 0 cls&goto reprintoptions
 cls&goto reprintoptions
@@ -205,6 +222,10 @@ exit /b
 if %save_range%==1 (set rangetick=\/) else (set rangetick=  &echo: >NUL)
 exit /b
 
+:execute_tick
+if %script_execute%==1 (set execution_tick=\/) else (set execution_tick=  &echo: >NUL)
+exit /b
+
 :setpowershell
 call :setuid
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "powershell:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
@@ -212,6 +233,17 @@ if "%powershell_or_not%" == "" set powershell_or_not=0
 if %powershell_or_not%==1 (set powershell_status=0) else (set powershell_status=1)
 echo powershell: %powershell_status% >>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
+
+:setscriptexecute
+if !filename!=="" echo:Filename is not set.&PAUSE&Exit /B
+if !filename!==".txt" echo:Filename is not set.&PAUSE&Exit /B
+if !filename!=="00" echo:Filename is not set.&PAUSE&Exit /B
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "execute:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+if %Script_execute%==0 (set script_execute=1) else (set script_execute=0)
+echo execute:%script_execute%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
 
 :saverange
 call :setuid
@@ -312,6 +344,10 @@ echo:
 if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
+if %script_execute%==1 if %save_subnet%==1 cls&echo Initializing script execute...Press E to Escape
+if %script_execute%==1 choice /c Et /n /d t /t 2
+if %script_execute%==1 if %errorlevel%==2 goto initial_start
+if %script_execute%==1 if %errorlevel%==1 goto options
 choice /c s03z2x1coe  /n 
 set /a choose+=1
 if %errorlevel%==3 set /a pings +=10
@@ -417,7 +453,7 @@ echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
                        
 
 
-
+:initial_start
 set ping_no=1
 ECHO:
 title Pinger Main Window: Pinger
@@ -489,6 +525,8 @@ tasklist /fi "windowtitle eq %totaluid%xGUHHEJ-Ping_WINDOW*"|find /i "cmd.exe" >
 call :updatevars
 call :update_screen_title
 del "%write_dir%\%totaluid%.online._.*.txt" 1>NUL 2>NUL
+if %script_execute% == 1 if %file_status% NEQ 0 goto save_file_default_file_name
+if %script_execute% == 1 if %file_status% == 0 echo Error running Script_execute. No default save file method defined.& timeout 4 >NUL
 
 :ping
 :ping_only
@@ -537,6 +575,7 @@ pause >NUL
 
 if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses" >"%%i" & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
 if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >"%%i")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
+if %scripT_execute% == 1 echo Script Execute Complete & timeout 4 >NUL & goto :eof
 :after_save
 if %powershellavlable%==1 echo:&echo Written [error_code:%errorlevel%]
 if %powershellavlable%==0 if exist !input_file_name! echo Written
