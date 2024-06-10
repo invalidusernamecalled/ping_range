@@ -169,7 +169,7 @@ choice /c 12345TseoDHCk /n
 set error=%errorlevel%
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
 if %error% == 10 call :delete_options_file&call :init_options_file&call :init&goto input
-if %error% == 7 goto loop
+if %error% == 7 goto scan
 if %error% == 8 goto enter_subnet
 if %error% == 13 set error=6
 if %error% == 6 if %error% == 0 goto options
@@ -385,6 +385,7 @@ if %powershellavlable%==0 echo %PREFIX_RANGE%|findstr /r "^[0-9]*[.][0-9]*[.][0-
 if "%state%"=="False"  powershell -c "write-host -nonewline TRY AGAIN!`r"&TIMEOUT 1 >nul & goto :enter_subnet
 ECHO:
 :loop
+if not defined PREFIX_RANGE goto enter_subnet
 del "%write_dir%\%totaluid%.online._.*.txt" 2>NUL
 del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
 timeout 1 >NUL
@@ -410,7 +411,6 @@ echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
 
 set ping_no=1
 ECHO:
-
 title Pinger Main Window: Pinger
 set skip_count=0
 set found_ip=
@@ -424,6 +424,8 @@ set updatevariable=0
 set percentage=0
 set ping_batch_var=0
 set begun=1
+for /f "delims=" %%i in ('ipconfig^| find /i "ipv4"') do goto there 
+(echo: Computer internet not working?&timeout 5 >NUL)
 :there
 set /a clearcounter+=1
 set /a clearcountermodulus=clearcounter %% 20
@@ -495,6 +497,7 @@ for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL
 echo:
 echo: * List of I.P Addresses *%ip_online_disclaimer%
 echo:that responded to requests
+if "%found_ip%" == "" set found_ip=No_Results.
 set found_ip=%found_ip: =%
 echo:---
 if %powershellavlable%==1 powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses;" 2>NUL
