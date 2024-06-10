@@ -87,6 +87,13 @@ exit /b
 
 :init
 
+set powershell_or_not=
+set save_subnet=
+set save_range=
+set lastuuid=
+set filename=
+set file_status=
+
 for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%"') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
 
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find "profiles:"') do set current_profile=%%i
