@@ -26,9 +26,13 @@ echo computer pinging utility     ^|^|                Initializing..
 echo =============================^|^|
 echo|set/p=.temp dir permission.
 set start=0
+if exist xxZhPuG.CustomDir.1 choice /m "Continue with custom DIR? yn"
+if exist xxZhPuG.CustomDir.1 if %errorlevel%==2 del xxZhPuG.CustomDir.1 2>NUL
+if exist xxZhPuG.CustomDir.1 for /f "delims=" %%a in ('type xxZhPuG.CustomDir.1') do set writeing_dir=%%a
 for %%a in (%writeing_dir%) do call :testdir %%a
 if %start%==0 echo Not found write directory
-if %start%==0 set /p writeing_dir=Please provide directory(in quotes):
+if %start%==0 set /p writeing_dir=Please provide directory(in quotes):&set custom_dir=!writeing_dir!
+
 if %start%==0 goto :check
 goto checkpwsh
 :testdir
@@ -36,10 +40,13 @@ if %start%==1 exit /b
 echo:>%1\xxZhPuG.write.-.test.txt
 if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set write_dir=%1&set start=1&title 
 color F
-echo:   [OK]
+if %start% == 1 echo:   [OK]
+if %start% == 0 echo:   Error
+
 title STARTUP: Using write_dir %1
 Exit /B
 :checkpwsh
+if Defined custom_dir echo !custom_dir!>xxZhPuG.CustomDir.1
 echo|set/p=.powershell available.
 color 7
 set powershellavlable=0
