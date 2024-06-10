@@ -128,6 +128,7 @@ timeout 1 >NUL
 exit /b
 :options
 set choose=0
+if %revelation%==666 title Praise God^^^!
 cls
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
 if not exist "%write_dir%\xxZhPuG.*.options.txt" call :createoptions&goto input
@@ -140,6 +141,7 @@ set lastuuid=
 set filename=
 set file_status=
 set powershell_tick=  &echo: >NUL
+set single-file=  &echo: >NUL
 set multi-file=  &echo: >NUL
 set subnettick=  &echo: >NUL
 set rangetick=  &echo: >NUL
@@ -527,7 +529,7 @@ if %file_status% NEQ 0 goto save_file_default_file_name
 set input_file_name=
 set /p input_file_name=Enter file name to save:
 set input_file_name="%input_file_name%.txt"
-echo Press a key to save !input_file_name!
+if !input_file_name! NEQ ".txt" (echo Press a key to save !input_file_name!) else (echo:File will not be saved. No name mentioned.&pause&goto input)
 pause >NUL
 (if exist !input_file_name! echo: File name already exists.&pause&goto input)
 (if "!input_file_name!" NEQ "" echo: Writing to file......)
