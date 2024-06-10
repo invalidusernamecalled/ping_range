@@ -10,6 +10,7 @@ set prefix_range=
 set label1={+}123
 set label2={-}zxc
 set cchar=0
+set choose=0
 for /l %%i in (1,1,5) do CALL set highlight%%i=    &echo: >NUL
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
@@ -18,6 +19,11 @@ REM LIST OF POSSIBLE WRITE LOCATIONS
 set writeing_dir="%TMP%" "%USERPROFILE%\AppData\Local\Temp" "%homedrive%\Users\%username%\AppData\Local"
 title STARTUP: Checking directory permissions..
 :check
+echo ...............................
+echo -------------------------------               
+echo Ping Master v 1 (from Github)^|^|         Make easy  Computer   Pings ^^^!^^^!
+echo computer pinging utility     ^|^|                Initializing..
+echo =============================^|^|
 echo|set/p=.temp dir permission.
 set start=0
 for %%a in (%writeing_dir%) do call :testdir %%a
@@ -48,7 +54,7 @@ title STARTUP: Reading options %options_file%
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
 
 set settings=1
-if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         -%%i-&call :init
+if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         [OK]&call :init
 if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
 goto start
 :setuid
@@ -279,10 +285,11 @@ if %choose% LEQ 5 goto :skipsetlabel
 if %pings% LSS 254 (set label1={+}123) else (set label1=)
 if %pings% == 1 (set label2=) else (set label2={-}zxc)
 :skipsetlabel
+if %choose% LSS 50 (set label3=    x.x.x.&set label4=) else (set label3=      -&set label4=-)
 echo:                                        
 echo:          -------------------------------- %label1%
-echo:          Press S to scan                   -%pings%-
-echo:          E to Edit Subnet                 %label2%
+echo:          Press S to perform a scan    %label3%%pings%%label4%
+echo:          E to Edit Subnet of I.P.         %label2%
 echo:          O Additional Options      
 echo:          --------------------------------                      
 echo:
@@ -291,12 +298,12 @@ if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
 choice /c s03z2x1coe  /n 
 set /a choose+=1
-if %errorlevel%==3 set /a pings +=25
-if %errorlevel%==4 set /a pings -=25
-if %errorlevel%==5 set /a pings +=12
-if %errorlevel%==6 set /a pings -=12
-if %errorlevel%==7 set /a pings +=2
-if %errorlevel%==8 set /a pings -=2
+if %errorlevel%==3 set /a pings +=10
+if %errorlevel%==4 set /a pings -=10
+if %errorlevel%==5 set /a pings +=5
+if %errorlevel%==6 set /a pings -=5
+if %errorlevel%==7 set /a pings +=1
+if %errorlevel%==8 set /a pings -=1
 if %pings% GEQ 255 set pings=254
 if %pings% LSS 1 set pings=1
 if %errorlevel%==1 goto scan
@@ -521,6 +528,7 @@ if "%file_status%" == "" goto :skip_check_file_status2
 if %file_status% NEQ 0 echo:&pause >NUL
 :skip_check_file_status2
 call :init
+set choose=0
 goto input
 :save_file_default_file_name
 set no_save=1
