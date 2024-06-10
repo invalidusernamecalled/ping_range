@@ -94,21 +94,21 @@ set lastuuid=
 set filename=
 set file_status=
 
-for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%"') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
+for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%" 2^>NUL') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
 
-for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find "profiles:"') do set current_profile=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "powershell:"') do set powershell_or_not=%%i
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "profiles:"') do set current_profile=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "powershell:"') do set powershell_or_not=%%i
 
 if "%powershell_or_not%" == "" goto skip_check_powershell_status2
 if %powershell_or_not%==0 set powershellavlable=0
 if %powershell_or_not%==1 set powershellavlable=1
 :skip_check_powershell_status2
 
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "savesubnet:"') do set save_subnet=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "save_range:"') do set save_range=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "uuid:"') do set lastuuid=%%i
-for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" ^| find "file:"') do set file_status=%%i
-for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" ^| find "filename:"') do set filename="%%~i"
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "savesubnet:" ') do set save_subnet=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "save_range:"') do set save_range=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "uuid:"') do set lastuuid=%%i
+for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "file:"') do set file_status=%%i
+for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "filename:"') do set filename="%%~i"
 if exist "init.xxZhPuG.lock.1.conf.bak" del "init.xxZhPuG.lock.1.conf.bak"
 color 7
 exit /b
@@ -541,7 +541,9 @@ if %powershellavlable%==0 if exist !input_file_name! echo Written
 if "%file_status%" == "" goto :skip_check_file_status2
 if %file_status% NEQ 0 echo:&pause >NUL
 :skip_check_file_status2
+
 call :init
+
 set choose=0
 goto input
 :save_file_default_file_name
