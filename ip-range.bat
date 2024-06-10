@@ -2,6 +2,7 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set /a revelation=%RANDOM%*2000/32767
+set error=99
 set last_error=0
 set gotrange=0
 set gotsubnet=0
@@ -11,7 +12,7 @@ set label1={+}123
 set label2={-}zxc
 set cchar=0
 set choose=0
-for /l %%i in (1,1,6) do CALL set highlight%%i=    &echo: >NUL
+for /l %%i in (1,1,8) do CALL set highlight%%i=    &echo: >NUL
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
 
@@ -55,13 +56,14 @@ if %errorlevel% == 0 color F&echo:  [OK]&set powershellavlable=1
 if %errorlevel% NEQ 0 set powershellavlable=0
 :getsettings
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
-if defined options_file if exist "init.xxZhPuG.lock.1.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
+if defined options_file if exist "init.xxZhPuG.lock.*.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
 color 7
 title STARTUP: Reading options %options_file%
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
 
 set settings=1
-if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         [OK]&call :init
+if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.settings file.         [OK]
+call :init
 if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
 goto start
 :setuid
@@ -81,12 +83,31 @@ echo:create settings file?
 choice /c yn
 if %errorlevel%==2 exit /b
 echo|set/p=>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
-set options="profiles:" "filename:00" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:0" "saverange:0" "execute:0"
+set options="profile:0" "profiles:" "filename:00" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:0" "saverange:0" "execute:0"
 for %%a in (%options%) do echo %%~a>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
 
-:init
+:process_profiles
+set profile_number=0
+for %%a in (%current_profile%) do set /a profile_number+=1
+if %profile_number% == 0 exit /b
+for %%a in (%current_profile%) do set /a profile_number+=1&for /f "tokens=1,2,3 delims=," %%i in (%%a) do echo !profile_number!.[%%k]  %%i.1 - %%i.%%j
+set total_profiles=%profile_number%
+if "%~1" == "entry" exit /b
+:entry
+for %%a in (%current_profile%) do set /a profile_number+=1
+if %profile_number% == 0 echo:No profiles.&timeout 2 >NUL & goto after_profiles
+set /p enterprofile=Enter a profile number:
+set /a enterprofile=%enterprofile%
+if %enterprofile% LEQ 0 exit /b
+if %enterprofile% GTR %total_profiles% exit /b
+set /a profile_number=0
+for %%a in (%current_profile%) do set /a profile_number+=1&if !profile_number!==%enterprofile% set choiceprofile=%%a
+for /f "tokens=1,2,3 delims=," %%i in (%choiceprofile%) do set pings=%%j&set prefix_range=%%i&goto loop
+goto after_profiles
 
+
+:init
 set powershell_or_not=0
 set save_subnet=0
 set save_range=0
@@ -94,10 +115,11 @@ set lastuuid=
 set filename=""
 set file_status=0
 set script_execute=0
+set profile_status=0
 
 for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%" 2^>NUL') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
 
-for /f "delims=" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "profiles:"') do set current_profile=%%i
+for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "profiles:"') do set current_profile=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "powershell:"') do set powershell_or_not=%%i
 
 if "%powershell_or_not%" == "" goto skip_check_powershell_status2
@@ -111,6 +133,7 @@ for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^|
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "file:"') do set file_status=%%i
 for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "filename:"') do set filename="%%~i"
 for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "execute:"') do set script_execute=%%i
+for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "profile:"') do set profile_status=%%i
 if exist "init.xxZhPuG.lock.1.conf.bak" del "init.xxZhPuG.lock.1.conf.bak"
 color 7
 exit /b
@@ -127,9 +150,19 @@ if %errorlevel%==2 exit /b
 del "%write_dir%\%options_file%"
 if exist "%write_dir%\%options_file%" echo File not deleted.&PAUSE
 del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
+del "init.xxZhPuG.lock.2.conf.bak" 2>NUL
 timeout 1 >NUL
 exit /b
+:clean_junk
+echo:make sure no instances of script is running..
+choice /m "clean junk cache? yn"
+if %errorlevel%==2 exit /b
+del "%write_dir%\xxZhPuG.*.online._.*.txt"
+del "%write_dir%\xxZhPuG.*.online.ip.*.txt"
+exit /b
 :options
+echo:>"init.xxZhPuG.lock.2.conf.bak"
+
 set choose=0
 if %revelation%==666 title Praise God^^^!
 cls
@@ -144,6 +177,7 @@ set lastuuid=
 set filename=""
 set file_status=0
 set script_execute=0
+set profile_status=0
 
 set powershell_tick=  &echo: >NUL
 set single-file=  &echo: >NUL
@@ -151,20 +185,24 @@ set multi-file=  &echo: >NUL
 set subnettick=  &echo: >NUL
 set rangetick=  &echo: >NUL
 set execution_tick=  &echo: >NUL
-
+set profile_tick=  &echo: >NUL
 call :init
-
 call :powershelltick
 call :filetick
 call :savesubnettick
 calL :saverangetick
 call :execute_tick
+call :profiletick
 rem if "%powershell_or_not%" NEQ "" 
 rem if "%powershell_or_not%" NEQ ""
 :reprintoptions
 set special_symbol=---:
 if %error% NEQ 6 if %error% NEQ 0 CALL set highlight%error%=%special_symbol%
 if %error% NEQ 6 if %error% == 14 CALL set highlight6=%special_symbol%
+if %error% NEQ 6 if %error% == 15 CALL set highlight7=%special_symbol%
+if %error% NEQ 6 if %error% == 16 CALL set highlight8=%special_symbol%
+
+
 echo                                                   {OPTIONS_FILE} %options_file%
 echo:           -----------------------------------
 echo:            S = Scan
@@ -178,16 +216,17 @@ echo:%highlight2%2.[%single-file%] enable default save file name (OVERWRITE^^^!)
 echo:%highlight3%3.[%rangetick%] Remember Range
 echo:%highlight4%4.[%subnettick%] Remember Subnet
 echo:%highlight5%5.[%powershell_tick%] enable powershell
-echo:%highlight6%6.[%execution_tick%] Automatic Script execution
+echo:%highlight6%6.[%execution_tick%] UnAssisted Script execution
+echo:%highlight7%7.[%profile_tick%] Enable Profiles
+echo:%highlight8%8. Clean Junk
 for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
-for /l %%i in (1,1,6) do CALL set highlight%%i=    &echo: >NUL
-choice /c 12345TseoDHCk6 /n
-set script_execute=0
+for /l %%i in (1,1,8) do CALL set highlight%%i=    &echo: >NUL
+choice /c 12345TseoDHCk678 /n
 set error=%errorlevel%
 
-
+if %error% == 16 call :clean_junk
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
 if %error% == 10 call :delete_options_file&call :init_options_file&call :init&goto input
 if %error% == 7 goto scan
@@ -204,12 +243,16 @@ if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_range% == 0 i
 if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% == 0 if %save_range% NEQ 0 echo:Both Remember Range and Remember Subnet must be enabled.&PAUSE
 if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% == 0 if %save_range% == 0 echo:Both Remember Range and Remember Subnet must be enabled.&PAUSE
 if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% neq 0 if %save_range% neq 0 call :setscriptexecute&goto options
-
+if %error%==6 if %last_error% GTR 0 if %last_error% == 15 call :setprofile&goto options
 set last_error=%error%
 if %error% LEQ 5 if %error% NEQ 0 cls&goto reprintoptions
+if exist "init.xxZhPuG.lock.2.conf.bak" del "init.xxZhPuG.lock.2.conf.bak"
 cls&goto reprintoptions
 :powershelltick
 if %powershell_or_not%==1 (set powershell_tick=\/) else (set powershell_tick=  &echo: >NUL)
+exit /b
+:profiletick
+if %profile_status%==1 (set profile_tick=\/) else (set profile_tick=  &echo: >NUL)
 exit /b
 :filetick
 if %file_status%==2 (set multi-file=\/) else (set multi-file=  &echo: >NUL)
@@ -226,10 +269,21 @@ exit /b
 if %script_execute%==1 (set execution_tick=\/) else (set execution_tick=  &echo: >NUL)
 exit /b
 
+:add_profile
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "profiles:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+echo profiles:%current_profile% "%prefix_range%,%pings%,%~1">>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+:setprofile
+call :setuid
+for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "profile:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+if %profile_status% == 0 (set profile_status=1) else (set profile_status=0)
+echo profile:%profile_status%>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+exit /b
+
 :setpowershell
 call :setuid
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "powershell:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
-if "%powershell_or_not%" == "" set powershell_or_not=0
 if %powershell_or_not%==1 (set powershell_status=0) else (set powershell_status=1)
 echo powershell: %powershell_status% >>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 exit /b
@@ -334,21 +388,22 @@ if %pings% LSS 254 (set label1={+}123) else (set label1=)
 if %pings% == 1 (set label2=) else (set label2={-}zxc)
 :skipsetlabel
 if %choose% LSS 50 (set label3=   -x.x.x.&set label4=) else (set label3=     -&set label4=-)
+if %profile_status%==1 (set label5=P Profiles&Call :process_profiles "entry") else (set label5=)
 echo:                                        
 echo:          -------------------------------- %label1%
 echo:          Press S to perform a scan upto%label3%%pings%%label4%
 echo:          E to Edit Subnet of I.P.         %label2%
-echo:          O Additional Options      
+echo:          O Additional Options %label5%      
 echo:          --------------------------------                      
 echo:
 if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
-if %script_execute%==1 if %save_subnet%==1 cls&echo Initializing script execute...Press E to Escape
-if %script_execute%==1 choice /c Et /n /d t /t 2
-if %script_execute%==1 if %errorlevel%==2 goto initial_start
-if %script_execute%==1 if %errorlevel%==1 goto options
-choice /c s03z2x1coe  /n 
+if %script_execute%==1 if %save_subnet%==1 cls&mode 40,20&for /l %%i in (1,1,10) do echo Running Auto Mode...Press C Cancel
+if %script_execute%==1 choice /c Ct /n /d t /t 3
+if %script_execute%==1 if %errorlevel%==2 goto loop
+if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
+choice /c s03z2x1coeP  /n 
 set /a choose+=1
 if %errorlevel%==3 set /a pings +=10
 if %errorlevel%==4 set /a pings -=10
@@ -361,7 +416,11 @@ if %pings% LSS 1 set pings=1
 if %errorlevel%==1 goto scan
 if %errorlevel%==9 goto options
 if %errorlevel%==10 goto enter_subnet
+if %errorlevel%==11 goto entry
+:after_profiles
 cls
+del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
+del "init.xxZhPuG.lock.2.conf.bak" 2>NUL
 goto input
 :get_mac.py
 color 2
@@ -552,14 +611,9 @@ if %powershellavlable%==0 for %%a in (%found_ip%) do echo %%a
 echo:--- 
 echo:Save list
 echo:.......................................
-if "%save_range%" == "" goto skip_save_range
 if %save_range% == 1 call :range&call :init_options_file
-:skip_save_range
-if "%save_subnet%" == "" goto skip_save_subnet
 if %save_subnet% == 1 call :subnet&call :init_options_file
-:skip_save_subnet
 del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
-if "%file_status%" == "" goto skip_check_file_status
 if %filename% == "" goto skip_check_file_status
 if %file_status% NEQ 0 goto save_file_default_file_name
 :skip_check_file_status
@@ -582,10 +636,10 @@ if %powershellavlable%==0 if exist !input_file_name! echo Written
 if "%file_status%" == "" goto :skip_check_file_status2
 if %file_status% NEQ 0 echo:&pause >NUL
 :skip_check_file_status2
-
 call :init
-
 set choose=0
+if %profile_status%==1 choice /c yn /m "Save Profile?" /n /d n /t 4
+if %profile_status%==1 if %errorlevel%==1 set /p enterprofilename=Enter friendly name:&call :add_profile "!enterprofilename!"
 goto input
 :save_file_default_file_name
 set no_save=1
