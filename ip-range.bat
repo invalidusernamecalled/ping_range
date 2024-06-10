@@ -21,7 +21,7 @@ title STARTUP: Checking directory permissions..
 :check
 echo ...............................
 echo -------------------------------               
-echo Ping Master v 1 (from Github)^|^|         Make easy  Computer   Pings ^^^!^^^!
+echo Ping Master v 1 (from Github)^|^|         Making  Computer   Pings  easy ^^^!^^^!
 echo computer pinging utility     ^|^|                Initializing..
 echo =============================^|^|
 echo|set/p=.temp dir permission.
@@ -285,10 +285,10 @@ if %choose% LEQ 5 goto :skipsetlabel
 if %pings% LSS 254 (set label1={+}123) else (set label1=)
 if %pings% == 1 (set label2=) else (set label2={-}zxc)
 :skipsetlabel
-if %choose% LSS 50 (set label3=    x.x.x.&set label4=) else (set label3=      -&set label4=-)
+if %choose% LSS 50 (set label3=   -x.x.x.&set label4=) else (set label3=     -&set label4=-)
 echo:                                        
 echo:          -------------------------------- %label1%
-echo:          Press S to perform a scan    %label3%%pings%%label4%
+echo:          Press S to perform a scan upto%label3%%pings%%label4%
 echo:          E to Edit Subnet of I.P.         %label2%
 echo:          O Additional Options      
 echo:          --------------------------------                      
