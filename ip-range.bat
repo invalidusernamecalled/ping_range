@@ -8,8 +8,8 @@ set gotrange=0
 set gotsubnet=0
 Set error=0
 set prefix_range=
-set label1={+}123
-set label2={-}zxc
+rem set label1={+}123
+rem set bel2={-}zxc
 set cchar=0
 set choose=0
 for /l %%i in (1,1,9) do CALL set highlight%%i=    &echo: >NUL
@@ -85,6 +85,7 @@ if %errorlevel%==2 exit /b
 echo|set/p=>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 set options="profile:0" "profiles:" "filename:00" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:0" "saverange:0" "execute:0"
 for %%a in (%options%) do echo %%~a>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
+call :init_options_file
 exit /b
 
 :process_profiles
@@ -223,7 +224,7 @@ echo                                                   {OPTIONS_FILE} %options_f
 echo:           -----------------------------------
 echo:            S = Scan
 echo:            E to Edit Subnet = %prefix_range%
-echo:            O Additional Options H= Change Range
+echo:            O Additional Options :H Change Range
 echo:          ------------------------------------
 echo:     Enter Choice No.#                       Tk=Tick/Untick
 echo:
@@ -405,19 +406,20 @@ if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IP
 :input
 cls
 title ping master  ^^(*(oo)*)^^
-if %choose% LEQ 5 goto :skipsetlabel
-if %pings% LSS 254 (set label1=[+]123) else (set label1=)
-if %pings% == 1 (set label2=) else (set label2=[-]zxc)
+rem if %choose% LEQ 5 goto :skipsetlabel
+if %pings% GEQ 254 (set label1=Maximum Range Achieved) else (set label1=)
+if %pings% == 1 (set label1=Range cannot be less than 1) else (set label1=)
+rem if %pings% == 1 (set label2=) else (set label2=[-]zxc)
 :skipsetlabel
 if %choose% LSS 50 (set label3=  *  -x.x.x.&set label4=) else (set label3=  * -&set label4=-)
-if %profile_status%==1 (set label5=:P Profiles*) else (set label5=)
-echo:          **************start pings******* 
-echo:          -------------------------------- %label1%
-echo:          Press S to perform a scan upto%label3%%pings%%label4%
-echo:          E to Edit Subnet of I.P.        *%label2%
-echo:          O Additional Options %label5%      
-echo:          --------------------------------                      
-if exist "%write_dir%\%options_file%" (echo:                    Loaded: %options_file%) else (echo:)
+if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
+echo: **************start pings*******^|^| Range: 1--x.x.x.%pings%
+echo: --------------------------------^|^| %label1% 
+echo: Press S to perform a scan upto  ^|^| 123^< .     .   . . increase 
+echo: range, E to Edit Subnet of I.P. ^|^| zxc^< . .  .  .   . decrease
+echo: O Additional Options%label5%^|^|___________________________
+echo: -------------------------------------------------------------                   
+if exist "%write_dir%\%options_file%" (echo:                     Loaded File: %options_file%) else (echo:)
 if %profile_status%==1  echo:Profiles:-
 if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
 if %profile_status%==1 (Call :process_profiles "entry")
@@ -491,8 +493,8 @@ title  ping master  ^^(*(oo)*)^^
 echo:                       
 if not defined PREFIX_RANGE goto enter_subnet
 echo:           -----------------------------------
-echo:            S to Scan
-echo:            E to Edit Subnet = %prefix_range%
+echo:            S to continue to Scanning...
+echo:            E Edit Subnet = %prefix_range%
 echo:            O Additional Options
 echo:          ------------------------------------
 
