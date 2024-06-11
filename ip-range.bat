@@ -110,6 +110,7 @@ goto after_profiles
 
 
 :init
+call :init_options_file
 set powershell_or_not=0
 set save_subnet=0
 set save_range=0
@@ -249,7 +250,7 @@ set error=%errorlevel%
 if %error% == 17 call :clean_junk
 if %error% == 16 set pingspeednote=Note: Increasing ping speed can result in slower script execution.
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
-if %error% == 10 call :delete_options_file&call :init_options_file&call :init&goto input
+if %error% == 10 call :delete_options_file&call :init&goto input
 if %error% == 7 goto scan
 if %error% == 8 goto enter_subnet
 if %error% == 13 set error=6
@@ -291,8 +292,6 @@ if %script_execute%==1 (set execution_tick=\/) else (set execution_tick=  &echo:
 exit /b
 
 :add_profile
-echO:called add_profile with %1xwith  current profile as %current_profile% already
-pause
 call :setuid
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "profiles:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 echo profiles:%current_profile% "%prefix_range%,%pings%,%~1">>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
