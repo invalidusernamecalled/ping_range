@@ -91,6 +91,7 @@ exit /b
 set profile_number=0
 for %%a in (%current_profile%) do set /a profile_number+=1
 if %profile_number% == 0 exit /b
+set profile_number=0
 for %%a in (%current_profile%) do set /a profile_number+=1&for /f "tokens=1,2,3 delims=," %%i in (%%a) do echo !profile_number!.[%%k]  %%i.1 - %%i.%%j
 set total_profiles=%profile_number%
 if "%~1" == "entry" exit /b
@@ -99,8 +100,8 @@ for %%a in (%current_profile%) do set /a profile_number+=1
 if %profile_number% == 0 echo:No profiles.&timeout 2 >NUL & goto after_profiles
 set /p enterprofile=Enter a profile number:
 set /a enterprofile=%enterprofile%
-if %enterprofile% LEQ 0 exit /b
-if %enterprofile% GTR %total_profiles% exit /b
+if %enterprofile% LEQ 0 goto after_profiles
+if %enterprofile% GTR %total_profiles% goto after_profiles
 set /a profile_number=0
 for %%a in (%current_profile%) do set /a profile_number+=1&if !profile_number!==%enterprofile% set choiceprofile=%%a
 for /f "tokens=1,2,3 delims=," %%i in (%choiceprofile%) do set pings=%%j&set prefix_range=%%i&goto loop
@@ -289,6 +290,8 @@ if %script_execute%==1 (set execution_tick=\/) else (set execution_tick=  &echo:
 exit /b
 
 :add_profile
+echO:called add_profile with %1xwith  current profile as %current_profile% already
+pause
 call :setuid
 for /f "delims=" %%i in ('type "%write_dir%\%options_file%" ^| find /v "profiles:"') do echo %%i>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 echo profiles:%current_profile% "%prefix_range%,%pings%,%~1">>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
@@ -403,19 +406,21 @@ if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IP
 cls
 title ping master  ^^(*(oo)*)^^
 if %choose% LEQ 5 goto :skipsetlabel
-if %pings% LSS 254 (set label1={+}123) else (set label1=)
-if %pings% == 1 (set label2=) else (set label2={-}zxc)
+if %pings% LSS 254 (set label1=[+]123) else (set label1=)
+if %pings% == 1 (set label2=) else (set label2=[-]zxc)
 :skipsetlabel
-if %choose% LSS 50 (set label3=   -x.x.x.&set label4=) else (set label3=     -&set label4=-)
-if %profile_status%==1 (set label5=P Profiles&Call :process_profiles "entry") else (set label5=)
+if %choose% LSS 50 (set label3=  *  -x.x.x.&set label4=) else (set label3=  * -&set label4=-)
+if %profile_status%==1 (set label5=:P Profiles*) else (set label5=)
 echo:          **************start pings******* 
 echo:          -------------------------------- %label1%
 echo:          Press S to perform a scan upto%label3%%pings%%label4%
-echo:          E to Edit Subnet of I.P.         %label2%
+echo:          E to Edit Subnet of I.P.        *%label2%
 echo:          O Additional Options %label5%      
 echo:          --------------------------------                      
-echo:
+if exist "%write_dir%\%options_file%" (echo:                    Loaded: %options_file%) else (echo:)
+if %profile_status%==1  echo:Profiles:-
 if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
+if %profile_status%==1 (Call :process_profiles "entry")
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
 if %script_execute%==1 if %save_subnet%==1 cls&mode 40,20&for /l %%i in (1,1,10) do echo Running Auto Mode...Press C Cancel
@@ -652,12 +657,12 @@ if %scripT_execute% == 1 echo Script Execute Complete & timeout 4 >NUL & goto :e
 :after_save
 if %powershellavlable%==1 echo:&echo Written [error_code:%errorlevel%]
 if %powershellavlable%==0 if exist !input_file_name! echo Written
-if %file_status% NEQ 0 echo:&pause >NUL
+if %file_status% NEQ 0 echo:&echo:press key&pause >NUL
 :skip_check_file_status2
-call :init
 set choose=0
 if %profile_status%==1 choice /c yn /m "Save Profile?" /n /d n /t 4
 if %profile_status%==1 if %errorlevel%==1 set /p enterprofilename=Enter friendly name:&call :add_profile "!enterprofilename!"
+call :init
 goto input
 :save_file_default_file_name
 set no_save=1
