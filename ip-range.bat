@@ -169,6 +169,7 @@ echo:ping speed is (%ping_batch%)
 choice /c ijs /m "S to Set" /n
 if %errorlevel%==1 set /a ping_batch+=1
 if %errorlevel%==2 set /a ping_batch-=1
+if %ping_batch% LSS 1 set ping_batch=1
 if %errorlevel%==3 exit /b
 goto ping_speed_loop
 
@@ -234,16 +235,17 @@ echo:%highlight6%6.[%execution_tick%] UnAssisted Script execution
 echo:%highlight7%7.[%profile_tick%] Enable Profiles
 echo:%highlight8%8. Ping Speed (%ping_batch%) (Not persistent across Sessions)
 echo:%highlight9%9. Clean Junk
-
 for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
 for /l %%i in (1,1,9) do CALL set highlight%%i=    &echo: >NUL
-choice /c 12345TseoDHCk678 /n
+if "%pingspeednote%" NEQ "" echo %pingspeednote%&set pingspeednote=
+:choice_options
+choice /c 12345TseoDHCk6789 /n
 set error=%errorlevel%
 
 if %error% == 17 call :clean_junk
-if %error% == 16 echo:Note: Increasing ping speed can result in slower script execution.&PAUSE
+if %error% == 16 set pingspeednote=Note: Increasing ping speed can result in slower script execution.
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
 if %error% == 10 call :delete_options_file&call :init_options_file&call :init&goto input
 if %error% == 7 goto scan
@@ -395,7 +397,7 @@ if "%save_subnet%" == "" goto skip_save_subnet_2
 if %save_subnet% == 1 call :getsubnet
 :skip_save_subnet_2
 if %gotrange%==0 set pings=254
-set ping_batch=3
+set ping_batch=2
 if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 :input
 cls
