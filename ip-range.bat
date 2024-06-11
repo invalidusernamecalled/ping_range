@@ -12,7 +12,7 @@ set label1={+}123
 set label2={-}zxc
 set cchar=0
 set choose=0
-for /l %%i in (1,1,8) do CALL set highlight%%i=    &echo: >NUL
+for /l %%i in (1,1,9) do CALL set highlight%%i=    &echo: >NUL
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
 
@@ -160,6 +160,18 @@ if %errorlevel%==2 exit /b
 del "%write_dir%\xxZhPuG.*.online._.*.txt"
 del "%write_dir%\xxZhPuG.*.online.ip.*.txt"
 exit /b
+
+:set_ping_speed
+echo:+i to increase
+echo:-j to decrease
+:ping_speed_loop
+echo:ping speed is (%ping_batch%)
+choice /c ijs /m "S to Set" /n
+if %errorlevel%==1 set /a ping_batch+=1
+if %errorlevel%==2 set /a ping_batch-=1
+if %errorlevel%==3 exit /b
+goto ping_speed_loop
+
 :options
 echo:>"init.xxZhPuG.lock.2.conf.bak"
 
@@ -201,6 +213,7 @@ set special_symbol=---:
 if %error% NEQ 6 if %error% NEQ 0 CALL set highlight%error%=%special_symbol%
 if %error% NEQ 6 if %error% == 14 CALL set highlight6=%special_symbol%
 if %error% NEQ 6 if %error% == 15 CALL set highlight7=%special_symbol%
+if %error% NEQ 6 if %error% == 17 CALL set highlight9=%special_symbol%
 if %error% NEQ 6 if %error% == 16 CALL set highlight8=%special_symbol%
 
 
@@ -219,15 +232,18 @@ echo:%highlight4%4.[%subnettick%] Remember Subnet
 echo:%highlight5%5.[%powershell_tick%] enable powershell
 echo:%highlight6%6.[%execution_tick%] UnAssisted Script execution
 echo:%highlight7%7.[%profile_tick%] Enable Profiles
-echo:%highlight8%8. Clean Junk
+echo:%highlight8%8. Ping Speed (%ping_batch%) (Not persistent across Sessions)
+echo:%highlight9%9. Clean Junk
+
 for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
-for /l %%i in (1,1,8) do CALL set highlight%%i=    &echo: >NUL
+for /l %%i in (1,1,9) do CALL set highlight%%i=    &echo: >NUL
 choice /c 12345TseoDHCk678 /n
 set error=%errorlevel%
 
-if %error% == 16 call :clean_junk
+if %error% == 17 call :clean_junk
+if %error% == 16 echo:Note: Increasing ping speed can result in slower script execution.&PAUSE
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
 if %error% == 10 call :delete_options_file&call :init_options_file&call :init&goto input
 if %error% == 7 goto scan
@@ -235,6 +251,7 @@ if %error% == 8 goto enter_subnet
 if %error% == 13 set error=6
 if %error% == 6 if %error% == 0 goto options
 if %error% == 11 goto input
+if %error%==6 if %last_error% GTR 0 if %last_error% == 16 call :set_ping_speed
 if %error%==6 if %last_error% GTR 0 if %last_error% == 1 call :addfile 2&goto options
 if %error%==6 if %last_error% GTR 0 if %last_error% == 2 call :addfile 1&goto options
 if %error%==6 if %last_error% GTR 0 if %last_error% == 3 call :saverange&goto options
