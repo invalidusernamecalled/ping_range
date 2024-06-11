@@ -26,7 +26,6 @@ Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file
 
 I oppose War generally, and I hate any body who has even a twiddled tid or cent of any of these venomous ideologies. I am Christian. If you are a christian you can not have any cent of these in you.
 
-I will War against them, if you have got any of these.
 
 
 _Non-Commercial Use License
