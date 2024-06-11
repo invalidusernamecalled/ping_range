@@ -195,6 +195,7 @@ call :execute_tick
 call :profiletick
 rem if "%powershell_or_not%" NEQ "" 
 rem if "%powershell_or_not%" NEQ ""
+if exist "init.xxZhPuG.lock.2.conf.bak" del "init.xxZhPuG.lock.2.conf.bak"
 :reprintoptions
 set special_symbol=---:
 if %error% NEQ 6 if %error% NEQ 0 CALL set highlight%error%=%special_symbol%
@@ -246,7 +247,6 @@ if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% neq 0
 if %error%==6 if %last_error% GTR 0 if %last_error% == 15 call :setprofile&goto options
 set last_error=%error%
 if %error% LEQ 5 if %error% NEQ 0 cls&goto reprintoptions
-if exist "init.xxZhPuG.lock.2.conf.bak" del "init.xxZhPuG.lock.2.conf.bak"
 cls&goto reprintoptions
 :powershelltick
 if %powershell_or_not%==1 (set powershell_tick=\/) else (set powershell_tick=  &echo: >NUL)
@@ -389,7 +389,7 @@ if %pings% == 1 (set label2=) else (set label2={-}zxc)
 :skipsetlabel
 if %choose% LSS 50 (set label3=   -x.x.x.&set label4=) else (set label3=     -&set label4=-)
 if %profile_status%==1 (set label5=P Profiles&Call :process_profiles "entry") else (set label5=)
-echo:                                        
+echo:          **************start pings******* 
 echo:          -------------------------------- %label1%
 echo:          Press S to perform a scan upto%label3%%pings%%label4%
 echo:          E to Edit Subnet of I.P.         %label2%
