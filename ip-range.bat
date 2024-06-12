@@ -659,7 +659,7 @@ if %file_status% NEQ 0 goto save_file_default_file_name
 :input_file_name
 set input_file_name=
 set /p input_file_name=Enter file name to save:
-set input_file_name="%input_file_name%.txt"
+set input_file_name="%input_file_name:"=%.txt"
 if !input_file_name! NEQ ".txt" (echo Press a key to save !input_file_name!) else (echo:File will not be saved. No name mentioned.&pause&goto input)
 pause >NUL
 (if exist !input_file_name! echo: File name already exists.& set filename=!input_file_name!& call :check_file_name_exist & set input_file_name=!filename!& if exist !filename! goto skip_check_file_status2)
