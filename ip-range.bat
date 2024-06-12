@@ -593,7 +593,7 @@ title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo:&echo:            ----------------------------------&echo:            [%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%]&echo:            Status: Sending ping requests..&echo:            Completed:%%i&echo:&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo:&echo:            ----------------------------------&echo:            @ %PREFIX_RANGE%.%absent% - %PREFIX_RANGE%.%present% @&echo:            Status: Sending ping requests..&echo:            Completed:%%i&echo:&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
@@ -663,16 +663,16 @@ set input_file_name="%input_file_name%.txt"
 if !input_file_name! NEQ ".txt" (echo Press a key to save !input_file_name!) else (echo:File will not be saved. No name mentioned.&pause&goto input)
 pause >NUL
 (if exist !input_file_name! echo: File name already exists.& set filename=!input_file_name!& call :check_file_name_exist & set input_file_name=!filename!& if exist !filename! goto skip_check_file_status2)
-(if !input_file_name! NEQ "" echo: Writing to file......)
+(if !input_file_name! NEQ "" echo: Writing ......)
 :save_input_file_name
 if !input_file_name! == "00" echo:Please set default filename from menu options.&pause >NUL&goto skip_check_file_status2
 if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses" >"%%i" & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
 if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >>"%%i")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
 if %scripT_execute% == 1 echo Script Execute Complete & timeout 4 >NUL & goto :eof
 :after_save
-if %powershellavlable%==1 echo:&echo Written [error_code:%errorlevel%]
-if %powershellavlable%==0 if exist !input_file_name! echo Written
-if %file_status% NEQ 0 echo:&echo:press key&pause >NUL
+if %powershellavlable%==1 if exist !input_file_name! echo:&echo Written to !input_file_name! [error_code:%errorlevel%]
+if %powershellavlable%==0 if exist !input_file_name! echo Written (!input_file_name!)
+echo:&echo:press key&pause >NUL
 :skip_check_file_status2
 set choose=0
 if %profile_status%==1 choice /c yn /m "Save Profile?" /n /d n /t 4
