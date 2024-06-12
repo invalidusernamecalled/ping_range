@@ -9,7 +9,7 @@ set label3=Press S to perform a scan upto
 set /a revelation=%RANDOM%*2000/32767
 set main_title=ping master  ^^^^(*(oo)*)^^^^
 set error=99
-set last_error=0
+set last_error=99
 set gotrange=0
 set gotsubnet=0
 Set error=0
@@ -18,7 +18,7 @@ rem set label1={+}123
 rem set bel2={-}zxc
 set cchar=0
 set choose=0
-for /l %%i in (1,1,10) do CALL set highlight%%i=    &echo: >NUL
+for /l %%i in (1,1,11) do CALL set highlight%%i=    &echo: >NUL
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
 
@@ -293,15 +293,16 @@ echo:%highlight7%7.[%profile_tick%] Enable Profiles
 echo:%highlight8%8. Ping Speed (%ping_batch%) (Not persistent across Sessions)
 echo:%highlight9%9. Backup
 echo:%highlight10%10. Clean Junk
+echo:%highlight11%11. Thanks ^& Honour
 echo:     Filename: (%filename%)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
-for /l %%i in (1,1,10) do CALL set highlight%%i=    &echo: >NUL
+for /l %%i in (1,1,11) do CALL set highlight%%i=    &echo: >NUL
 if "%pingspeednote%" NEQ "" echo %pingspeednote%&set pingspeednote=
 :choice_options
 choice /c 12345TseoDHCk6789 /n
 set error=%errorlevel%
-
+if %error% == 1 if %last_error% == 1  call :credits
 if %error%==17 call :backup
 if %error% == 18 call :clean_junk
 if %error% == 16 set pingspeednote=Note: Increasing ping speed can result in slower script execution.
@@ -898,3 +899,25 @@ if "%install_python%"=="1" goto input
 echo:
 :paused
 pause
+:credits
+cls
+echo:
+echo:
+echo:
+echo:
+echo:
+echo:
+echo:
+echo:                          -------------------------------------------
+echo:                         ^|      I would like to Thank my Friend,   ^|
+echo:                         ^|       Lord ^& Savior Jesus for this     ^|
+echo:                         ^|             Work.                       ^|
+echo:                          000--------------------------------------000
+echo:
+echo:
+echo:
+echo:
+echo:
+echo:
+pause >NUL
+exit /b
