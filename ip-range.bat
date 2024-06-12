@@ -2,7 +2,6 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set error_of=0
-set scroll_text="Press S to perform a scan upto" "E to Edit Subnet of I.P.      " "O to go to Options            " "Press keys 123, zxc to increase/decrease range"
 set scrolltextnow=1
 set label3=Press S to perform a scan upto
 set /a revelation=%RANDOM%*2000/32767
@@ -16,7 +15,7 @@ rem set label1={+}123
 rem set bel2={-}zxc
 set cchar=0
 set choose=0
-for /l %%i in (1,1,9) do CALL set highlight%%i=    &echo: >NUL
+for /l %%i in (1,1,10) do CALL set highlight%%i=    &echo: >NUL
 :checkduplicate
 REM for /f "tokens=*" %%i in ('tasklist /fi "windowtitle eq xxZhPuG.Pinger*" ^| find /i "cmd.exe"') do color c&title I worship the (+) Cross but you have a DANGEROUS EXCEPTION^^^!&echo Duplicate Process running..&echo:Impossible duplicate Script execution ^^^!&echo:Dangerous Exception ^^^!&echo:&echo:(Please stop the similar dialog that you have running and try again)&pause&goto  :eof
 
@@ -43,12 +42,12 @@ goto checkpwsh
 :testdir
 if %start%==1 exit /b
 echo:>%1\xxZhPuG.write.-.test.txt
-if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set write_dir=%1&set start=1&title 
+if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set start=1&for /f "delims=" %%i in (%1) do set write_dir=%~1
 color F
 if %start% == 1 echo:   [OK]
 if %start% == 0 echo:   Error
 
-title STARTUP: Using write_dir %1
+title STARTUP: Using write_dir "!write_dir!"
 Exit /B
 :checkpwsh
 if Defined custom_dir echo !custom_dir!>xxZhPuG.CustomDir.1
@@ -84,12 +83,28 @@ exit /b
 :createoptions
 echo:File not exists
 echo:create settings file?
-choice /c yn
+echo:R Restore
+choice /c ynR
 if %errorlevel%==2 exit /b
+if %errorlevel%==3 goto create_from_backup
 echo|set/p=>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 set options="profile:0" "profiles:" "filename:00" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:0" "saverange:0" "execute:0"
 for %%a in (%options%) do echo %%~a>>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 call :init_options_file
+goto end_of_create
+:create_from_backup
+for /f "delims=" %%i in ('dir /b xxZhPuG.settings.*.bak.txt') do findstr /i "subnet:" "%%i" >NUL&&(choice /m "is this %%i"&if !errorlevel!==1 set restore_file=%%i&goto :continue_backup_restore)
+echo:Cannot continue file name should be in format = xxZhPuG.settings.#.bak.txt where # is a number digit & PAUSE & exit /b
+:continue_backup_restore
+set options=profile: profiles: filename: file: powershell: range: subnet: uuid: savesubnet: saverange: execute:
+set sanity_check=0
+for %%a in (%options%) do findstr /i "%%a" %restore_file% >NUL&& (set /a sanity_check+=1)
+echo:Sanity Check: %sanity_check%
+if %sanity_check%==11 (echo:Copying to write_dir "%write_dir%"..&copy  %restore_file% "%write_dir%\xxZhPuG.%resultstr%.options.txt" >NUL) else (echo:Check completed with Errors. Unable to continue restore from backup.&PAUSE&goto end_of_create)
+call :init
+if %errorlevel%==0 echo:Completed.
+pause
+:end_of_create
 exit /b
 
 :process_profiles
@@ -111,6 +126,32 @@ set /a profile_number=0
 for %%a in (%current_profile%) do set /a profile_number+=1&if !profile_number!==%enterprofile% set choiceprofile=%%a
 for /f "tokens=1,2,3 delims=," %%i in (%choiceprofile%) do set pings=%%j&set prefix_range=%%i&goto loop
 goto after_profiles
+
+:backup
+
+set options=profile: profiles: filename: file: powershell: range: subnet: uuid: savesubnet: saverange: execute:
+set values=profile_status current_profile filename file_status powershell_or_not pings prefix_range lastuuid save_subnet save_range script_execute
+
+set backup_count=0
+for %%a in (%options%) do set arr_options[!backup_count!]=%%a&set /a backup_count+=1
+set /a total_option=backup_count-1
+set backup_count=0
+for %%a in (%values%) do set arr_values[!backup_count!]=%%a&set /a backup_count+=1
+set /a total_value=backup_count-1
+if %total_value% NEQ %total_option% echo:Error backing up. Value/option mismatch in code.&pause&Exit /b
+set backup_count=0
+set counter_of=1
+echo|set /p=>xxZhPuG.temp.1.bak
+for /l %%i in (0,1,%total_value%) do echo !arr_options[%%i]!!arr_values[%%i]! >>xxZhPuG.temp.1.bak
+:looper
+if %counter_of% GTR 2000 set /a counter_of=0&echo: Something Fishy (infinite Loop?)&PAUSE
+if exist xxZhPuG.settings.%counter_of%.bak.txt (set /a counter_of+=1&goto looper)
+echo|set /p=>xxZhPuG.settings.%counter_of%.bak.txt
+for /f "tokens=1,2* delims=: " %%a in ('type xxZhPuG.temp.1.bak') do CALL echo %%a:%%%%b%% >>xxZhPuG.settings.%counter_of%.bak.txt
+echo:// please do not rename file for easy restore^^^!>>xxZhPuG.settings.%counter_of%.bak.txt
+del xxZhPuG.temp.1.bak
+echo:File saved to xxZhPuG.settings.%counter_of%.bak.txt&PAUSE
+exit /b
 
 
 :init
@@ -138,7 +179,7 @@ for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^|
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "save_range:"') do set save_range=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "uuid:"') do set lastuuid=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "file:"') do set file_status=%%i
-for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "filename:"') do set filename="%%~i"
+for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "filename:"') do set filename=%%i
 for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "execute:"') do set script_execute=%%i
 for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "profile:"') do set profile_status=%%i
 if exist "init.xxZhPuG.lock.1.conf.bak" del "init.xxZhPuG.lock.1.conf.bak"
@@ -221,8 +262,10 @@ set special_symbol=---:
 if %error% NEQ 6 if %error% NEQ 0 CALL set highlight%error%=%special_symbol%
 if %error% NEQ 6 if %error% == 14 CALL set highlight6=%special_symbol%
 if %error% NEQ 6 if %error% == 15 CALL set highlight7=%special_symbol%
-if %error% NEQ 6 if %error% == 17 CALL set highlight9=%special_symbol%
+if %error% NEQ 6 if %error% == 18 CALL set highlight10=%special_symbol%
 if %error% NEQ 6 if %error% == 16 CALL set highlight8=%special_symbol%
+if %error% NEQ 6 if %error% == 17 CALL set highlight9=%special_symbol%
+
 
 
 echo                                                   {OPTIONS_FILE} %options_file%
@@ -241,17 +284,19 @@ echo:%highlight5%5.[%powershell_tick%] enable powershell
 echo:%highlight6%6.[%execution_tick%] UnAssisted Script execution
 echo:%highlight7%7.[%profile_tick%] Enable Profiles
 echo:%highlight8%8. Ping Speed (%ping_batch%) (Not persistent across Sessions)
-echo:%highlight9%9. Clean Junk
-for /f "tokens=*" %%i in ("!filename!") do echo:     Filename: (%%~i)
+echo:%highlight9%9. Backup
+echo:%highlight10%10. Clean Junk
+echo:     Filename: (%filename%)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
-for /l %%i in (1,1,9) do CALL set highlight%%i=    &echo: >NUL
+for /l %%i in (1,1,10) do CALL set highlight%%i=    &echo: >NUL
 if "%pingspeednote%" NEQ "" echo %pingspeednote%&set pingspeednote=
 :choice_options
 choice /c 12345TseoDHCk6789 /n
 set error=%errorlevel%
 
-if %error% == 17 call :clean_junk
+if %error%==17 call :backup
+if %error% == 18 call :clean_junk
 if %error% == 16 set pingspeednote=Note: Increasing ping speed can result in slower script execution.
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
 if %error% == 10 call :delete_options_file&call :init&goto input
@@ -408,6 +453,7 @@ set ping_batch=2
 if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 :input
 title ping master  ^^(*(oo)*)^^
+set scroll_text="Press S to perform a scan Range upto x.x.x.%pings%" "E to Edit Subnet of I.P.  %prefix_range%.y    " "O to go to Options Settings   " "Press keys 123, zxc to increase/decrease range %pings%"
 set scrollc=0
 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==2 title %%~a
 set /a scrolltextnow+=1
@@ -424,7 +470,7 @@ echo: --------------------------------^|^| !label1! %label2%
 echo: %label3%  ^|^| 123^< .     .   . . increase 
 echo: range, E to Edit Subnet of I.P. ^|^| zxc^< . .  .  .   . decrease
 echo: O Additional Options%label5%^|^|___________________________
-echo: -------------------------------------------------------------                   
+echo: -------------------------------------------------------------   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if %profile_status%==1  echo:Profiles:-
 if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
