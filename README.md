@@ -17,12 +17,14 @@ Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file
 ```
 
 
-<p align=center><strong></b>Live in Peace!!</strong></p>
+<p align=center><strong></b>Author Peace!!</strong></p>
 
 ##I oppose the following ideas/ideologies
 - Western supremacy/hegemony/exceptionalism/hypocrisy/convenience/first-world-privelege
 - Hindu-supremacists and politically fascist parties
 - Zionist racist Zionism
+
+And other vile souls that defile humanity and human consciousness by constant lying and hypocrisy!
 
 I oppose War generally, and I hate any body who has even a twiddled tid or cent of any of these venomous ideologies. I am Christian. If you are a christian you can not have any cent of these in you.
 
