@@ -3,8 +3,11 @@ mode 120,30
 setlocal enabledelayedexpansion
 set error_of=0
 set scrolltextnow=1
+set bounce=1
+set scroller=**************start pings*******
 set label3=Press S to perform a scan upto
 set /a revelation=%RANDOM%*2000/32767
+set main_title=ping master  ^^^^(*(oo)*)^^^^
 set error=99
 set last_error=0
 set gotrange=0
@@ -80,6 +83,10 @@ for %%a in (%make_me_a_string%) DO set /a counter+=1&if !counter!==!cchar! set r
 set /a times+=1
 if %times% LEQ 6 goto times
 exit /b
+:NewSecretRxFx
+if %bounce%==1 if "%scroller:~0,1%" == "*" (set scroller=%scroller:~1%*) 
+if %bounce%==0 if "%scroller:~-1%" == "*" (set scroller=*%scroller:~0,-1%) 
+Exit /b
 :createoptions
 echo:File not exists
 echo:create settings file?
@@ -452,11 +459,12 @@ if %gotrange%==0 set pings=254
 set ping_batch=2
 if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 :input
-title ping master  ^^(*(oo)*)^^
+title ping master %main_title%
 set scroll_text="Press S to perform a scan Range upto x.x.x.%pings%" "E to Edit Subnet of I.P.  %prefix_range%.y    " "O to go to Options Settings   " "Press keys 123, zxc to increase/decrease range %pings%"
 set scrollc=0
 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==2 title %%~a
 set /a scrolltextnow+=1
+call :NewSecretRxFx
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %pings% GEQ 254 (set label1=Maximum Range Achieved) else (set label1=)
 if %pings% GEQ 254 (set label2=      press keys)
@@ -465,7 +473,7 @@ if %pings% == 1 set label2=  press keys
 if %pings% == 1 (set label1=Range cannot be less than 1)
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
 if %error_of% == 2 (echo:>NUL&goto skip_labels) else (set error_of=0&cls)
-echo: **************start pings*******^|^| Range: 1--x.x.x.%pings%
+echo: %scroller%^|^| Range: 1--x.x.x.%pings%
 echo: --------------------------------^|^| !label1! %label2%
 echo: %label3%  ^|^| 123^< .     .   . . increase 
 echo: range, E to Edit Subnet of I.P. ^|^| zxc^< . .  .  .   . decrease
@@ -486,12 +494,12 @@ echo:&echo:Please Adjust Range before starting to Ping^^^!&echo:&echo:&echo:
 choice /c s03z2x1coePU /n /t 3 /d 0 >NUL
 set error_of=%errorlevel%
 set /a choose+=1
-if %errorlevel%==3 set /a pings +=10
-if %errorlevel%==4 set /a pings -=10
-if %errorlevel%==5 set /a pings +=5
-if %errorlevel%==6 set /a pings -=5
-if %errorlevel%==7 set /a pings +=1
-if %errorlevel%==8 set /a pings -=1
+if %errorlevel%==3 set /a pings +=10&set bounce=0&set main_title=^^^^(*(oo)*)^^^^ +10
+if %errorlevel%==4 set /a pings -=10&set bounce=1&set main_title=^^^^(*(oo)*)^^^^ -10
+if %errorlevel%==5 set /a pings +=5&set bounce=0&set main_title=^^^^(*(oo)*)^^^^ +5
+if %errorlevel%==6 set /a pings -=5&set bounce=1&set main_title=^^^^(*(oo)*)^^^^ -5
+if %errorlevel%==7 set /a pings +=1&set bounce=0&set main_title=^^^^(*(oo)*)^^^^ +1
+if %errorlevel%==8 set /a pings -=1&set bounce=1&set main_title=^^^^(*(oo)*)^^^^ -1
 if %pings% GEQ 255 set pings=254
 if %pings% LSS 1 set pings=1
 if %errorlevel%==1 goto scan
