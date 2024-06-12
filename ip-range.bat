@@ -1,6 +1,10 @@
 @echo off
 mode 120,30
 setlocal enabledelayedexpansion
+set error_of=0
+set scroll_text="Press S to perform a scan upto" "E to Edit Subnet of I.P.      " "O to go to Options            " "Press keys 123, zxc to increase/decrease range"
+set scrolltextnow=1
+set label3=Press S to perform a scan upto
 set /a revelation=%RANDOM%*2000/32767
 set error=99
 set last_error=0
@@ -403,22 +407,25 @@ if %gotrange%==0 set pings=254
 set ping_batch=2
 if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 :input
-cls
 title ping master  ^^(*(oo)*)^^
-rem if %choose% LEQ 5 goto :skipsetlabel
+set scrollc=0
+for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==2 title %%~a
+set /a scrolltextnow+=1
+if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %pings% GEQ 254 (set label1=Maximum Range Achieved) else (set label1=)
-if %pings% == 1 (set label1=Range cannot be less than 1) else (set label1=)
-rem if %pings% == 1 (set label2=) else (set label2=[-]zxc)
-:skipsetlabel
-if %choose% LSS 50 (set label3=  *  -x.x.x.&set label4=) else (set label3=  * -&set label4=-)
+if %pings% GEQ 254 (set label2=      press keys)
+if %pings% LSS 254 if %pings% GTR 1 set label2=                             press keys
+if %pings% == 1 set label2=  press keys
+if %pings% == 1 (set label1=Range cannot be less than 1)
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
+if %error_of% == 2 (echo:>NUL&goto skip_labels) else (set error_of=0&cls)
 echo: **************start pings*******^|^| Range: 1--x.x.x.%pings%
-echo: --------------------------------^|^| %label1% 
-echo: Press S to perform a scan upto  ^|^| 123^< .     .   . . increase 
+echo: --------------------------------^|^| !label1! %label2%
+echo: %label3%  ^|^| 123^< .     .   . . increase 
 echo: range, E to Edit Subnet of I.P. ^|^| zxc^< . .  .  .   . decrease
 echo: O Additional Options%label5%^|^|___________________________
 echo: -------------------------------------------------------------                   
-if exist "%write_dir%\%options_file%" (echo:                     Loaded File: %options_file%) else (echo:)
+if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if %profile_status%==1  echo:Profiles:-
 if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
 if %profile_status%==1 (Call :process_profiles "entry")
@@ -428,7 +435,10 @@ if %script_execute%==1 if %save_subnet%==1 cls&mode 40,20&for /l %%i in (1,1,10)
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
-choice /c s03z2x1coeP  /n 
+echo:&echo:Please Adjust Range before starting to Ping^^^!&echo:&echo:&echo:
+:skip_labels
+choice /c s03z2x1coePU /n /t 3 /d 0 >NUL
+set error_of=%errorlevel%
 set /a choose+=1
 if %errorlevel%==3 set /a pings +=10
 if %errorlevel%==4 set /a pings -=10
@@ -443,7 +453,6 @@ if %errorlevel%==9 goto options
 if %errorlevel%==10 goto enter_subnet
 if %errorlevel%==11 goto entry
 :after_profiles
-cls
 del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
 del "init.xxZhPuG.lock.2.conf.bak" 2>NUL
 goto input
@@ -491,11 +500,11 @@ cls
 title  ping master  ^^(*(oo)*)^^
 echo:                       
 if not defined PREFIX_RANGE goto enter_subnet
-echo:           -----------------------------------
-echo:            S to continue to Scanning...
-echo:            E Edit Subnet = %prefix_range%
-echo:            O Additional Options
-echo:          ------------------------------------
+echo:======================================================       
+echo:S to continue to Scanning I.P Addresses..^|         
+echo:E = Edit Subnet                          ^|%prefix_range%            
+echo:o Additional options                     ^|____________
+echo:-----------------------------------------^|============
 
 choice /c seO /m "" /n
 if %errorlevel%==1 goto loop
@@ -510,7 +519,7 @@ echo: Enter Subnet
 set /p PREFIX_RANGE=Subnet X.X.X:
 if "%PREFIX_RANGE%"=="" set PREFIX_RANGE=192.168.1
 if %powershellavlable%==1 for /f %%i in ('powershell -c "'%PREFIX_RANGE%' -match '^\d{0,1}\d{0,1}\d{0,1}[.]\d{0,1}\d{0,1}\d{0,1}\.\d{0,1}\d{0,1}\d{0,1}$'"') do set state=%%i
-if %powershellavlable%==0 echo %PREFIX_RANGE%|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$"&& (goto loop) || (echo:bad format&goto :enter_subnet)
+if %powershellavlable%==0 echo %PREFIX_RANGE%|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$"&& (goto input) || (echo:bad format&goto :enter_subnet)
 if "%state%"=="False"  powershell -c "write-host -nonewline TRY AGAIN!`r"&TIMEOUT 1 >nul & goto :enter_subnet
 ECHO:
 :loop
@@ -519,27 +528,31 @@ del "%write_dir%\%totaluid%.online._.*.txt" 2>NUL
 del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
 timeout 1 >NUL
 cls
+:displyascii
+echo:
+echo:
+echo:     _       __ _ _          _                        _                _ _
+echo:    ^| ^|     / _(_) ^|        ^| ^|                      ^| ^|              (_) ^|
+echo:  __^| ^| ___^| ^|_ _^| ^| ___  __^| ^|______ ___ _ __   __ _^| ^| _____    ___  _^| ^|
+echo: / _` ^|/ _ \  _^| ^| ^|/ _ \/ _` ^|______/ __^| '_ \ / _` ^| ^|/ / _ \  / _ \^| ^| ^|
+echo:^| (_^| ^|  __/ ^| ^| ^| ^|  __/ (_^| ^|      \__ \ ^| ^| ^| (_^| ^|   ^<  __/ ^| (_) ^| ^| ^|
+echo: \__,_^|\___^|_^| ^|_^|_^|\___^|\__,_^|      ^|___/_^| ^|_^|\__,_^|_^|\_\___^|  \___/^|_^|_^|
+echo:
+echo:
+echo: _                                  _       _   _                          __
+echo:(_)                                (_)     ^| ^| (_)                        / /
+echo: _ _ __     __ _ ___ ___  ___   ___ _  __ _^| ^|_ _  ___  _ __   __      __/ /
+echo:^| ^| '_ \   / _` / __/ __^|/ _ \ / __^| ^|/ _` ^| __^| ^|/ _ \^| '_ \  \ \ /\ / / /
+echo:^| ^| ^| ^| ^| ^| (_^| \__ \__ \ (_) ^| (__^| ^| (_^| ^| ^|_^| ^| (_) ^| ^| ^| ^|  \ V  V / /
+echo:^|_^|_^| ^|_^|  \__,_^|___/___/\___/ \___^|_^|\__,_^|\__^|_^|\___/^|_^| ^|_^|   \_/\_/_/
 echo:
 echo:
 echo:
-echo:**** ---- *                  ----               **** ---- * **** ---- *
-echo:**** ---- * **** TE          ----         ECH * **** ---- * **** ---- *
-echo:**** ---- * **** ----        ----        ---- * **** ---- * **** ---- *
-echo:**** ---- * **** ----        ---- *   GI ---- * **** ---- * **** ---- *
-echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
-echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
-echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
-echo:**** ---- *      ---- * **** ---- *      ---- * **** ---- * **** ---- *
-echo:**** TEC       I ---- * **** ---- * GO        * **** ---- * **** ---- *
-echo:**** TE        I ---- * **** ---- * GOG           GI ---- * **** ---- *
-echo:          * **** ---- * **** ---- * ****         OGI ---- * **** ---- *
-echo:**** ---- * **** ---- * **** ---- * **** ---- * **** ---- * **** ---- *
-                       
+echo:ASCII Art source:http://patorjk.com/
 
-
+timeout 1 >NUL
 :initial_start
 set ping_no=1
-ECHO:
 title Pinger Main Window: Pinger
 set skip_count=0
 set found_ip=
