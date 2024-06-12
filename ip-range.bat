@@ -662,8 +662,8 @@ set /p input_file_name=Enter file name to save:
 set input_file_name="%input_file_name%.txt"
 if !input_file_name! NEQ ".txt" (echo Press a key to save !input_file_name!) else (echo:File will not be saved. No name mentioned.&pause&goto input)
 pause >NUL
-(if exist !input_file_name! echo: File name already exists.&pause&goto input)
-(if "!input_file_name!" NEQ "" echo: Writing to file......)
+(if exist !input_file_name! echo: File name already exists.& set filename=!input_file_name!& call :check_file_name_exist & set input_file_name=!filename!& if exist !filename! goto skip_check_file_status2)
+(if !input_file_name! NEQ "" echo: Writing to file......)
 :save_input_file_name
 if !input_file_name! == "00" echo:Please set default filename from menu options.&pause >NUL&goto skip_check_file_status2
 if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses" >"%%i" & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
@@ -698,7 +698,7 @@ for /f "tokens=*" %%i in ("!filename!") do for /l %%d in (1,1,99) do if !inverte
 :check_file_name_exist_over
 set no_save=0
 :save_me_from_this
-echo:you got saved
+REM echo:you got saved
 exit /b
 if %powershellavlable%==1 set filename=%filename:@=`@%
 if %powershellavlable%==1 set filename=%filename:#=`#%
