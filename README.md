@@ -35,7 +35,7 @@ Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file
 
 ##I oppose the following ideas/ideologies
 - Western supremacy/hegemony/exceptionalism/hypocrisy/convenience/first-world-privelege
-- Hindu-supremacists and politically fascist parties
+- Hindu-supremacists and politically fascist parties (personal politic)
 - Zionist-racist Zionism (No problems saying yes to hate-free and supremacist free Zionism if exist)
 
 And other vile souls that defile humanity and human consciousness by constant lying and hypocrisy!
