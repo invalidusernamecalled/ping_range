@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 set error_of=0
 set scrolltextnow=1
 set bounce=1
-set scroller=**************start pings*******
+set scroller=**************[--zxc 123--]*****
 set label3=Press S to perform a scan upto
 set /a revelation=%RANDOM%*2000/32767
 set main_title=ping master  ^^^^(*(oo)*)^^^^
