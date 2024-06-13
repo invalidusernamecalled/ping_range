@@ -1,12 +1,11 @@
 @echo off
 mode 120,30
 setlocal enabledelayedexpansion
-Set scroller=************
+set last_ping=%pings%
 Set switch=1
 set error_of=0
 set scrolltextnow=1
-set bounce=1
-set label3=Press S to perform a scan upto
+set bounce=0
 set /a revelation=%RANDOM%*2000/32767
 set main_title=ping master  ^^^^(*(oo)*)^^^^
 set error=99
@@ -466,35 +465,51 @@ if %save_subnet% == 1 call :getsubnet
 :skip_save_subnet_2
 if %gotrange%==0 set pings=254
 set ping_batch=2
+Set scroller=*********************************************************************
+set /a perc=pings*100/254
+set /a perc=perc*70/100
+Set /a minus_perc=perc-70
+rem echo !minus_perc!
+rem echo !scroller:~%minus_perc%!
+rem echo !scroller:~0,%perc%!X! before&PAUSE
+set scroller=!scroller:~0,%perc%!X!scroller:~%minus_perc%!
+rem echo !scroller!
+set perc=0
 if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
+set diff=0
 :input
+if %diff% LSS 0 set /a diff=-diff
+set /a perc=diff*70/254
 title %main_title% : ping master ^^(*(oo)*)^^
-if %pings% GTR 250 if %pings% LSS 254 if %switch%==1 set scroller=*******************[--zxc 123--]&set switch=0
-if %pings% LSS 10 if %pings% GTR 1 if %switch%==1 set scroller=[--zxc 123--]*******************&set switch=0
+if %pings% GTR 243 if %pings% LSS 254 if %switch%==1 set scroller=********************************************************X&set switch=0
+REM                                                               ***********************************************************
+REM                                                               *****************************Maximum Range Achieved********
+REM                                                               Range is at Minima = 1*************************************
+if %pings% LSS 20 if %pings% GTR 1 if %switch%==1    set scroller=X**********************************************************&set switch=0
 set scroll_text="Press S to perform a scan Range upto x.x.x.%pings%" "E to Edit Subnet of I.P.  %prefix_range%.y    " "O to go to Options Settings   " "Press keys 123, zxc to increase/decrease range %pings%"
 set scrollc=0
 if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==2 title %%~a
 if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum
 if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum
 set /a scrolltextnow+=1
-if %pings% == 254 set scroller=**********Maximum Range Achieved&set switch=1
-if %pings% == 1   set scroller=Range cannot be less than 1*****&set switch=1
+if %pings% == 254 set scroller=**************************************Maximum Range Achieved&set switch=0
+if %pings% == 1   set scroller=Range cannot be less than 1*********************************&set switch=0
 REM                                 Range cannot be less than 1
 REM                                      Maximum Range Achieved
-call :NewSecretRxFx
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 rem if %pings% GEQ 254 (set label1=Maximum Range Achieved) else (set label1=)
-rem if %pings% GEQ 254 (set label2=      press keys)
-if %pings% LSS 254 if %pings% GTR 1 set label2=                             press keys
+REM rem if %pings% GEQ 254 (set label2=      press keys)
+REM if %pings% LSS 254 if %pings% GTR 1 set label2=                             press keys
 rem if %pings% == 1 set label2=  press keys
 rem if %pings% == 1 (set label1=Range cannot be less than 1)
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
 if %error_of% == 2 (echo:>NUL&goto skip_labels) else (set error_of=0&cls)
-echo: %scroller%^|^| Range: %prefix-label%1--%prefix-label%{%pings%}
-echo: --------------------------------^|^| !label1! %label2%
-echo: %label3%  ^|^| 123^< .     .   . . increase 
-echo: range, E to Edit Subnet of I.P. ^|^| zxc^< . .  .  .   . decrease
+echo: !scroller!
+echo: Range: %prefix-label%1--%prefix-label%{%pings%}
+echo: --------------------------------.- & REM <!label1!?> echo %perc% %diff%
+echo: S:SCAN E:Edit O:Option          ^|  123^< .     .   . . increase last octet
+echo: Scan Range ,E to edit ip subnet ^|^| zxc^< . .  .  .   . decrease
 echo: O Additional Options%label5%^|^|___________________________
 echo: -------------------------------------------------------------   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
@@ -507,17 +522,22 @@ if %script_execute%==1 if %save_subnet%==1 cls&mode 40,20&for /l %%i in (1,1,10)
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
-echo:&echo:Please Adjust Range before starting to Ping^^^!&echo:&echo:&echo:
+echo:&echo:Please Adjust Range ^^^!&echo:&echo:&echo:
 :skip_labels
 choice /c s03z2x1coePU /n /t 3 /d 0 >NUL
+set switch=1
 set error_of=%errorlevel%
 set /a choose+=1
+set last_ping=%pings%
+for /l %%i in (1,1,%perc%) do call :NewSecretRxFx
 if %errorlevel%==3 set /a pings +=10&set bounce=0&set main_title= +10
 if %errorlevel%==4 set /a pings -=10&set bounce=1&set main_title= -10
 if %errorlevel%==5 set /a pings +=5&set bounce=0&set main_title= +5
 if %errorlevel%==6 set /a pings -=5&set bounce=1&set main_title= -5
 if %errorlevel%==7 set /a pings +=1&set bounce=0&set main_title= +1
 if %errorlevel%==8 set /a pings -=1&set bounce=1&set main_title= -1
+set /a diff=4
+if %errorlevel% NEQ 8 if %errorlevel% NEQ 7 set /a diff=pings-last_ping
 if %pings% GEQ 255 set pings=254
 if %pings% LSS 1 set pings=1
 if %errorlevel%==1 goto scan
