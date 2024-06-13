@@ -2,7 +2,7 @@
 *                    *           Script - based I.P. Address Scanner
 **                  ***
 *** script - based *****
-**** un assisted execution
+**** unassisted execute**
 ***** save to logs********
 ****** profiles ***********
 *******        *************
