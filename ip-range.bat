@@ -473,6 +473,7 @@ set scrollc=0
 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==2 title %%~a
 set /a scrolltextnow+=1
 call :NewSecretRxFx
+if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %pings% GEQ 254 (set label1=Maximum Range Achieved) else (set label1=)
 if %pings% GEQ 254 (set label2=      press keys)
@@ -481,7 +482,7 @@ if %pings% == 1 set label2=  press keys
 if %pings% == 1 (set label1=Range cannot be less than 1)
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
 if %error_of% == 2 (echo:>NUL&goto skip_labels) else (set error_of=0&cls)
-echo: %scroller%^|^| Range: 1--x.x.x.%pings%
+echo: %scroller%^|^| Range: %prefix-label%1--%prefix-label%{%pings%}
 echo: --------------------------------^|^| !label1! %label2%
 echo: %label3%  ^|^| 123^< .     .   . . increase 
 echo: range, E to Edit Subnet of I.P. ^|^| zxc^< . .  .  .   . decrease
