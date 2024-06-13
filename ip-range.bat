@@ -187,6 +187,11 @@ for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^|
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "uuid:"') do set lastuuid=%%i
 for /f "tokens=2 delims=: " %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "file:"') do set file_status=%%i
 for /f "tokens=2* delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "filename:"') do set filename=%%i
+
+:strip_loop
+set strip_filename=%filename:" ="%
+if %strip_filename% NEQ %filename% goto strip_loop
+set filename=!strip_filename!
 for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "execute:"') do set script_execute=%%i
 for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "profile:"') do set profile_status=%%i
 if exist "init.xxZhPuG.lock.1.conf.bak" del "init.xxZhPuG.lock.1.conf.bak"
@@ -263,6 +268,7 @@ call :execute_tick
 call :profiletick
 rem if "%powershell_or_not%" NEQ "" 
 rem if "%powershell_or_not%" NEQ ""
+
 if exist "init.xxZhPuG.lock.2.conf.bak" del "init.xxZhPuG.lock.2.conf.bak"
 :reprintoptions
 set special_symbol=---:
@@ -283,27 +289,28 @@ echo:            O Additional Options :H Change Range
 echo:          ------------------------------------
 echo:     Enter Choice No.#                       Tk=Tick/Untick
 echo:
-echo:%highlight1%1.[%multi-file%] enable default save file name (multiple files generated)
-echo:%highlight2%2.[%single-file%] enable default save file name (OVERWRITE^^^!)
-echo:%highlight3%3.[%rangetick%] Remember Range
-echo:%highlight4%4.[%subnettick%] Remember Subnet
-echo:%highlight5%5.[%powershell_tick%] enable powershell
-echo:%highlight6%6.[%execution_tick%] UnAssisted Script execution
-echo:%highlight7%7.[%profile_tick%] Enable Profiles
+echo:%highlight1%1. [%multi-file%] enable default save file name (multiple files generated)
+echo:%highlight2%2. [%single-file%] enable default save file name (OVERWRITE^^^!)
+echo:%highlight3%3. [%rangetick%] Remember Range
+echo:%highlight4%4. [%subnettick%] Remember Subnet
+echo:%highlight5%5. [%powershell_tick%] enable powershell
+echo:%highlight6%6. [%execution_tick%] UnAssisted Script execution
+echo:%highlight7%7. [%profile_tick%] Enable Profiles
 echo:%highlight8%8. Ping Speed (%ping_batch%) (Not persistent across Sessions)
 echo:%highlight9%9. Backup
-echo:%highlight10%10. Clean Junk
+echo:%highlight10%Z. Clean Junk
 echo:%highlight11%11. Thanks ^& Honour
-echo:     Filename: (%filename%)
+for /f "tokens=*" %%i in (!filename!) do echo:     Filename: (%%i)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
 for /l %%i in (1,1,11) do CALL set highlight%%i=    &echo: >NUL
 if "%pingspeednote%" NEQ "" echo %pingspeednote%&set pingspeednote=
 :choice_options
-choice /c 12345TseoDHCk6789 /n
+if %error% == 17 call :backup
+choice /c 12345TseoDHCk6789Z /n
 set error=%errorlevel%
 if %error% == 1 if %last_error% == 1  call :credits
-if %error%==17 call :backup
+if %error%==17 cls&goto :reprintoptions
 if %error% == 18 call :clean_junk
 if %error% == 16 set pingspeednote=Note: Increasing ping speed can result in slower script execution.
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
@@ -910,7 +917,7 @@ echo:
 echo:
 echo:                          -------------------------------------------
 echo:                         ^|      I would like to Thank my Friend,   ^|
-echo:                         ^|       Lord ^& Savior Jesus for this     ^|
+echo:                         ^|       Lord ^& Savior Jesus for this      ^|
 echo:                         ^|             Work.                       ^|
 echo:                          000--------------------------------------000
 echo:
