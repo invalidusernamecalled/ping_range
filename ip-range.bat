@@ -1,6 +1,7 @@
 @echo off
 mode 120,30
 setlocal enabledelayedexpansion
+Set scroller=************
 Set switch=1
 set error_of=0
 set scrolltextnow=1
