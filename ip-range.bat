@@ -1,6 +1,8 @@
 @echo off
 mode 120,30
 setlocal enabledelayedexpansion
+set notchange=1
+set notreally=0
 set last_ping=%pings%
 Set switch=1
 set error_of=0
@@ -135,7 +137,10 @@ for /f "tokens=1,2,3 delims=," %%i in (%choiceprofile%) do set pings=%%j&set pre
 goto after_profiles
 
 :backup
-
+if %notreally%==2 exit /b
+choice /m "Really yn"
+set notreally=%errorlevel%
+if %notreally% == 2 cls&goto reprintoptions
 set options=profile: profiles: filename: file: powershell: range: subnet: uuid: savesubnet: saverange: execute:
 set values=profile_status current_profile filename file_status powershell_or_not pings prefix_range lastuuid save_subnet save_range script_execute
 
@@ -158,6 +163,7 @@ for /f "tokens=1,2* delims=: " %%a in ('type xxZhPuG.temp.1.bak') do CALL echo %
 echo:// please do not rename file for easy restore^^^!>>xxZhPuG.settings.%counter_of%.bak.txt
 del xxZhPuG.temp.1.bak
 echo:File saved to xxZhPuG.settings.%counter_of%.bak.txt&PAUSE
+:here
 exit /b
 
 
@@ -234,6 +240,7 @@ if %errorlevel%==3 exit /b
 goto ping_speed_loop
 
 :options
+
 echo:>"init.xxZhPuG.lock.2.conf.bak"
 
 set choose=0
@@ -271,6 +278,7 @@ rem if "%powershell_or_not%" NEQ ""
 
 if exist "init.xxZhPuG.lock.2.conf.bak" del "init.xxZhPuG.lock.2.conf.bak"
 :reprintoptions
+if %notchange%==1 set notchange=0&goto options
 set special_symbol=---:
 if %error% NEQ 6 if %error% NEQ 0 CALL set highlight%error%=%special_symbol%
 if %error% NEQ 6 if %error% == 14 CALL set highlight6=%special_symbol%
@@ -307,30 +315,32 @@ for /l %%i in (1,1,11) do CALL set highlight%%i=    &echo: >NUL
 if "%pingspeednote%" NEQ "" echo %pingspeednote%&set pingspeednote=
 :choice_options
 if %error% == 17 call :backup
+set notreally=0
 choice /c 12345TseoDHCk6789Z /n
 set error=%errorlevel%
 if %error% == 1 if %last_error% == 1  call :credits
 if %error%==17 cls&goto :reprintoptions
 if %error% == 18 call :clean_junk
 if %error% == 16 set pingspeednote=Note: Increasing ping speed can result in slower script execution.
-if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&goto options
+if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&set notchange=1&goto options
 if %error% == 10 call :delete_options_file&call :init&goto input
+if %error% == 11 goto input
 if %error% == 7 goto scan
 if %error% == 8 goto enter_subnet
 if %error% == 13 set error=6
 if %error% == 6 if %error% == 0 goto options
 if %error% == 11 goto input
 if %error%==6 if %last_error% GTR 0 if %last_error% == 16 call :set_ping_speed
-if %error%==6 if %last_error% GTR 0 if %last_error% == 1 call :addfile 2&goto options
-if %error%==6 if %last_error% GTR 0 if %last_error% == 2 call :addfile 1&goto options
-if %error%==6 if %last_error% GTR 0 if %last_error% == 3 call :saverange&goto options
-if %error%==6 if %last_error% GTR 0 if %last_error% == 4 call :savesubnet&goto options
-if %error%==6 if %last_error% GTR 0 if %last_error% == 5 call :setpowershell&goto options
+if %error%==6 if %last_error% GTR 0 if %last_error% == 1 call :addfile 2&set notchange=1&goto reprintoptions
+if %error%==6 if %last_error% GTR 0 if %last_error% == 2 call :addfile 1&set notchange=1&goto reprintoptions
+if %error%==6 if %last_error% GTR 0 if %last_error% == 3 call :saverange&set notchange=1&goto reprintoptions
+if %error%==6 if %last_error% GTR 0 if %last_error% == 4 call :savesubnet&set notchange=1&goto reprintoptions
+if %error%==6 if %last_error% GTR 0 if %last_error% == 5 call :setpowershell&set notchange=1&goto reprintoptions
 if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_range% == 0 if %save_subnet% NEQ 0 echo:Both Remember Range and Remember Subnet must be enabled.&PAUSE
 if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% == 0 if %save_range% NEQ 0 echo:Both Remember Range and Remember Subnet must be enabled.&PAUSE
 if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% == 0 if %save_range% == 0 echo:Both Remember Range and Remember Subnet must be enabled.&PAUSE
-if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% neq 0 if %save_range% neq 0 call :setscriptexecute&goto options
-if %error%==6 if %last_error% GTR 0 if %last_error% == 15 call :setprofile&goto options
+if %error%==6 if %last_error% GTR 0 if %last_error% == 14 if %save_subnet% neq 0 if %save_range% neq 0 call :setscriptexecute&set notchange=1&goto reprintoptions
+if %error%==6 if %last_error% GTR 0 if %last_error% == 15 call :setprofile&set notchange=1&goto reprintoptions
 set last_error=%error%
 if %error% LEQ 5 if %error% NEQ 0 cls&goto reprintoptions
 cls&goto reprintoptions
@@ -508,13 +518,13 @@ if %error_of% == 2 (echo:>NUL&goto skip_labels) else (set error_of=0&cls)
 echo: !scroller!
 echo: Range: %prefix-label%1--%prefix-label%{%pings%}
 echo: --------------------------------.- & REM <!label1!?> echo %perc% %diff%
-echo: S:SCAN E:Edit O:Option          ^|  123^< .     .   . . increase last octet
+echo: PRESS [S] (E)dit 0ptions        ^|  123^< .     .   . . increase last octet
 echo: Scan Range ,E to edit ip subnet ^|^| zxc^< . .  .  .   . decrease
-echo: O Additional Options%label5%^|^|___________________________
+echo: O            Options%label5%^|^|___________________________
 echo: -------------------------------------------------------------   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if %profile_status%==1  echo:Profiles:-
-if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
+REM if %choose% == 2 echo:     Tip-:(Please use Windows Console Host as your default terminal.)
 if %profile_status%==1 (Call :process_profiles "entry")
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
@@ -524,11 +534,10 @@ if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
 echo:&echo:Please Adjust Range ^^^!&echo:&echo:&echo:
 :skip_labels
-choice /c s03z2x1coePU /n /t 3 /d 0 >NUL
-set switch=1
-set error_of=%errorlevel%
 set /a choose+=1
 set last_ping=%pings%
+choice /c s03z2x1coePUy /n /t 3 /d y >NUL
+set error_of=%errorlevel%
 for /l %%i in (1,1,%perc%) do call :NewSecretRxFx
 if %errorlevel%==3 set /a pings +=10&set bounce=0&set main_title= +10
 if %errorlevel%==4 set /a pings -=10&set bounce=1&set main_title= -10
@@ -536,14 +545,18 @@ if %errorlevel%==5 set /a pings +=5&set bounce=0&set main_title= +5
 if %errorlevel%==6 set /a pings -=5&set bounce=1&set main_title= -5
 if %errorlevel%==7 set /a pings +=1&set bounce=0&set main_title= +1
 if %errorlevel%==8 set /a pings -=1&set bounce=1&set main_title= -1
+if %errorlevel%==1 goto scan
+if %errorlevel%==2 cls&goto reprintoptions
+if %errorlevel%==9 cls&goto reprintoptions
+if %errorlevel%==10 goto enter_subnet
+if %errorlevel%==11 goto entry
 set /a diff=4
 if %errorlevel% NEQ 8 if %errorlevel% NEQ 7 set /a diff=pings-last_ping
 if %pings% GEQ 255 set pings=254
 if %pings% LSS 1 set pings=1
-if %errorlevel%==1 goto scan
-if %errorlevel%==9 goto options
-if %errorlevel%==10 goto enter_subnet
-if %errorlevel%==11 goto entry
+
+set switch=1
+
 :after_profiles
 del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
 del "init.xxZhPuG.lock.2.conf.bak" 2>NUL
@@ -602,7 +615,7 @@ choice /c seO /m "" /n
 if %errorlevel%==1 goto loop
 if %errorlevel%==3 goto options
 :enter_subnet
-set choose=0
+REM set choose=0
 cls
 echo:press /enter\ for the default value
 echo:..
