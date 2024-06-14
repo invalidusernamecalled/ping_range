@@ -508,8 +508,9 @@ if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!=
 if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum
 if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum
 set /a scrolltextnow+=1
-if %pings% == 254 set scroller=**************************************Maximum Range Achieved&set switch=0
-if %pings% == 1   set scroller=Range cannot be less than 1********************************&set switch=0
+set label1=
+if %pings% == 254 set scroller=**************************************Maximum Range Achieved&set label1= Cannot Increase Range any more&set switch=0
+if %pings% == 1   set scroller=Range cannot be less than 1********************************&set label1= Cannot decrease Range any more&set switch=0
 REM                                 Range cannot be less than 1
 REM                                      Maximum Range Achieved
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
@@ -525,10 +526,10 @@ echo:
 echo:            !scroller![%pings%]
 echo:
 echo: Range: %prefix-label%1--%prefix-label%{%pings%}                      
-echo: --------------------------------.  & REM <!label1!?> echo %perc% %diff%
-echo: PRESS [S]  E dit 0ptions        ^|  123^< .     .   . . increase last octet
-echo: Scan Range ,E to edit ip subnet ^|  zxc^< . .  .  .   . decrease  ""    ""
-echo: O            Options%label5%^|________________________________________
+echo: ----keyboard--instructions------.  & REM <!label1!?> echo %perc% %diff%
+echo: PRESS [S]  E dit 0ptions        ^|  123 .     .   . . ++ range last octet
+echo: Scan Range                      ^|  zxc . .  .  .   . -- ""    ""    ""
+echo:                     %label5%^|________keyboard_keys___________________
 echo: -------------------------------------------------------------------------.   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if %profile_status%==1  echo:Profiles:-
@@ -540,7 +541,7 @@ if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
-echo:&echo: Please Adjust Range ^^^!&echo:&echo:&echo:
+echo:&echo: Please Adjust Range ^^^!%label1%&echo:&echo:&echo:
 :skip_labels
 set /a choose+=1
 set last_ping=%pings%
