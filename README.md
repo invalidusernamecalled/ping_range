@@ -10,7 +10,6 @@
 *********    ****************
 **********  *****************
 ******************************
-The Pyramid of Holy Script-hood
 ```
 <html><b>&nbsp        </b>&nbsp  Mature Release (Stable)
 
@@ -31,7 +30,7 @@ Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file
 ```
 
 
-<p align=center><strong></b>Author Peace!!</strong></p>
+<p align=center>The Pyramid of Holy Script-hood, I present *Batch Scanner* <strong></b>Author Peace!!</strong></p>
 
 
 
