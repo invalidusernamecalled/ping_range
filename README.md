@@ -33,15 +33,6 @@ Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file
 
 <p align=center><strong></b>Author Peace!!</strong></p>
 
-##I oppose the following ideas/ideologies
-- Western supremacy/hegemony/exceptionalism/hypocrisy/convenience/first-world-privelege (ungodly)
-- Hindu-supremacists and politically fascist parties (personal/personality politik)
-- Zionist-racist Zionism (No problems saying yes to hate-free and supremacist free Zionism -if it can exist)
-
-And other vile souls that defile humanity and human consciousness by constant lying and hypocrisy!
-
-I oppose War generally, and I hate any body who has even a twiddled tid or cent of any of these venomous ideologies. I am Christian. If you are a christian you can not have any cent of these in you.
-
 
 
 _Non-Commercial Use License
