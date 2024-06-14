@@ -217,7 +217,11 @@ Exit /b
 color 7
 choice /c yn /m "Are you sure? yn" /n
 if %errorlevel%==2 exit /b
+echo:trying to erase settings
+echo:.
 del "%write_dir%\%options_file%"
+echo:..
+if not exist "%write_dir%\%options_file%" echo ...Success&echo:&echo:press key&PAUSE >NUL
 if exist "%write_dir%\%options_file%" echo File not deleted.&PAUSE
 del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
 del "init.xxZhPuG.lock.2.conf.bak" 2>NUL
