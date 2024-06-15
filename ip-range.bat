@@ -518,7 +518,7 @@ echo:!labelx!       -:!progress_bar!!pings!!progress_bar!:-
 echo:
 echo: Range: %prefix-label%1--%prefix-label%{%pings%}                      
 echo: : : ..: : .. : .:  - - : : . : ..       &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
-echo: PRESS [S]   E,dit 0ptions       ~   123 .     .   . . ++ range last octet
+echo: PRESS [S]   E,dit 0ptions       ~   123 .     .   . . ++ inc.:range last octet
 echo:                                 ~   zxc . .  .  .   . (-) "     "     "
 echo:                     %label5%~   ::: , keyboard key      [S]~Scan~    ~
 echo: -------------------------------------------------------------------------   
