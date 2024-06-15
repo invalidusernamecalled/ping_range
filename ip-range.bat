@@ -256,13 +256,17 @@ if %ping_batch% LSS 1 set ping_batch=1
 if %errorlevel%==3 exit /b
 goto ping_speed_loop
 
-:options
+:monkey_dance
+echo:working...
+echo|set/p=
+exit /b
 
+:options
 echo:>"init.xxZhPuG.lock.2.conf.bak"
 
 set choose=0
 if %revelation%==666 title Praise God^^^!
-cls
+cls & (for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..
 set ran_check=1&if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
 set ran_check=1&if not exist "%write_dir%\xxZhPuG.*.options.txt" call :createoptions&goto input
 for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%"') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
@@ -294,6 +298,7 @@ rem if "%powershell_or_not%" NEQ ""
 rem if "%powershell_or_not%" NEQ ""
 
 if exist "init.xxZhPuG.lock.2.conf.bak" del "init.xxZhPuG.lock.2.conf.bak"
+cls
 :reprintoptions
 if %ran_check%==0 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
 if %ran_check%==0 if not exist "%write_dir%\xxZhPuG.*.options.txt" call :createoptions&goto input
@@ -336,15 +341,15 @@ if "%pingspeednote%" NEQ "" echo %pingspeednote%&set pingspeednote=
 :choice_options
 if %error% == 17 call :backup
 set notreally=0
-choice /c 12345TseoDBCk6789Z /n
+choice /c 12345TseoDbck6789Z >NUL
 set error=%errorlevel%
+if %error% == 11 set juice=1&goto input
 if %error% == 1 if %last_error% == 1  call :credits
 if %error%==17 cls&goto :reprintoptions
 if %error% == 18 call :clean_junk
 if %error% == 16 set pingspeednote=Note: Increasing ping speed can result in slower script execution.
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&set notchange=1&goto options
 if %error% == 10 call :delete_options_file&set notchange=1&goto input
-if %error% == 11 set/p hello_from_hell=&goto input
 if %error% == 7 goto scan
 if %error% == 8 goto enter_subnet
 if %error% == 13 set error=6
@@ -542,8 +547,8 @@ if %errorlevel%==6 set /a pings -=5&set main_title= -5
 if %errorlevel%==7 set /a pings +=1&set main_title= +1
 if %errorlevel%==8 set /a pings -=1&set main_title= -1
 if %errorlevel%==1 goto scan
-if %errorlevel%==2 cls&goto options
-if %errorlevel%==9 cls&goto options
+if %errorlevel%==2 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
+if %errorlevel%==9 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
 if %errorlevel%==10 goto enter_subnet
 if %errorlevel%==11 goto entry
 if %error_of% NEQ 7 if %error_of% NEQ 8 set /a semi_diff=0
@@ -554,12 +559,10 @@ if %pings% LSS 1 set pings=1&set label1= Cannot decrease Range any more
 if %last_error%==7 set /a semi_diff+=1
 if %last_error%==8 set /a semi_diff+=1
 set Last_error=%error_of%
-echo|set/p=
 set /a diff=semi_diff
 if %error_of% NEQ 7 if %error_of% NEQ 8 set /a diff=pings-last_ping
 if %error_of% NEQ 7 if %error_of% NEQ 8 if %diff% LSS 0 set /a diff=-diff
 if %error_of% GEQ 3 if %error_of% LEQ 8 set juice=1
-
 :after_profiles
 
 goto input
