@@ -1,14 +1,14 @@
 @echo off
 mode 120,30
 setlocal enabledelayedexpansion
+set juice=1
+set scroll_text="Press S to perform a scan Range upto x.x.x.%pings%" "E to Edit Subnet of I.P.  %prefix_range%.y    " "O to go to Options Settings   " "Press keys 123, zxc to increase/decrease range %pings%"
 Set ran_check=0
 set notchange=1
 set notreally=0
 set last_ping=%pings%
-Set switch=1
 set error_of=0
 set scrolltextnow=1
-set bounce=0
 set /a revelation=%RANDOM%*2000/32767
 set main_title=ping master  ^^^^(*(oo)*)^^^^
 set error=99
@@ -344,7 +344,7 @@ if %error% == 18 call :clean_junk
 if %error% == 16 set pingspeednote=Note: Increasing ping speed can result in slower script execution.
 if %error% == 12  set /p filename=Enter a file name:&call :addfilename "!filename!"&set notchange=1&goto options
 if %error% == 10 call :delete_options_file&set notchange=1&goto input
-if %error% == 11 goto input
+if %error% == 11 set/p hello_from_hell=&goto input
 if %error% == 7 goto scan
 if %error% == 8 goto enter_subnet
 if %error% == 13 set error=6
@@ -500,29 +500,26 @@ set diff=5
 :input
 set /a perc=pings*100/254
 call :progress %perc%
-title %main_title% : ping master ^^(*(oo)*)^^
-set scroll_text="Press S to perform a scan Range upto x.x.x.%pings%" "E to Edit Subnet of I.P.  %prefix_range%.y    " "O to go to Options Settings   " "Press keys 123, zxc to increase/decrease range %pings%"
 set scrollc=0
-if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==2 title %%~a
+if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==2 set main_title=%%~a
+title %main_title% : ping master ^^(*(oo)*)^^
 if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum
 if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum
 set /a scrolltextnow+=1
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
-if %error_of% == 2 (echo:>NUL&goto skip_labels) else (cls)
+if %juice%==1 (cls) else (goto skip_labels)
 echo:
 echo:             -:!progress_bar!!pings!!progress_bar!:-
 echo:
 echo: Range: %prefix-label%1--%prefix-label%{%pings%}                      
 echo: : : ..: : .. : .:  - - : : . : ..       &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
-echo: PRESS [S]  E,dit 0ptions        ~   123 .     .   . . ++ range last octet
-echo:                                 ~   zxc . .  .  .   . -- ""    ""    ""
-echo:                     %label5%~      ._keyboard_keys_        ~    ~    ~
+echo: PRESS [S]   E,dit 0ptions       ~   123 .     .   . . ++ range last octet
+echo:                                 ~   zxc . .  .  .   . (-) "    ""    ""
+echo:                     %label5%~       ._keyboard_key_        ~    ~    ~
 echo: -------------------------------------------------------------------------   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
-if %profile_status%==1  echo:Profiles:-
-if %profile_status%==1 (Call :process_profiles "entry")
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
 if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in (1,1,10) do echo Running Auto Mode...Press C Cancel
@@ -530,9 +527,12 @@ if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
 echo:&echo: Please Adjust Range ^^^!&echo:&echo:&echo:
+if %profile_status%==1  echo: Profiles:-
+if %profile_status%==1 (Call :process_profiles "entry")
 :skip_labels
 set /a choose+=1
 set last_ping=%pings%
+Set juice=0
 choice /c s03z2x1coePUy /n /t 3 /d y >NUL
 set error_of=%errorlevel%
 if %errorlevel%==3 set /a pings +=10&set main_title= +10
@@ -558,13 +558,10 @@ echo|set/p=
 set /a diff=semi_diff
 if %error_of% NEQ 7 if %error_of% NEQ 8 set /a diff=pings-last_ping
 if %error_of% NEQ 7 if %error_of% NEQ 8 if %diff% LSS 0 set /a diff=-diff
-
-
-set switch=1
+if %error_of% GEQ 3 if %error_of% LEQ 8 set juice=1
 
 :after_profiles
-del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
-del "init.xxZhPuG.lock.2.conf.bak" 2>NUL
+
 goto input
 :get_mac.py
 color 2
