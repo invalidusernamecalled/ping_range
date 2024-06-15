@@ -2,7 +2,7 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set juice=1
-set scroll_text="Press S to perform a scan" "E to Edit Subnet of I.P." "O to go to Options Settings" "Press keys 123, zxc"
+set scroll_text="Press S to perform a scan" "E to Edit Scan Subnet" "O to go to Options Settings" "Press keys: 123, zxc"
 Set ran_check=0
 set notchange=1
 set notreally=0
@@ -514,13 +514,13 @@ if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 echo:
-echo:             -:!progress_bar!!pings!!progress_bar!:- 
+echo:!labelx!       -:!progress_bar!!pings!!progress_bar!:- 
 echo:
 echo: Range: %prefix-label%1--%prefix-label%{%pings%}                      
 echo: : : ..: : .. : .:  - - : : . : ..       &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: PRESS [S]   E,dit 0ptions       ~   123 .     .   . . ++ range last octet
-echo:                                 ~   zxc . .  .  .   . (-) "    ""    ""
-echo:                     %label5%~       ._keyboard_key_     [S]~Scan~    ~
+echo:                                 ~   zxc . .  .  .   . (-) "     "     "
+echo:                     %label5%~   ::: , keyboard key      [S]~Scan~    ~
 echo: -------------------------------------------------------------------------   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
@@ -539,12 +539,14 @@ Set juice=0
 choice /c s03z2x1coePUy /n /t 3 /d y >NUL
 set error_of=%errorlevel%
 set label1=
-if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0 ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] Oo ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] o0 ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] 0o ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] oO ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] Oo ping master ^^^^(*(oo)*)^^^^
+set /a struffof=error_of %% 2
+if %error_of% LEQ 8 if %struffof% == 0 (set labelx=._oO) else (set labelx=Oo_.)
 if %errorlevel%==1 goto scan
 if %errorlevel%==2 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
 if %errorlevel%==9 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
