@@ -2,7 +2,7 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set juice=1
-set scroll_text="Press S to perform a scan Range upto x.x.x.%pings%" "E to Edit Subnet of I.P.  %prefix_range%.y    " "O to go to Options Settings   " "Press keys 123, zxc to increase/decrease range %pings%"
+set scroll_text="Press S to perform a scan" "E to Edit Subnet of I.P." "O to go to Options Settings" "Press keys 123, zxc"
 Set ran_check=0
 set notchange=1
 set notreally=0
@@ -10,7 +10,6 @@ set last_ping=%pings%
 set error_of=0
 set scrolltextnow=1
 set /a revelation=%RANDOM%*2000/32767
-set main_title=ping master  ^^^^(*(oo)*)^^^^
 set error=99
 set last_error=99
 set gotrange=0
@@ -506,27 +505,26 @@ set diff=5
 set /a perc=pings*100/254
 call :progress %perc%
 set scrollc=0
-if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==2 set main_title=%%~a
-title %main_title% : ping master ^^(*(oo)*)^^
+if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==13 set label1=%%~a
 if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum
 if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum
 set /a scrolltextnow+=1
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
-if %juice%==1 (cls) else (goto skip_labels)
+if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 echo:
-echo:             -:!progress_bar!!pings!!progress_bar!:-
+echo:             -:!progress_bar!!pings!!progress_bar!:- 
 echo:
 echo: Range: %prefix-label%1--%prefix-label%{%pings%}                      
 echo: : : ..: : .. : .:  - - : : . : ..       &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: PRESS [S]   E,dit 0ptions       ~   123 .     .   . . ++ range last octet
 echo:                                 ~   zxc . .  .  .   . (-) "    ""    ""
-echo:                     %label5%~       ._keyboard_key_        ~    ~    ~
+echo:                     %label5%~       ._keyboard_key_     [S]~Scan~    ~
 echo: -------------------------------------------------------------------------   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
-if %revelation% == 666 color F&echo:                   i thanks Jesus for the strength to make this.
+if %revelation% == 666 color F&echo:                   Jesus made mae do this. (False accuser)
 if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in (1,1,10) do echo Running Auto Mode...Press C Cancel
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
@@ -540,19 +538,19 @@ set last_ping=%pings%
 Set juice=0
 choice /c s03z2x1coePUy /n /t 3 /d y >NUL
 set error_of=%errorlevel%
-if %errorlevel%==3 set /a pings +=10&set main_title= +10
-if %errorlevel%==4 set /a pings -=10&set main_title= -10
-if %errorlevel%==5 set /a pings +=5&set main_title= +5
-if %errorlevel%==6 set /a pings -=5&set main_title= -5
-if %errorlevel%==7 set /a pings +=1&set main_title= +1
-if %errorlevel%==8 set /a pings -=1&set main_title= -1
+set label1=
+if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] ping master ^^^^(*(oo)*)^^^^
 if %errorlevel%==1 goto scan
 if %errorlevel%==2 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
 if %errorlevel%==9 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
 if %errorlevel%==10 goto enter_subnet
 if %errorlevel%==11 goto entry
 if %error_of% NEQ 7 if %error_of% NEQ 8 set /a semi_diff=0
-set label1=
 if %pings% GEQ 254 set pings=254&set label1= Cannot Increase Range any more
 if %pings% LSS 1 set pings=1&set label1= Cannot decrease Range any more
 
@@ -607,18 +605,19 @@ for /l %%i in (1,1,5) do pause >NUl
 goto input
 :scan
 cls
-title  ping master  ^^(*(oo)*)^^
+title  Review - ping master  ^^(*(oo)*)^^
 echo:                       
 if not defined PREFIX_RANGE goto enter_subnet
 echo:======================================================       
 echo:S to continue to Scanning I.P Addresses..^|         
-echo:E = Edit Subnet                          ^|%prefix_range%            
-echo:o Additional options                     ^|____________
+echo:E = Edit Subnet ------------------------^>^|%prefix_range%            
+echo:o Additional options     H:-change range ^|____________
 echo:-----------------------------------------^|============
 
-choice /c seO /m "" /n
+choice /c seOh /m "" /n
 if %errorlevel%==1 goto loop
 if %errorlevel%==3 goto options
+if %errorlevel%==4 set juice=1&goto after_profiles
 :enter_subnet
 REM set choose=0
 cls
@@ -639,6 +638,7 @@ del "%write_dir%\%totaluid%.online.ip.*.txt" 2>NUL
 timeout 1 >NUL
 cls
 :displyascii
+title  ping master  ^^(*(oo)*)^^
 echo:
 echo:
 echo:       _             _
@@ -792,7 +792,7 @@ set choose=0
 if %profile_status%==1 choice /c yn /m "Save Profile?" /n /d n /t 4
 if %profile_status%==1 if %errorlevel%==1 set /p enterprofilename=Enter friendly name:&call :add_profile "!enterprofilename!"
 call :init
-goto input
+set juice=1&goto input
 :save_file_default_file_name
 if !input_file_name! == "00" echo:Please set default filename from menu options.&timeout 4 >NUL&goto skip_check_file_status2
 set no_save=1
