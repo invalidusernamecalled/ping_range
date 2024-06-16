@@ -526,10 +526,11 @@ echo: pings:^>                                                            [3][2]
 echo:&echo: FROM %prefix-label%1 to %prefix-label%{%pings%}                         
 echo:                 
 echo: ::::::::                                &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
-echo: S---------- Start               ~                        .   .    .                  
+echo: S---------- Start               ~                        .   .                       
 echo: e---------- Set range subnet    ~                        .   .    .                 
-echo:                     %label5%~   %label6%                [S] Scan ^^^!    
+echo:                     %label5%~  %label6%                 [S] Scan ^^^!    
 echo: :::::::::. . . . . . . . . . . . . . . . . . . . . . . . . . . .:::::::::   
+echo: - - - - - - - - - - - - - - - - -  %label6% - - - - - - - - - - - - - - - - --
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   Jesus made mae do this. (False accuser)
@@ -637,8 +638,9 @@ if "%prefix_range%" == "" set PREFIX_RANGE=
 echo: Enter Subnet
 set /p PREFIX_RANGE=Subnet X.X.X:
 if "%PREFIX_RANGE%"=="" set PREFIX_RANGE=192.168.1
-if %powershellavlable%==1 for /f %%i in ('powershell -c "'%PREFIX_RANGE%' -match '^\d{0,1}\d{0,1}\d{0,1}[.]\d{0,1}\d{0,1}\d{0,1}\.\d{0,1}\d{0,1}\d{0,1}$'"') do set state=%%i
-if %powershellavlable%==0 echo %PREFIX_RANGE%|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$"&& (goto input) || (echo:bad format&goto :enter_subnet)
+if %powershellavlable%==1 for /f %%i in ('powershell -c "'%PREFIX_RANGE%' -match '^\d{1,1}\d{0,1}\d{0,1}[.]\d{1,1}\d{0,1}\d{0,1}\.\d{1,1}\d{0,1}\d{0,1}$'"') do set state=%%i
+if %powershellavlable%==1 if "%state%"=="True" set juice=1&goto input
+if %powershellavlable%==0 echo %PREFIX_RANGE%|findstr /r "^[0-9][0-9]*[.][0-9][0-9]*[.][0-9][0-9]*$"&& (set juice=1&goto input) || (echo:bad format&goto :enter_subnet)
 if "%state%"=="False"  powershell -c "write-host -nonewline TRY AGAIN!`r"&TIMEOUT 1 >nul & goto :enter_subnet
 ECHO:
 :loop
@@ -784,7 +786,7 @@ REM for /f "tokens=*" %%I in (!input_file_name!) do if "%%xI" NEQ ".txt" set inp
 :continue-to-strip
 set strip_file_name=%input_file_name:" ="%&set strip_file_name=%input_file_name: "="%
 if !strip_file_name! NEQ !input_file_name! echo:striping input_file_name (!input_file_name!) =to= !strip_file_name!&echo|set/p=.&goto continue-to-strip
-if !input_file_name! NEQ ".txt" (echo Press a key to save !input_file_name!) else (echo:File will not be saved. No name mentioned.&pause&goto input)
+if !input_file_name! NEQ "00.txt" (echo Press a key to save !input_file_name!) else (echo:File will not be saved. No name mentioned.&pause&set juice=1&goto input)
 pause >NUL
 (if exist !input_file_name! echo: File name already exists.& set filename=!input_file_name!& call :check_file_name_exist & set input_file_name=!filename!& if exist !filename! goto skip_check_file_status2)
 (if !input_file_name! NEQ "" echo: Writing ......)
