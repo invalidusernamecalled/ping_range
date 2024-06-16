@@ -689,6 +689,7 @@ set updatevariable=0
 set percentage=0
 set ping_batch_var=0
 set begun=1
+set pingstotal=%pings%
 for /f "delims=" %%i in ('ipconfig^| find /i "ipv4"') do goto there 
 (echo: Computer internet not working?&timeout 5 >NUL)
 :there
@@ -709,13 +710,13 @@ echo:
 goto skip_ip
 :update_screen
 set /a percentage=pings_actual*100/(pings)
-set var=Pinger Main Window: pinger        (%percentage% %%)
+set var=Pinger Main Window: pinger     --%percentage% %%--
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&cls & echo:&echo:            ----------------------------------&echo:            @ %PREFIX_RANGE%.%absent% - %PREFIX_RANGE%.%present% @&echo:            Status: Sending ping requests..&echo:            Completed:%%i&echo:&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&set /a remain=pingstotal-%%i&cls & echo:&echo:            ----------------------------------&echo:            @ %PREFIX_RANGE%.%absent% - %PREFIX_RANGE%.%present% @&echo:            Status: Sending ping requests..&echo:            Completed:%%i Remaining: !remain!&echo:&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
@@ -725,7 +726,7 @@ exit /b
 :update_screen_title
 for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i
 set /a percentage=pings_actual*100/(pings)
-set var=Pinger Main Window: pinger        (%percentage% %%)
+set var=Pinger Main Window: pinger     --%percentage% %%--
 REM set var=!var:~0,%percentage%!
 title !var!
 exit /b
