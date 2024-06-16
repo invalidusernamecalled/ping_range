@@ -127,6 +127,7 @@ for %%a in (%current_profile%) do set /a profile_number+=1&for /f "tokens=1,2,3 
 set total_profiles=%profile_number%
 if "%~1" == "entry" exit /b
 :entry
+set profile_number=0
 for %%a in (%current_profile%) do set /a profile_number+=1
 if %profile_number% == 0 echo:No profiles.&timeout 2 >NUL & goto after_profiles
 set /p enterprofile=Enter a profile number:
@@ -217,7 +218,7 @@ Exit /b
 set progress_bar=
 set /a real=%1/2
 set /a mid=Real/2
-for /l %%i in (1,1,%mid%) do set progress_bar=!progress_bar!-
+for /l %%i in (1,1,%mid%) do set progress_bar=!progress_bar!:
 exit /b
 
 
@@ -506,22 +507,24 @@ set /a perc=pings*100/254
 call :progress %perc%
 set scrollc=0
 if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==13 set label1=%%~a
-if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum
-if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum
+set labely=
+if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum&set labely=-MAX
+if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum&set labely=
 set /a scrolltextnow+=1
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
-echo:
-echo:!labelx!       -:!progress_bar!!pings!!progress_bar!:- 
-echo:
-echo: Range: %prefix-label%1--%prefix-label%{%pings%}                      
-echo: : : ..: : .. : .:  - - : : . : ..       &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
-echo: PRESS [S]   E,dit 0ptions       ~   123 .     .   . . ++ inc.:range last octet
-echo:                                 ~   zxc . .  .  .   . (-) "     "     "
-echo:                     %label5%~   ::: , keyboard key      [S]~Scan~    ~
-echo: -------------------------------------------------------------------------   
+echo: !labelx!       ^|::!progress_bar!!pings!!labely!!progress_bar!::^|
+echo: pings:^>                                                               [5][6]
+echo: pings:^>                                                            [3][2]
+echo: from %prefix-label%1 to %prefix-label%{%pings%}                           
+echo:                 
+echo: ::::::::                                &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
+echo: S---------- Start               ~                        .   .    .                  
+echo: e---------- Set range subnet    ~                        .   .    .                 
+echo:                     %label5%~   :::                     [S] Scan      
+echo: :::::::::. . . . . . . . . . . . . . . . . . . . . . . . . . . .:::::::::   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   Jesus made mae do this. (False accuser)
@@ -536,22 +539,22 @@ if %profile_status%==1 (Call :process_profiles "entry")
 set /a choose+=1
 set last_ping=%pings%
 Set juice=0
-choice /c s03z2x1coePUy /n /t 3 /d y >NUL
+choice /c s0615243oePUy /n /t 3 /d y >NUL
 set error_of=%errorlevel%
 set label1=
-if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0 ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] Oo ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] o0 ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] 0o ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] oO ping master ^^^^(*(oo)*)^^^^
-if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] Oo ping master ^^^^(*(oo)*)^^^^
+if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0 INCREASING ^^^^(*(oo)*)^^^^
+if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] Oo DECREASING ^^^^(*(oo)*)^^^^
+if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] o0 INCREASING ^^^^(*(oo)*)^^^^
+if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] 0o DECREASING ^^^^(*(oo)*)^^^^
+if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] oO INCREASING ^^^^(*(oo)*)^^^^
+if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] Oo DECREASING ^^^^(*(oo)*)^^^^
 set /a struffof=error_of %% 2
-if %error_of% LEQ 8 if %struffof% == 0 (set labelx=._oO) else (set labelx=Oo_.)
-if %errorlevel%==1 goto scan
-if %errorlevel%==2 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
-if %errorlevel%==9 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
-if %errorlevel%==10 goto enter_subnet
-if %errorlevel%==11 goto entry
+if %error_of% LEQ 8 if %struffof% == 0 (set labelx=OOo_) else (set labelx=_oOO)
+if %error_of%==1 goto scan
+if %error_of%==2 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
+if %error_of%==9 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
+if %error_of%==10 goto enter_subnet
+if %profile_status%==1 if %error_of%==11 goto entry
 if %error_of% NEQ 7 if %error_of% NEQ 8 set /a semi_diff=0
 if %pings% GEQ 254 set pings=254&set label1= Cannot Increase Range any more
 if %pings% LSS 1 set pings=1&set label1= Cannot decrease Range any more
