@@ -2,7 +2,7 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set juice=1
-set scroll_text="Press S to perform a scan" "E to Edit Scan Subnet" "O to go to Options Settings" "Press keys: 123, zxc"
+set scroll_text="Press S to perform a scan" "E to Edit Scan Subnet" "O to go to Settings" "Press keys: 123, zxc"
 Set ran_check=0
 set notchange=1
 set notreally=0
@@ -96,7 +96,7 @@ echo:File not exists
 echo:create settings file?
 echo:R Restore
 choice /c ynR 
-if %errorlevel%==2 set /p hello_from_hell=&goto input
+if %errorlevel%==2 set juice=1&goto input&set /p=hello_from_hell
 if %errorlevel%==3 goto create_from_backup
 echo|set/p=>"%write_dir%\xxZhPuG.%resultstr%.options.txt"
 set options="profile:0" "profiles:" "filename:00" "file:" "powershell:1" "range:" "subnet:" "uuid:%resultstr%" "savesubnet:0" "saverange:0" "execute:0"
@@ -116,6 +116,7 @@ call :init
 if %errorlevel%==0 echo:Completed.
 pause
 :end_of_create
+set juice=1
 goto input
 
 :process_profiles
@@ -234,6 +235,9 @@ if not exist "%write_dir%\%options_file%" echo ...Success&echo:&echo:press key&P
 if exist "%write_dir%\%options_file%" echo File not deleted.&PAUSE
 del "init.xxZhPuG.lock.1.conf.bak" 2>NUL
 del "init.xxZhPuG.lock.2.conf.bak" 2>NUL
+echo:please wait..
+call :init
+set juice=1
 timeout 1 >NUL
 exit /b
 :clean_junk
@@ -514,16 +518,17 @@ set /a scrolltextnow+=1
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
+if %filename%=="" (set label6=   &echo >NUL) else (set label6=^(o^))
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
-echo: !labelx!       ^|::!progress_bar!!pings!!labely!!progress_bar!::^|
+echo: !labelx!       1^|::!progress_bar!!pings!!labely!!progress_bar!::^|
 echo: pings:^>                                                               [5][6]
 echo: pings:^>                                                            [3][2]
-echo: from %prefix-label%1 to %prefix-label%{%pings%}                           
+echo:&echo: FROM %prefix-label%1 to %prefix-label%{%pings%}                         
 echo:                 
 echo: ::::::::                                &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: S---------- Start               ~                        .   .    .                  
 echo: e---------- Set range subnet    ~                        .   .    .                 
-echo:                     %label5%~   :::                     [S] Scan      
+echo:                     %label5%~   %label6%                [S] Scan ^^^!    
 echo: :::::::::. . . . . . . . . . . . . . . . . . . . . . . . . . . .:::::::::   
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
@@ -532,7 +537,7 @@ if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
-echo:&echo: Please Adjust Range ^^^!&echo:&echo:&echo:
+echo:&echo: Please Adjust Range ^^^!&echo:&echo:&echo:&echo:&echo:
 if %profile_status%==1  echo: Profiles:-
 if %profile_status%==1 (Call :process_profiles "entry")
 :skip_labels
