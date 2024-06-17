@@ -523,13 +523,14 @@ if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 echo: !labelx!       1^|::!progress_bar!!pings!!labely!!progress_bar!::^|
 echo: pings:^>                                                               [5][6]---^>
 echo: pings:^>                                                       ^<---[1][2]
-echo:&echo: FROM %prefix-label%1 to %prefix-label%{%pings%}                         
+echo:                                                      a d j u s t  k e y s - - -
+echo: FROM %prefix-label%1 to %prefix-label%{%pings%}                         
 echo:                 
 echo: ::::::::                      .         .                .&if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: S---------- Start             . .    .  .  .         .   .   .                       
 echo: e---------- Set range subnet  . . .  .  .  . . .. .: .   .   .:  : .                 
 echo: %label5%                     %label6%                   [S] Scan ^^^!    
-echo: :::::::::. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .:::   
+echo: :::. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .:::   
 echo: - - - - - - - - - - - - - - - - -%label6% - - - - - - - - - - - - - - - - --
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
@@ -538,7 +539,7 @@ if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
-echo:&echo: Please Adjust Range ^^^!&echo:&echo:&echo:&echo:&echo:
+echo:&echo: p l e a s e  a d j u s t  r a n g e ^^^!&echo:&echo:&echo:&echo:&echo:
 if %profile_status%==1  echo: Profiles:-
 if %profile_status%==1 (Call :process_profiles "entry")
 :skip_labels
@@ -619,11 +620,15 @@ cls
 title  Review - ping master  ^^(*(oo)*)^^
 echo:                       
 if not defined PREFIX_RANGE goto enter_subnet
-echo:======================================================       
+echo:,,
+echo:, , ,          .
+echo:. . ..    .   ..
+echo:. . . .  ,.. .. ..
+echo:===================================================:::^>     
 echo:S to continue to Scanning I.P Addresses..^|         
 echo:E = Edit Subnet ------------------------^>^|%prefix_range%            
 echo:o Additional options     H:-change range ^|____________
-echo:-----------------------------------------^|============
+echo:-----------------------------------------^|h=go back:::
 
 choice /c seOh /m "" /n
 if %errorlevel%==1 goto loop
