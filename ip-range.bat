@@ -62,7 +62,7 @@ echo|set/p=.powershell available.
 color 7
 set powershellavlable=0
 powershell -c "write-host \" \"" >NUL
-if %errorlevel% == 0 color F&echo:    x [OK]&set powershellavlable=1
+if %errorlevel% == 0 (color F&echo:    x [OK]&set powershellavlable=1) else (echo:    x [NOT OK])
 if %errorlevel% NEQ 0 set powershellavlable=0
 :getsettings
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
@@ -229,7 +229,7 @@ choice /c yn /m "Are you sure? yn" /n
 if %errorlevel%==2 exit /b
 echo:trying to erase settings
 echo:.
-del "%write_dir%\%options_file%"
+del "%write_dir%\xxZhPuG.*.options.txt"
 echo:..
 if not exist "%write_dir%\%options_file%" echo ...Success&echo:&echo:press key&PAUSE >NUL
 if exist "%write_dir%\%options_file%" echo File not deleted.&PAUSE
@@ -517,20 +517,20 @@ if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum&set labely=
 set /a scrolltextnow+=1
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
-if %profile_status%==1 (set label5= P Profiles &echo:>NUL) else (set label5=            &echo:>NUL)
-if %filename%=="" (set label6=   &echo >NUL) else (set label6=^(o^))
+if %profile_status%==1 (set label5=P Profiles  &echo:>NUL) else (set label5=            &echo:>NUL)
+if %filename%=="" (set label6= - - -&echo >NUL) else (set label6= - ^(o^))
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 echo: !labelx!       1^|::!progress_bar!!pings!!labely!!progress_bar!::^|
-echo: pings:^>                                                               [5][6]
-echo: pings:^>                                                            [3][2]
+echo: pings:^>                                                               [5][6]---^>
+echo: pings:^>                                                       ^<---[1][2]
 echo:&echo: FROM %prefix-label%1 to %prefix-label%{%pings%}                         
 echo:                 
-echo: ::::::::                                &if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
-echo: S---------- Start               ~                        .   .                       
-echo: e---------- Set range subnet    ~                        .   .    .                 
-echo:                     %label5%~  %label6%                 [S] Scan ^^^!    
-echo: :::::::::. . . . . . . . . . . . . . . . . . . . . . . . . . . .:::::::::   
-echo: - - - - - - - - - - - - - - - - -  %label6% - - - - - - - - - - - - - - - - --
+echo: ::::::::                      .         .                .&if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
+echo: S---------- Start             . .    .  .  .         .   .   .                       
+echo: e---------- Set range subnet  . . .  .  .  . . .. .: .   .   .:  : .                 
+echo: %label5%                     %label6%                   [S] Scan ^^^!    
+echo: :::::::::. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .:::   
+echo: - - - - - - - - - - - - - - - - -%label6% - - - - - - - - - - - - - - - - --
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   Jesus made mae do this. (False accuser)
