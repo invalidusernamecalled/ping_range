@@ -638,7 +638,7 @@ if "%prefix_range%" == "" set PREFIX_RANGE=
 echo: Enter Subnet
 set /p PREFIX_RANGE=Subnet X.X.X:
 if "%PREFIX_RANGE%"=="" set PREFIX_RANGE=192.168.1
-if %powershellavlable%==1 for /f %%i in ('powershell -c "'%PREFIX_RANGE%' -match '^\d{1,1}\d{0,1}\d{0,1}[.]\d{1,1}\d{0,1}\d{0,1}\.\d{1,1}\d{0,1}\d{0,1}$'"') do set state=%%i
+if %powershellavlable%==1 for /f %%i in ('powershell -c "'%PREFIX_RANGE%' -match '^\d{1,3}[.]\d{1,3}[.]\d{1,3}$'"') do set state=%%i
 if %powershellavlable%==1 if "%state%"=="True" set juice=1&goto input
 if %powershellavlable%==0 echo %PREFIX_RANGE%|findstr /r "^[0-9][0-9]*[.][0-9][0-9]*[.][0-9][0-9]*$"&& (set juice=1&goto input) || (echo:bad format&goto :enter_subnet)
 if "%state%"=="False"  powershell -c "write-host -nonewline TRY AGAIN!`r"&TIMEOUT 1 >nul & goto :enter_subnet
