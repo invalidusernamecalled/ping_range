@@ -336,7 +336,7 @@ echo:%highlight7%7. [%profile_tick%] Enable Profiles
 echo:%highlight8%8. Ping Speed (%ping_batch%) (Not persistent across Sessions)
 echo:%highlight9%9. Backup
 echo:%highlight10%Z. Clean Cache
-echo:%highlight11%11.~~~Thanks ^& Honour~~~
+echo:%highlight11%11.Inspiration
 echo:     Filename: (!filename!)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
@@ -526,7 +526,7 @@ echo: pings:^>                                                       ^<---[1][2]
 echo:                                                      a d j u s t  k e y s - - -
 echo: FROM %prefix-label%1 to %prefix-label%{%pings%}                         
 echo:                 
-echo: ::::::::                      .         .                .&if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
+echo: :::                           .         .                .&if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: S---------- Start             . .    .  .  .         .   .   .                       
 echo: e---------- Set range subnet  . . .  .  .  . . .. .: .   .   .:  : .                 
 echo: %label5%                     %label6%                   [S] Scan ^^^!    
@@ -986,12 +986,12 @@ echo:
 echo:
 echo:
 echo:
-echo:                          -------------------------------------------
-echo:                         ^|      I would like to Thank my Friend,   ^|
-echo:                         ^|       Lord ^& Savior Jesus for this      ^|
-echo:                         ^|             Work.                       ^|
-echo:                          000--------------------------------------000
-echo:
+echo:                      ------------------------------------------------------------------------------
+echo:                     ^| And there were flashed of lightning and sounds and peals of thunder;        ^|
+echo:                     ^| And his appearance was like lightning, and his clothing as white as snow.   ^|
+echo:                     ^|                 .                                                           ^|
+echo:                       -*---000------------------------------------------------------------000---*-
+echo:                      Source: https://bible.knowing-jesus.com/topics/Lightning
 echo:
 echo:
 echo:
