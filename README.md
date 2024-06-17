@@ -1,5 +1,5 @@
 ```
-*                    *           Script - based I.P. Address Scanner
+*                    *           
 **                  ***           *
 *** script - based *****        *::*
 **** unassisted execute**      */*/*
@@ -30,8 +30,7 @@ Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file
 ```
 
 
-<p align=center>The Pyramid of Holy Script-hood, I present *Batch Scanner* <strong></b>Author Peace!!</strong></p>
-
+```easy pinging tool for just pinging. save logs and other cool features```
 
 
 _Non-Commercial Use License
