@@ -512,25 +512,26 @@ call :progress %perc%
 set scrollc=0
 if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==13 set label1=%%~a
 set labely=
+if %pings% GEQ 254 set label1=.            MAXIMUM                    ^| : : : : : : : : : : : : : [254]-MAX : : : : : :  : : : : : : :^|
 if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum&set labely=-MAX
 if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum&set labely=
 set /a scrolltextnow+=1
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %profile_status%==1 (set label5=P Profiles  &echo:>NUL) else (set label5=            &echo:>NUL)
-if %filename%=="" (set label6= - - -&echo >NUL) else (set label6= - ^(o^))
+if %filename%=="" (set label6= - - -&echo >NUL) else (set label6= - File Open ^(+^))
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 echo: !labelx!       1^|::!progress_bar!!pings!!labely!!progress_bar!::^|
-echo: pings:^>                                                               [5][6]---^>
-echo: pings:^>                                                       ^<---[1][2]
-echo:                                                      a d j u s t  k e y s - - -
+echo: pings^>                                                                  [6]---^>  increase
+echo: pings^>                                             decrease  ^<---[1]   
+echo:                                                     -- x - key - - usage - x --
 echo: FROM %prefix-label%1 to %prefix-label%{%pings%}                         
 echo:                 
-echo: :::                           .         .                .&if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
-echo: S---------- Start             . .    .  .  .         .   .   .                       
-echo: e---------- Set range subnet  . . .  .  .  . . .. .: .   .   .:  : .                 
-echo: %label5%                     %label6%                   [S] Scan ^^^!    
-echo: :::. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .:::   
+echo: . .         .        .        .         .                .&if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
+echo: .  . .    . . .       .... .  . .    .  .  .         .   .   .                       
+echo: . . . . .      . . . .        . . .  .  .  . . .. .: .   .   .:  : .                 
+echo: %label5%                     %label6%                                    
+echo: .... . . . . . . . . . . . . . . . . . . . .   .    .. . . .   ...   .---   
 echo: - - - - - - - - - - - - - - - - -%label6% - - - - - - - - - - - - - - - - --
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
@@ -563,7 +564,7 @@ if %error_of%==9 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options.
 if %error_of%==10 goto enter_subnet
 if %profile_status%==1 if %error_of%==11 goto entry
 if %error_of% NEQ 7 if %error_of% NEQ 8 set /a semi_diff=0
-if %pings% GEQ 254 set pings=254&set label1= Cannot Increase Range any more
+if %pings% GEQ 254 set pings=254&set label1=.             ^|:::::::::::::[254]-MAX:::::::::::::^|
 if %pings% LSS 1 set pings=1&set label1= Cannot decrease Range any more
 
 if %last_error%==7 set /a semi_diff+=1
@@ -770,8 +771,8 @@ for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL
 echo:
 echo: * List of I.P Addresses *%ip_online_disclaimer%
 echo:that responded to requests
-if "%found_ip%" == "" set found_ip=No_Results.
 set found_ip=%found_ip: =%
+if "%found_ip%" == "" set found_ip=No_Results.
 echo:---
 if %powershellavlable%==1 powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses;" 2>NUL
 if %powershellavlable%==0 for %%a in (%found_ip%) do echo %%a 
@@ -797,9 +798,11 @@ pause >NUL
 (if exist !input_file_name! echo: File name already exists.& set filename=!input_file_name!& call :check_file_name_exist & set input_file_name=!filename!& if exist !filename! goto skip_check_file_status2)
 (if !input_file_name! NEQ "" echo: Writing ......)
 :save_input_file_name
+set found_ip=%found_ip: =%
+set found_ip=%found_ip:~0,-1%
 if !input_file_name! == "00" echo:Please set default filename from menu options.&pause >NUL&goto skip_check_file_status2
-if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses" >"%%i" & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
-if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(for %%a in (%found_ip%) do echo %%a >>"%%i")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
+if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses">"%%i" & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
+if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(echo|set/p=>"%%i"&for %%a in (%found_ip%) do echo %%a >>"%%i")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
 if %scripT_execute% == 1 echo Script Execute Complete & timeout 4 >NUL & goto :eof
 :after_save
 if %powershellavlable%==1 if exist !input_file_name! echo:&echo Written to !input_file_name! [error_code:%errorlevel%]
