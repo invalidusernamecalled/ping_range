@@ -532,7 +532,7 @@ echo: .  . .    . . .       .... .  . .    .  .  .         .   .   .
 echo: . . . . .      . . . .        . . .  .  .  . . .. .: .   .   .:  : .                 
 echo: %label5%                     %label6%                                    
 echo: .... . . . . . . . . . . . . . . . . . . . .   .    .. . . .   ...   .---   
-echo: - - - - - - - - - - - - - - - - -%label6% - - - - - - - - - - - - - - - - --
+echo: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --
 if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   Jesus made mae do this. (False accuser)
