@@ -133,8 +133,8 @@ for %%a in (%current_profile%) do set /a profile_number+=1
 if %profile_number% == 0 echo:No profiles.&timeout 2 >NUL & goto after_profiles
 set /p enterprofile=Enter a profile number:
 set /a enterprofile=%enterprofile%
-if %enterprofile% LEQ 0 goto after_profiles
-if %enterprofile% GTR %total_profiles% goto after_profiles
+if %enterprofile% LEQ 0 set juice=1&echo Invalid ^^^!&goto after_profiles
+if %enterprofile% GTR %total_profiles% set juice=1&echo Invalid ^^^!&goto after_profiles
 set /a profile_number=0
 for %%a in (%current_profile%) do set /a profile_number+=1&if !profile_number!==%enterprofile% set choiceprofile=%%a
 for /f "tokens=1,2,3 delims=," %%i in (%choiceprofile%) do set pings=%%j&set prefix_range=%%i&goto loop
