@@ -137,7 +137,7 @@ if %enterprofile% LEQ 0 set juice=1&echo Invalid ^^^!&goto after_profiles
 if %enterprofile% GTR %total_profiles% set juice=1&echo Invalid ^^^!&goto after_profiles
 set /a profile_number=0
 for %%a in (%current_profile%) do set /a profile_number+=1&if !profile_number!==%enterprofile% set choiceprofile=%%a
-for /f "tokens=1,2,3 delims=," %%i in (%choiceprofile%) do set pings=%%j&set prefix_range=%%i&goto loop
+for /f "tokens=1,2,3 delims=," %%i in (%choiceprofile%) do set pings=%%j&set prefix_range=%%i&set profile_status=0&goto loop
 goto after_profiles
 
 :backup
@@ -541,7 +541,7 @@ if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
 echo:&echo: p l e a s e  a d j u s t  r a n g e ^^^!&echo:&echo:&echo:&echo:&echo:
-if %profile_status%==1  echo: Profiles:-
+if %profile_status%==1  echo: Profiles (P):-
 if %profile_status%==1 (Call :process_profiles "entry")
 :skip_labels
 set /a choose+=1
