@@ -62,7 +62,7 @@ echo|set/p=.powershell available.
 color 7
 set powershellavlable=0
 powershell -c "write-host \" \"" >NUL
-if %errorlevel% == 0 (color F&echo:    x [OK]&set powershellavlable=1) else (echo:    x [NOT OK])
+if %errorlevel% == 0 (color F&echo:    x [OK]&set powershellavlable=1&set power_on=  ^(Powershell Available^)) else (set power_on=  ^(Not Available^)&echo:    x [NOT OK])
 if %errorlevel% NEQ 0 set powershellavlable=0
 :getsettings
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
@@ -330,7 +330,7 @@ echo:%highlight1%1. [%multi-file%] enable default save file name (multiple files
 echo:%highlight2%2. [%single-file%] enable default save file name (OVERWRITE^^^!)
 echo:%highlight3%3. [%rangetick%] Remember Range
 echo:%highlight4%4. [%subnettick%] Remember Subnet
-echo:%highlight5%5. [%powershell_tick%] enable powershell
+echo:%highlight5%5. [%powershell_tick%] enable powershell %power_on%
 echo:%highlight6%6. [%execution_tick%] UnAssisted Script execution
 echo:%highlight7%7. [%profile_tick%] Enable Profiles
 echo:%highlight8%8. Ping Speed (%ping_batch%) (Not persistent across Sessions)
