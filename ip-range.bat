@@ -166,7 +166,7 @@ echo|set /p=>xxZhPuG.settings.%counter_of%.bak.txt
 for /f "tokens=1,2* delims=: " %%a in ('type xxZhPuG.temp.1.bak') do CALL echo %%a:%%%%b%% >>xxZhPuG.settings.%counter_of%.bak.txt
 echo:// please do not rename file for easy restore^^^!>>xxZhPuG.settings.%counter_of%.bak.txt
 del xxZhPuG.temp.1.bak
-echo:File saved to xxZhPuG.settings.%counter_of%.bak.txt&PAUSE
+echo:File saved to xxZhPuG.settings.%counter_of%.bak.txt
 :here
 exit /b
 
@@ -512,50 +512,47 @@ call :progress %perc%
 set scrollc=0
 if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==13 set label1=%%~a
 set labely=
-if %pings% GEQ 254 set label1=.            MAXIMUM                    ^| : : : : : : : : : : : : : [254]-MAX : : : : : :  : : : : : : :^|
+if %pings% GEQ 254 set label1=.^| : : : : : : : : : : : : : [254]-MAX : : : : : :  : : : : : : :^|
 if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum&set labely=-MAX
 if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum&set labely=
 set /a scrolltextnow+=1
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %profile_status%==1 (set label5=P Profiles  &echo:>NUL) else (set label5=            &echo:>NUL)
-if %filename%=="" (set label6= - - -&echo >NUL) else (set label6= - File Open ^(+^))
+if %filename%=="" (set label6= - - -&echo >NUL) else (set label6= - SettingsON^(+^))
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
-echo: !labelx!       1^|::!progress_bar!!pings!!labely!!progress_bar!::^|
-echo: pings^>                                                                  [6]---^>  increase
-echo: pings^>                                             decrease  ^<---[1]   
-echo:                                                     -- x - key - - usage - x --
-echo: FROM %prefix-label%1 to %prefix-label%{%pings%}                         
-echo:                 
-echo: . .         .        .        .         .                .&if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
-echo: .  . .    . . .       .... .  . .    .  .  .         .   .   .                       
-echo: . . . . .      . . . .        . . .  .  .  . . .. .: .   .   .:  : .                 
+echo: !labelx!       
+echo: pings^>                                                                  [6]%label8%^>  increase
+echo: pings^>                                             decrease  ^<%label7%[1]   
+echo:                                                                              M=maximum
+echo: ping FROM %prefix-label%1 to . . .                    %prefix-label%{%pings%}                         
+echo: 1^|::!progress_bar!!pings!!labely!!progress_bar!::^|                
+if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: %label5%                     %label6%                                    
-echo: .... . . . . . . . . . . . . . . . . . . . .   .    .. . . .   ...   .---   
 echo: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --
-if exist "%write_dir%\%options_file%" (echo: Loaded File: %options_file%    Ping Subnet:%prefix_range%) else (echo:)
+if exist "%write_dir%\%options_file%" (echo:{Options File}: %options_file%      Subnet:%prefix_range%.x   S-Start,O-Option) else (echo:)
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   Jesus made mae do this. (False accuser)
 if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in (1,1,10) do echo Running Auto Mode...Press C Cancel
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
-echo:&echo: p l e a s e  a d j u s t  r a n g e ^^^!&echo:&echo:&echo:&echo:&echo:
 if %profile_status%==1  echo: Profiles (P):-
 if %profile_status%==1 (Call :process_profiles "entry")
 :skip_labels
 set /a choose+=1
 set last_ping=%pings%
 Set juice=0
-choice /c s0615243oePUy /n /t 3 /d y >NUL
+choice /c s0615243oePUyM /n /t 3 /d y >NUL
 set error_of=%errorlevel%
 set label1=
-if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0 INCREASING ^^^^(*(oo)*)^^^^
-if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] Oo DECREASING ^^^^(*(oo)*)^^^^
-if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] o0 INCREASING ^^^^(*(oo)*)^^^^
-if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] 0o DECREASING ^^^^(*(oo)*)^^^^
-if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] oO INCREASING ^^^^(*(oo)*)^^^^
-if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] Oo DECREASING ^^^^(*(oo)*)^^^^
+if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0 INCREASING ^^^^(*(oo)*)^^^^&set label7=&set label8=---
+if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] Oo DECREASING ^^^^(*(oo)*)^^^^&set label7=---&set label8=
+if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] o0 INCREASING ^^^^(*(oo)*)^^^^&set label7=&set label8=---
+if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] 0o DECREASING ^^^^(*(oo)*)^^^^&set label7=---&set label8=
+if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] oO INCREASING ^^^^(*(oo)*)^^^^&set label7=&set label8=---
+if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] Oo DECREASING ^^^^(*(oo)*)^^^^&set label7=---&set label8=
+if %errorlevel%==14 set pings=254&set juice=1
 set /a struffof=error_of %% 2
 if %error_of% LEQ 8 if %struffof% == 0 (set labelx=OOo_) else (set labelx=_oOO)
 if %error_of%==1 goto scan
@@ -704,7 +701,7 @@ set /a clearcountermodulus=clearcounter %% 20
 set /a absent=present-ping_batch
 if %absent% LSS 1 set absent=1
 call :updatevars
-if %begun% NEQ 0 cls&echo:            ----------------------------------&echo:            [%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%]&echo:            Status: Sending requests..
+if %begun% NEQ 0 cls&echo:                                              &echo:            [%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%]&echo:            Status: Sending requests..
 for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title %totaluid%xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\%totaluid%.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\%totaluid%.online._.%%i.txt""
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 if %percentage% LSS 80 (if %updatevariable% == 1 call :update_screen) else (call :update_screen)
@@ -722,7 +719,7 @@ title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&set /a remain=pingstotal-%%i&cls & echo:&echo:            ----------------------------------&echo:            @ %PREFIX_RANGE%.%absent% - %PREFIX_RANGE%.%present% @&echo:            Status: Sending ping requests..&echo:            Completed:%%i Remaining: !remain!&echo:&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&set /a remain=pingstotal-%%i&cls & echo:&echo:                                              &echo:            @ %PREFIX_RANGE%.%absent% - %PREFIX_RANGE%.%present% @&echo:            Status: Sending ping requests..&echo:            Completed:%%i Remaining: !remain!&echo:&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
