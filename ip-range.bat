@@ -2,7 +2,7 @@
 mode 120,30
 setlocal enabledelayedexpansion
 set juice=1
-set scroll_text="Press S to perform a scan" "E to Edit Scan Subnet" "O to go to Settings" "Press keys: 123, zxc"
+set scroll_text="Press S to perform a scan" "E to Edit Scan Subnet" "O to go to Settings" "Press keys: 123, 456"
 Set ran_check=0
 set notchange=1
 set notreally=0
