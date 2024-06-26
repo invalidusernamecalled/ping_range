@@ -532,7 +532,7 @@ echo: %label5%                     %label6%
 echo: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --
 if exist "%write_dir%\%options_file%" (echo:{Options File}: %options_file%      Subnet:%prefix_range%.x   S-Start,O-Option) else (echo:)
 if !cchar! GTR 24 call :flash F
-if %revelation% == 666 color F&echo:                   Jesus made mae do this. (False accuser)
+if %revelation% == 666 color F&echo:                   Jesus made mae do this. 
 if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in (1,1,10) do echo Running Auto Mode...Press C Cancel
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
