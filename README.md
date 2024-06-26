@@ -32,7 +32,7 @@ Tip:- Do not use offending Characters like `&`, `^`, `<`, `>` while writing file
 
 ```easy pinging tool for just pinging. save logs and other cool features```
 
-
+Usage is Subject to License
 _Non-Commercial Use License
 (C) invalidusernamecalled, 2024_
 
