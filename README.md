@@ -2,7 +2,7 @@
 *                    *           
 **                  ***           *
 *** script - based *****        *::*
-**** unassisted execute**      */*/*
+**** unassist   execute**      */*/*
 ***** save to logs********     /:/
 ****** profiles ***********   // 
 *******        *************  /
