@@ -105,7 +105,7 @@ call :init_options_file
 goto end_of_create
 :create_from_backup
 for /f "delims=" %%i in ('dir /b xxZhPuG.settings.*.bak.txt') do findstr /i "subnet:" "%%i" >NUL&&(choice /m "is this %%i"&if !errorlevel!==1 set restore_file=%%i&goto :continue_backup_restore)
-echo:Cannot continue file name should be in format = xxZhPuG.settings.#.bak.txt where # is a number digit & PAUSE & exit /b
+echo:Cannot continue file name should be in format = xxZhPuG.settings.#.bak.txt where # is a number digit & PAUSE & set juice=1& exit /b
 :continue_backup_restore
 set options=profile: profiles: filename: file: powershell: range: subnet: uuid: savesubnet: saverange: execute:
 set sanity_check=0
