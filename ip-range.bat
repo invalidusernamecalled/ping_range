@@ -67,7 +67,7 @@ if %start%==1 exit /b
 echo:>%1\xxZhPuG.write.-.test.txt
 if exist %1\xxZhPuG.write.-.test.txt del %1\xxZhPuG.write.-.test.txt&set start=1&for /f "delims=" %%i in (%1) do set write_dir=%~1
 color F
-if %start% == 1 echo: x [OK]
+if %start% == 1 echo:   [\/]
 if %start% == 0 echo:   Error
 
 title STARTUP: Using write_dir "!write_dir!"
@@ -78,7 +78,7 @@ echo|set/p=.powershell available.
 color 7
 set powershellavlable=0
 powershell -c "write-host \" \"" >NUL
-if %errorlevel% == 0 (color F&echo:    x [OK]&set powershellavlable=1&set power_on=  ^(Powershell Available^)) else (set power_on=  ^(Not Available^)&echo:    x [NOT OK])
+if %errorlevel% == 0 (color F&echo:      [\/]&set powershellavlable=1&set power_on=  ^(Powershell Available^)) else (set power_on=  ^(Not Available^)&echo:    x [NOT OK])
 if %errorlevel% NEQ 0 set powershellavlable=0
 :getsettings
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
@@ -88,7 +88,7 @@ title STARTUP: Reading options %options_file%
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
 
 set settings=1
-if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.reading from file. :-    x [OK]
+if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.reading from file. :-      [\/]
 call :init
 if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
 goto start
