@@ -1,6 +1,22 @@
 @echo off
 mode 120,30
 setlocal enabledelayedexpansion
+for /f "tokens=1,2 delims=\" %%i in ('whoami') do set computer_name=%%i&set user_name=%%j
+if not exist xxZhPuG.strlen.bytes.txt echo %computer_name%>xxZhPuG.strlen.bytes.txt
+set strbyte=0
+for /f "tokens=3" %%i in ('dir xxZhPuG.strlen.bytes.txt ^| find "File(s)"') do set strbyte=%%i
+Del xxZhPuG.strlen.bytes.txt 2>NUL
+set spaces=                                           
+set /a strd=strbyte %% 2
+if %strd%==1 set /a strbyte=strbyte+1
+set /a strbyte=strbyte/2
+set /a leftover=15-strbyte
+CALL set spaces_pad=%%spaces:~0,%leftover%%%
+set /a strdleftover=leftover %% 2
+if %strdleftover%==1 set /a leftover=leftover+1
+set /a strdleftover=leftover/2
+CALL set spaces_right=%%spaces:~0,%strdleftover%%%
+set computer_string=%spaces_pad%computer name: %computer_name%%spaces_right%user name:%user_name%
 set juice=1
 set scroll_text="Press S to perform a scan" "E to Edit Scan Subnet" "O to go to Settings" "Press keys: 123, 456"
 Set ran_check=0
@@ -678,6 +694,7 @@ echo:ASCII Art source:http://patorjk.com/
 
 timeout 1 >NUL
 :initial_start
+set start_time=%date%%time%
 set ping_no=1
 title Pinger Main Window: Pinger
 set skip_count=0
@@ -798,8 +815,8 @@ pause >NUL
 set found_ip=%found_ip: =%
 set found_ip=%found_ip:~0,-1%
 if !input_file_name! == "00" echo:Please set default filename from menu options.&pause >NUL&goto skip_check_file_status2
-if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses">"%%i" & for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
-if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(echo|set/p=>"%%i"&for %%a in (%found_ip%) do echo %%a >>"%%i")&for /f "tokens=*" %%a in ('whoami') do echo:>>"%%i"&echo:==============>>"%%i"&echo:Generated on: %date% %time% by %%a>>"%%i"&echo:==============>>"%%i"
+if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses">"%%i" & echo:>>"%%i"&echo:         ♦  I.P Scan requested : %start_time%>>"%%i"&echo:         ♦  Generated @        : %date%%time%>>"%%i"&echo:              ^>^>^>   Subnet %prefix_range%.x, Upto %pings% ^<^<^<>>"%%i"&echo:%computer_string%>>"%%i"
+if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(echo|set/p=>"%%i"&for %%a in (%found_ip%) do echo %%a >>"%%i")&echo:>>"%%i"&echo:         ♦  I.P Scan requested : %start_time%>>"%%i"&echo:         ♦  Generated @        : %date%%time%>>"%%i"&echo:              ^>^>^>   Subnet %prefix_range%.x, Upto %pings% ^<^<^<>>"%%i"&echo:%computer_string%>>"%%i"
 if %scripT_execute% == 1 echo Script Execute Complete & timeout 4 >NUL & goto :eof
 :after_save
 if %powershellavlable%==1 if exist !input_file_name! echo:&echo Written to !input_file_name! [error_code:%errorlevel%]
