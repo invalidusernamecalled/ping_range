@@ -226,8 +226,8 @@ color 7
 exit /b
 
 :init_options_file
-
-if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
+set options_file_exists=0
+if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&set options_file_exists=1
 
 Exit /b
 
@@ -235,7 +235,7 @@ Exit /b
 set progress_bar=
 set /a real=%1/2
 set /a mid=Real/2
-for /l %%i in (1,1,%mid%) do set progress_bar=!progress_bar!:
+for /l %%i in (1,1,%mid%) do set progress_bar=!progress_bar!``
 exit /b
 
 
@@ -333,7 +333,7 @@ if %error% NEQ 6 if %error% == 17 CALL set highlight9=%special_symbol%
 
 
 
-echo                                                   {OPTIONS_FILE} %options_file%
+echo                                                   {settings file} %options_file%
 echo:           -----------------------------------
 echo:            S = Scan
 echo:            E to Edit Subnet = %prefix_range%
@@ -508,9 +508,7 @@ if %powershell_or_not%==0 set powershellavlable=0
 if %powershell_or_not%==1 set powershellavlable=1
 :skip_check_powershell_status
 set totaluid=xxZhPuG.!resultstr!
-rem start of program ****************************************************************************************
-REM 
-rem set default variables ***********************************************************************************
+
 :Y
 if "%save_range%" == "" goto skip_save_range_2
 if %save_range% == 1 call :getrange
@@ -522,31 +520,35 @@ if %gotrange%==0 set pings=254
 set ping_batch=2
 if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 set diff=5
+
 :input
 set /a perc=pings*100/254
 call :progress %perc%
 set scrollc=0
 if %pings% LSS 254 for %%a in (%scroll_text%) do set /a scrollc+=1&if !scrollc!==!scrolltextnow! if %error_of%==13 set label1=%%~a
 set labely=
-if %pings% GEQ 254 set label1=.^| : : : : : : : : : : : : : [254]-MAX : : : : : :  : : : : : : :^|
+if %pings% GEQ 254 set label1=Maximum
 if %pings% == 254 title Press Z,x,c ^^^! Range At Maximum&set labely=-MAX
 if %pings% == 1 title Press 1,2,3 ^^^! Range is At Minimum&set labely=
 set /a scrolltextnow+=1
 if "%prefix_range%" NEQ "" (set prefix-label=%prefix_range%.) else (set prefix-label=)
 if %scrolltextnow% GTR 4 set scrolltextnow=1
 if %profile_status%==1 (set label5=P Profiles  &echo:>NUL) else (set label5=            &echo:>NUL)
-if %filename%=="" (set label6= - - -&echo >NUL) else (set label6= - SettingsON^(+^))
+
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
+if %options_file_exists%==1 echo:                                                                                {%options_file%}
 echo: !labelx!       
 echo: pings^>                                                                  [6]%label8%^>  increase
 echo: pings^>                                             decrease  ^<%label7%[1]   
 echo:                                                                              M=maximum
-echo: ping FROM %prefix-label%1 to . . .                    %prefix-label%{%pings%}                         
-echo: 1^|::!progress_bar!!pings!!labely!!progress_bar!::^|                
+echo: ping FROM %prefix-label%1 to . . .                    %prefix-label%{%pings%}   
+echo:                      
+echo: 1^|:!progress_bar!!pings!!labely!!progress_bar!:^|254            
+echo:
 if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: %label5%                     %label6%                                    
-echo: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --
-if exist "%write_dir%\%options_file%" (echo:{Options File}: %options_file%      Subnet:%prefix_range%.x   S-Start,O-Option) else (echo:)
+echo: : , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , ,
+if %options_file_exists%==1 (echo:Subnet:%prefix_range%.x   S-Start,O-Optional Settings) else (echo:  S-Start,O-Optional Settings)
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   Jesus made mae do this. 
 if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in (1,1,10) do echo Running Auto Mode...Press C Cancel
@@ -562,12 +564,12 @@ Set juice=0
 choice /c s0615243oePUyM /n /t 3 /d y >NUL
 set error_of=%errorlevel%
 set label1=
-if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0 INCREASING ^^^^(*(oo)*)^^^^&set label7=&set label8=---
-if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] Oo DECREASING ^^^^(*(oo)*)^^^^&set label7=---&set label8=
-if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] o0 INCREASING ^^^^(*(oo)*)^^^^&set label7=&set label8=---
-if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] 0o DECREASING ^^^^(*(oo)*)^^^^&set label7=---&set label8=
-if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] oO INCREASING ^^^^(*(oo)*)^^^^&set label7=&set label8=---
-if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] Oo DECREASING ^^^^(*(oo)*)^^^^&set label7=---&set label8=
+if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0.. INCREASING &set label7=&set label8=---
+if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] Oo.. DECREASING &set label7=---&set label8=
+if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] o0.. INCREASING &set label7=&set label8=---
+if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] 0o.. DECREASING &set label7=---&set label8=
+if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] oO.. INCREASING &set label7=&set label8=---
+if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] Oo.. DECREASING &set label7=---&set label8=
 if %errorlevel%==14 set pings=254&set juice=1
 set /a struffof=error_of %% 2
 if %error_of% LEQ 8 if %struffof% == 0 (set labelx=OOo_) else (set labelx=_oOO)
@@ -589,45 +591,6 @@ if %error_of% NEQ 7 if %error_of% NEQ 8 if %diff% LSS 0 set /a diff=-diff
 if %error_of% GEQ 3 if %error_of% LEQ 8 set juice=1
 :after_profiles
 
-goto input
-:get_mac.py
-color 2
-title ping master  ^^(*(oo)*)^^
-cls
-if not exist get_mac.py set check_repository=1&set file_not_exist= get_mac.py&goto display_macadd_ismissing
-for /f "tokens=*" %%i in ('where python 2^>NUL') do set python_path=%%i
-echo "%python_path%" |findstr /r "[\\]" >NUL&&(echo:..Python path found.."%python_path%"..) || (set check_repository=0&echo:&echo:Python not found!&set install_python=1&set file_not_exist=     python&goto display_macadd_ismissing)
-color 7
-echo:Running get_mac.py..&echo:
-if exist xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt del xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-del xxZhPuG1000.arp.list.txt 2>NUL
-python get_mac.py
-echo:---
-for /f "tokens=*" %%a in ('type xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt') do set file_ip_found=1
-if "%file_ip_found%" NEQ "1" echo: No results found.
-if "%file_ip_found%" == "1" type xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-echo:---
-echo:
-echo:Press a key to start mac address to name mapping..
-color 7
-pause >NUL
-cls
-if not exist mac_add.print_troubleshoot_from_github echo:&echo:Unable to map mac address to name&echo:File `mac_add.print_troubleshoot_from_github` is missing & timeout 3 >NUL
-if not exist mac_add.print_troubleshoot_from_github set check_repository=1&set file_not_exist=mac_add.print_troubleshoot_from_github&goto display_macadd_ismissing
-echo|set/p=>xxZhPuG1000.python.print_troubleshoot_from_github.txt
-for /f "tokens=1,2 delims= " %%i in ('type xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt') do for /f "tokens=3 delims=," %%a in ('type mac_add.print_troubleshoot_from_github ^| find /i "%%j"') do echo %%i %%j "%%a" >> xxZhPuG1000.python.print_troubleshoot_from_github.txt
-
-for /f "tokens=1,2 delims= " %%i in ('type xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt') do type xxZhPuG1000.python.print_troubleshoot_from_github.txt | find "%%i"&&echo: || echo:%%i %%j Randomised Mac address#>> xxZhPuG1000.python.print_troubleshoot_from_github.txt
-timeout 1 >NUL
-cls
-echo:Results
-echo:======
-type xxZhPuG1000.python.print_troubleshoot_from_github.txt
-echo:#Suspected
-echo:
-del xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github 2>NUL
-pause
-for /l %%i in (1,1,5) do pause >NUl
 goto input
 :scan
 cls
@@ -815,8 +778,8 @@ pause >NUL
 set found_ip=%found_ip: =%
 set found_ip=%found_ip:~0,-1%
 if !input_file_name! == "00" echo:Please set default filename from menu options.&pause >NUL&goto skip_check_file_status2
-if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses">"%%i" & echo:>>"%%i"&echo:          ✧  I.P Scan requested : %start_time%>>"%%i"&echo:          ✧  Generated @         : %date% %time%>>"%%i"&echo:              ^>^>^>   Subnet %prefix_range%.x, Upto %pings% ^<^<^<>>"%%i"&echo:%computer_string%>>"%%i"
-if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(echo|set/p=>"%%i"&for %%a in (%found_ip%) do echo %%a >>"%%i")&echo:>>"%%i"&echo:         ✧  I.P Scan requested : %start_time%>>"%%i"&echo:         ✧  Generated @         : %date% %time%>>"%%i"&echo:              ^>^>^>   Subnet %prefix_range%.x, Upto %pings% ^<^<^<>>"%%i"&echo:%computer_string%>>"%%i"
+if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses">"%%i" & echo:>>"%%i"&echo:          -  I.P Scan requested : %start_time%>>"%%i"&echo:          -  Generated @         : %date% %time%>>"%%i"&echo:              ^>^>^>   Subnet %prefix_range%.x, Upto %pings% ^<^<^<>>"%%i"&echo:%computer_string%>>"%%i"
+if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(echo|set/p=>"%%i"&for %%a in (%found_ip%) do echo %%a >>"%%i")&echo:>>"%%i"&echo:         -  I.P Scan requested : %start_time%>>"%%i"&echo:         -  Generated @         : %date% %time%>>"%%i"&echo:              ^>^>^>   Subnet %prefix_range%.x, Upto %pings% ^<^<^<>>"%%i"&echo:%computer_string%>>"%%i"
 if %scripT_execute% == 1 echo Script Execute Complete & timeout 4 >NUL & goto :eof
 :after_save
 if %powershellavlable%==1 if exist !input_file_name! echo:&echo Written to !input_file_name! [error_code:%errorlevel%]
@@ -850,150 +813,13 @@ set no_save=0
 :save_me_from_this
 REM echo:you got saved
 exit /b
-if %powershellavlable%==1 set filename=%filename:@=`@%
-if %powershellavlable%==1 set filename=%filename:#=`#%
-if %powershellavlable%==1 set filename=%filename:{=`{%
-if %powershellavlable%==1 set filename=%filename:}=`}%
-if %powershellavlable%==1 set filename=%filename:(=`(%
-if %powershellavlable%==1 set filename=%filename:)=`)%
-if %powershellavlable%==1 set filename=%filename:'=`'%
-if %powershellavlable%==1 set filename=%filename:;=`;%
-if %powershellavlable%==1 set filename=%filename:|=`|%
-choice /c Pabcdefghijklmnoqrstuvwxyz0123456789 /m "Press P to ping a list:"
-if %errorlevel% NEQ 1 goto input
-:ping_list
-echo:paste the list here
-echo:Then, Write `ping` to start pinging..
-for /l %%i in (1,1,200) do CALL set /p name%%i=&CALL :checkname %%i&if "!temp!"=="ping" set temp=%%i&goto strtpng
-goto :eof
-:strtpng
-echo **********************************************
-echo beginning pings................
-echo ((((((((((((((((((((((((((((((((((((((((((((((
-echo:
-echo:
-for /l %%i in (1,1,!temp!) do CALL CALL :ping_param %%name%%i%%
-:checkname
-CALL set temp=%%name%1%%
-exit /b
-:ping_param
-set temp_ping_name=%1
-set temp_ping_name=!temp_ping_name: =!
-if "!temp_ping_name!"=="ping" echo End--&PAUSE&goto :eof
-echo !temp_ping_name!|findstr /r "[0-9]*[.][0-9]*[.][0-9]*[.][0-9]*"&&(echo pinging ..&ping -n 1 !temp_ping_name!&echo:&echo:-------press a key to continue pinging--------&pause >NUL)
-echo:
-exit /b
-pause
-if exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt set arp_done=0&echo:Would u like to ping these devices found in the logbook? Press N to skip
-if exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt choice /c Nabcdefghijklmopqrstuvwxyz0123456789 /m "Press any (letter/number) key to continue to ping.." /n
-if not exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt goto print_ip_lists
-if exist xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt if %errorlevel% == 1 goto skip_ping
-echo:
-echo:Pinging IP Addresses...  
-set file_contents=0
-start cmd /c "echo off & cls & mode 30,20 & color 20 & (for /f "delims=" %%i in (xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt) do ping -n 1 %%i | find /i "TTL" >NUL&&echo %%i is up || echo pinging.... %%i [trying])&pause"
-goto choose_ping
-for /f "delims=" %%i in (xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt) do set file_contents=0&echo:&echo:trying to ping %%i&echo:&ping -n 1 %%i | find /i "TTL"&&call :color || call :offset
-if %file_contents%==1 echo: File (log file) empty.&echo:&echo:Run a scan to get started.&echo:
-goto choose_ping
-:skip_ping
-:arp-a
-echo:
-(set arp_done=0)&echo:Press Y for arp -a mac address name mapping.....
-choice /c Yabcdefghijklmnopqrstuvwxz0123456789 /m "Press any (letter/number) key to skip.." /n
-if %errorlevel% NEQ 1 goto print_ip_lists
-echo:
-echo|set/p= > xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
 
-(arp -a | findstr /r "[a-z0-9][a-z0-9][-][a-z0-9][a-z0-9][-][a-z0-9][a-z0-9][-]" > xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt)&(set arp_done=1)
-copy xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt xxZhPuG1000.arp.list.txt /Y
-goto next
-:trim_mac
-set ip_=%1
-set mac_=%2
-echo Processing ... %ip_% %mac_%
-set mac_=%mac_:-=%
-set mac_=%mac_:~0,6%
-for /f "tokens=*" %%i in ('type  mac_add.print_troubleshoot_from_github ^| find /i "%mac_%"') do for /f "tokens=3 delims=," %%f in ("%%i") do echo %ip_% "%%f" >> PRINTER.Arp_get.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-Exit /B
-:color
-title Pinging..
-echo:[92mX[0monline[92mX[0m
-Exit /B
-:offset
-echo:ZZz.offline.zZZ
-Exit /b
-:next
-title xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-if not exist mac_add.print_troubleshoot_from_github echo ! File missing (mac_add.print_troubleshoot_from_github) ! & echo: & timeout 3
-for /f "tokens=1,2" %%i in (xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt) do call :trim_mac %%i %%j
-move /Y PRINTER.Arp_get.LOGBOOK.BOOK.print_troubleshoot_from_github.txt  xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt
-@echo on & cls
-@echo off 
-:print_ip_lists
-type xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt 1>NUL 2>NUL
-echo:
-echo:
-if %errorlevel% == 0 echo:List of i.p. addresses online# (from Last Scan)
-if %errorlevel% NEQ 0 echo:
-if %errorlevel% == 0 echo:---
-type xxZhPuG1000.path.LOGBOOK.BOOK.print_troubleshoot_from_github.txt 2>NUL
-if %errorlevel% == 0 echo:--- 
-if %errorlevel% == 0 echo:#means, found in the network
-echo:
-echo:
-if exist xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt if %arp_done%==0 echo:List of device names using arp -a command [old results] 
-if exist xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt if %arp_done%==1 echo:List of device names using arp -a command
-if exist xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt type xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt&&title Result
-echo: 
-if exist xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt echo:---
-echo:
-echo:
-if exist xxZhPuG1000.arp.LOGBOOK.BOOK.print_troubleshoot_from_github.txt pause
-goto input
-:restart-spooler
-if not exist restart_spooler.bat cls&echo 'restart_spooler.bat' file is missing & set file_not_exist=       file&goto display_macadd_ismissing
-echo Set objShell = CreateObject("Shell.Application") >LOG.ip.scan.xxxxxxxxxx0931092.vbs
-echo Set FSO = CreateObject("Scripting.FileSystemObject") >>LOG.ip.scan.xxxxxxxxxx0931092.vbs
-echo objShell.ShellExecute "cmd", "/c " ^& Chr(34) ^& "cd %cd% & restart_spooler.bat" ^& Chr(34) , "", "runas" >>LOG.ip.scan.xxxxxxxxxx0931092.vbs
-wscript "LOG.ip.scan.xxxxxxxxxx0931092.vbs"
-del LOG.ip.scan.xxxxxxxxxx0931092.vbs
-echo: 
-pause
-goto input
 :flash
 color %1
-echo:
 ping -n 1 localhost >NUL
 color 7
 exit /b
-:display_macadd_ismissing
-title %file_not_exist% is missing ! See repository
-echo:
-if "%mac_add%"=="1" echo:File name: mac_add.print_troubleshoot_from_github
-echo:
-echo:
-echo:
-echo:                          _________________________
-echo:                        ^|                         ^|
-echo:                        ^|  %file_not_exist% is         ^|
-echo:                        ^|         missing !       ^|
-echo:                        ^|_________________________^|
-echo:
-echo:                               i use this file !!
-echo:
-echo:
-echo:
-if "%check_repository%"=="1" echo:Check repository.
-if "%install_python%"=="1" choice /m "Try to Install python?"
-if "%install_python%"=="1" if %errorlevel%==2 goto paused
-if "%install_python%"=="1" echo:&echo:Trying to install using winget..
-if "%install_python%"=="1" timeout 1 >nul
-if "%install_python%"=="1" winget install  python & echo:&PAUSE
-if "%install_python%"=="1" goto input
-echo:
-:paused
-pause
+
 :credits
 cls
 echo:
