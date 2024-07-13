@@ -682,12 +682,12 @@ set /a absent=present-ping_batch
 if %absent% LSS 1 set absent=1
 call :updatevars
 if %begun% NEQ 0 cls&echo:                                              &echo:            [%PREFIX_RANGE%.%absent%]-[%PREFIX_RANGE%.%present%]&echo:            Status: Sending requests..
-for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title %totaluid%xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&echo|set/p=%prefix_range%.%%i>"%write_dir%\%totaluid%.online.ip.%%i.txt"&echo|set/p=>"%write_dir%\%totaluid%.online._.%%i.txt""
+for /l %%i in (%absent%,1,%present%) do start /min cmd /c "title %totaluid%xGUHHEJ-Ping_WINDOW&PING -n %ping_no% %PREFIX_RANGE%.%%i | findstr /i "[^<=^>][0-9]*ms"&&type nul>"%write_dir%\%totaluid%.online.ip.%%i.txt"&type nul>"%write_dir%\%totaluid%.online._.%%i.txt""
 if %found% GEQ 1 echo:&echo FOUND&echo:[92mX[0m%found_ip%[92mX[0m&echo:&echo I.P(s) found = %skip_count%
 if %percentage% LSS 80 (if %updatevariable% == 1 call :update_screen) else (call :update_screen)
 set test_ip=0
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i" 2^>NUL') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do for /f "tokens=5 delims=." %%a in ("%%i") do set /a skip_count+=1&call :setfound %prefix_range%.%%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "tokens=5 delims=." %%a in ("%%i") do set /a skip_count+=1&call :setfound %prefix_range%.%%a
 set /a present=absent-1
 echo:
 goto skip_ip
@@ -719,8 +719,8 @@ if %absent% == 0 goto wait
 if %present% GEQ 1 goto there
 if %present% == 0 set /a present=pings
 :wait
-if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
-if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do set /a skip_count+=1&call :setfound %%a
+if %skip_count% GEQ 1 for /f "skip=%skip_count% delims=" %%i in ('dir /b /od "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do for /f "tokens=5 delims=." %%a in ("%%i") do set /a skip_count+=1&call :setfound %prefix_range%.%%a
+if %skip_count% == 0 for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "tokens=5 delims=." %%a in ("%%i") do set /a skip_count+=1&call :setfound %prefix_range%.%%a
 timeout 1 >NUL
 set /a rund+=1
 if %rund%==3 echo:Windows closing....waiting&set /a rund=0
@@ -744,7 +744,7 @@ set initial_messages=0
 set /a initial_messages+=1
 :set_repeat_count
 set found_ip=
-for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do  for /f "delims=" %%a in ('type "%write_dir%\%%i"') do call :setfound %%a
+for /f "delims=" %%i in ('dir /b "%write_dir%\%totaluid%.online.ip.*.txt" 2^>NUL') do   for /f "tokens=5 delims=." %%a in ("%%i") do call :setfound %prefix_range%.%%a
 echo:
 echo: * List of I.P Addresses *%ip_online_disclaimer%
 echo:that responded to requests
