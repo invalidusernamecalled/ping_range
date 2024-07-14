@@ -19,6 +19,7 @@ CALL set spaces_right=%%spaces:~0,%strdleftover%%%
 set computer_string=%spaces_pad%computer name: %computer_name%%spaces_right%user name:%user_name%
 set juice=1
 set scroll_text="Press S to perform a scan" "E to Edit Scan Subnet" "O to go to Settings" "Press keys: 123, 456"
+set powershellavlable=0
 Set ran_check=0
 set notchange=1
 set notreally=0
@@ -46,7 +47,7 @@ title STARTUP: Checking directory permissions..
 :check
 echo  ::::::::::::::::::::::::::::
 echo -------------------------------               
-echo Ping Master v 1 (from Github)^|^|         Making  Computer   Pings  easy ^^^!^^^!
+echo Ping Master                  ^|^|         Making  Computer   Pings  easy ^^^!^^^!
 echo computer pinging utility     ^|^|                Initializing..
 echo -----------------------------^|^|
 echo: :::::::::::::::::::::::::::::
@@ -61,7 +62,7 @@ if %start%==0 echo Not found write directory
 if %start%==0 set /p writeing_dir=Please provide directory(in quotes):&set custom_dir=!writeing_dir!
 
 if %start%==0 goto :check
-goto checkpwsh
+goto getsettings
 :testdir
 if %start%==1 exit /b
 echo:>%1\xxZhPuG.write.-.test.txt
@@ -74,21 +75,21 @@ title STARTUP: Using write_dir "!write_dir!"
 Exit /B
 :checkpwsh
 if Defined custom_dir echo !custom_dir!>xxZhPuG.CustomDir.1
-echo|set/p=.powershell available.
 color 7
 set powershellavlable=0
 powershell -c "write-host \" \"" >NUL
-if %errorlevel% == 0 (color F&echo:      [\/]&set powershellavlable=1&set power_on=  ^(Powershell Available^)) else (set power_on=  ^(Not Available^)&echo:    x [NOT OK])
+if %errorlevel% == 0 (color F&set powershellavlable=1&set power_on=  ^(Powershell Available^)) else (set power_on=  ^(Not Available^))
 if %errorlevel% NEQ 0 set powershellavlable=0
+exit /b
 :getsettings
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
 if defined options_file if exist "init.xxZhPuG.lock.*.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
 color 7
 title STARTUP: Reading options %options_file%
-if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
+if exist "%write_dir%\xxZhPuG.*.options.txt" echo:.deleting old files.        [\/]&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
 
 set settings=1
-if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.reading from file. :-      [\/]
+if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.reading settings.          [\/]
 call :init
 if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
 goto start
@@ -283,7 +284,7 @@ exit /b
 
 :options
 echo:>"init.xxZhPuG.lock.2.conf.bak"
-
+if not defined checkedpowershell call ::checkpwsh & set checkedpowershell=1
 set choose=0
 if %revelation%==666 title Praise God^^^!
 cls & (for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..
@@ -538,17 +539,19 @@ if %profile_status%==1 (set label5=P Profiles  &echo:>NUL) else (set label5=    
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 if %options_file_exists%==1 echo:                                                                                {%options_file%}
 echo: !labelx!       
-echo: pings^>                                                                  [6]%label8%^>  increase
-echo: pings^>                                             decrease  ^<%label7%[1]   
+echo: ###                                                                [6]%label8%^>  increase
+echo: ###                                            decrease  ^<%label7%[1]   
 echo:                                                                              M=maximum
-echo: ping FROM %prefix-label%1 to . . .                    %prefix-label%{%pings%}   
+echo: ping FROM %prefix-label%1                   to                     %prefix-label%{%pings%}   
 echo:                      
 echo: 1^|:!progress_bar!!pings!!labely!!progress_bar!:^|254            
 echo:
 if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: %label5%                     %label6%                                    
-echo: : , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , ,
-if %options_file_exists%==1 (echo:Subnet:%prefix_range%.x   S-Start,O-Optional Settings) else (echo:  S-Start,O-Optional Settings)
+echo: :
+if %options_file_exists%==1 (echo:Subnet:%prefix_range%.x   S-Start,O-Optional Settings) else (echo:S-Start,O-Optional Settings)
+echo: _
+echo: _
 if !cchar! GTR 24 call :flash F
 if %revelation% == 666 color F&echo:                   Jesus made mae do this. 
 if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in (1,1,10) do echo Running Auto Mode...Press C Cancel
@@ -561,7 +564,7 @@ if %profile_status%==1 (Call :process_profiles "entry")
 set /a choose+=1
 set last_ping=%pings%
 Set juice=0
-choice /c s0615243oePUyM /n /t 3 /d y >NUL
+choice /c s0615243oePUyM /n /t 3 /d y >nul
 set error_of=%errorlevel%
 set label1=
 if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0.. INCREASING &set label7=&set label8=---
