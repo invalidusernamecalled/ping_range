@@ -52,6 +52,10 @@ echo computer pinging utility     ^|^|                Initializing..
 echo -----------------------------^|^|
 echo: :::::::::::::::::::::::::::::
 echo:
+set tmp_write_dir=%tmp%
+if exist "%tmp_write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%tmp_write_dir%\xxZhPuG.*.options.txt" 2^>NUL') do set options_file=%%i&set write_dir=%tmp_write_dir%&set options_file_exists=1
+if defined options_file if exist "init.xxZhPuG.lock.*.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
+if defined options_file goto getsettings
 echo|set/p=.working dir permissions.
 set start=0
 if exist xxZhPuG.CustomDir.1 choice /m "Continue with custom DIR? yn"
@@ -82,16 +86,14 @@ if %errorlevel% == 0 (color F&set powershellavlable=1&set power_on=  ^(Powershel
 if %errorlevel% NEQ 0 set powershellavlable=0
 exit /b
 :getsettings
-if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i
-if defined options_file if exist "init.xxZhPuG.lock.*.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
 color 7
 title STARTUP: Reading options %options_file%
-if exist "%write_dir%\xxZhPuG.*.options.txt" echo:.deleting old files.        [\/]&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt" ^| find /v "%options_file%"') do del "%write_dir%\%%i"
-
-set settings=1
-if exist "%write_dir%\xxZhPuG.*.options.txt" type nul > "init.xxZhPuG.lock.1.conf.bak"&for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&echo:.reading settings.          [\/]
+if defined options_file type nul > "init.xxZhPuG.lock.1.conf.bak" 
+echo:.reading settings.          [\/]
+set exceptions=0
+if defined options_file set exceptions=1&call :init&goto start
 call :init
-if not exist "%write_dir%\xxZhPuG.*.options.txt" set settings=0
+if defined options_file if exist "init.xxZhPuG.lock.*.conf.bak" echo INIT failed last time & timeout 1 >NUL & echo Resetting App... & call :delete_options_file
 goto start
 :setuid
 set make_me_a_string=a b c d e f g h i j k l m o p A B C D E F G I J K L 1 2 3 4 5 6
@@ -189,7 +191,8 @@ exit /b
 
 
 :init
-call :init_options_file
+if %exceptions%==0 call :init_options_file
+set exceptions=0
 set powershell_or_not=0
 set save_subnet=0
 set save_range=0
@@ -198,7 +201,7 @@ set filename=""
 set file_status=0
 set script_execute=0
 set profile_status=0
-
+if not defined options_file exit /b
 for /f "tokens=*" %%i in ('type "%write_dir%\%options_file%" 2^>NUL') do for /f "tokens=2 delims=." %%a in ("%%~ni") do set uid=%%a
 
 for /f "tokens=2 delims=:" %%i in ('type "%write_dir%\%options_file%" 2^>NUL ^| find "profiles:"') do set current_profile=%%i
@@ -229,7 +232,6 @@ exit /b
 :init_options_file
 set options_file_exists=0
 if exist "%write_dir%\xxZhPuG.*.options.txt" for /f "delims=" %%i in ('dir /od /b "%write_dir%\xxZhPuG.*.options.txt"') do set options_file=%%i&set options_file_exists=1
-
 Exit /b
 
 :progress
@@ -558,7 +560,7 @@ if %script_execute%==1 if %save_subnet%==1 cls&mode 60,20&color 0a&for /l %%i in
 if %script_execute%==1 choice /c Ct /n /d t /t 3
 if %script_execute%==1 if %errorlevel%==2 goto loop
 if %script_execute%==1 if %errorlevel%==1 mode 120,30&goto options
-if %profile_status%==1  echo: Profiles (P):-
+if %profile_status%==1  echo: Profiles (P)  
 if %profile_status%==1 (Call :process_profiles "entry")
 :skip_labels
 set /a choose+=1
