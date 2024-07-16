@@ -704,7 +704,7 @@ title !var!
 exit /b
 :updatevars
 set /a ping_batch_var=pings-absent+1
-for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&set /a remain=pingstotal-%%i&cls & echo:&echo:                                              &echo:            @ %PREFIX_RANGE%.%absent% - %PREFIX_RANGE%.%present% @&echo:            Status: Sending ping requests..&echo:            Completed:%%i Remaining: !remain!&echo:&set /a updatevariable=clearcounter %% 2
+for /f "tokens=1" %%i in ('dir "%write_dir%\%totaluid%.online._.*.txt" 2^>NUL ^| find "File(s)"') do set pings_actual=%%i&set begun=0&set /a remain=pingstotal-%%i&cls & echo:&echo:                                              &echo:            @ %PREFIX_RANGE%.%absent% - %PREFIX_RANGE%.%present% @&echo:            Status: Sending ping requests..&echo:            Completed:%%i Remaining:!remain! Found:!skip_count!&echo:&set /a updatevariable=clearcounter %% 2
 exit /b
 :setfound
 set /a found+=1
