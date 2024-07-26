@@ -1,4 +1,4 @@
-@echo off
+@echo off 
 mode 120,30
 setlocal enabledelayedexpansion
 for /f "tokens=1,2 delims=\" %%i in ('whoami') do set computer_name=%%i&set user_name=%%j
@@ -19,6 +19,7 @@ CALL set spaces_right=%%spaces:~0,%strdleftover%%%
 set computer_string=%spaces_pad%computer name: %computer_name%%spaces_right%user name:%user_name%
 set juice=1
 set scroll_text="Press S to perform a scan" "E to Edit Scan Subnet" "O to go to Settings" "Press keys: 123, 456"
+set exceptions=0
 set powershellavlable=0
 Set ran_check=0
 set notchange=1
