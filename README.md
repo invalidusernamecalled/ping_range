@@ -21,5 +21,5 @@ and then choose the subnet to start pinging
 
 Usage is Subject to License
 _Non-Commercial Use License
-(C) invalidusernamecalled, 2024_
+(C) invalidusernamecalled, 2025_
 
