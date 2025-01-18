@@ -13,10 +13,10 @@ and then choose the subnet to start pinging
 *******************************************************************************
 
        Do not use offending Characters like `&`, `^`, `<`, `>` while writing file names.
-
-writes files to %tmp%
-you can change write_dir
 ```
++ writes files to %tmp%
++ you can change write_dir
+
 ```easy pinging tool for just pinging. save logs and other cool features```
 
 Usage is Subject to License
