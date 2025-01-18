@@ -776,6 +776,13 @@ REM for /f "tokens=*" %%I in (!input_file_name!) do if "%%xI" NEQ ".txt" set inp
 :continue-to-strip
 set strip_file_name=%input_file_name:" ="%&set strip_file_name=%input_file_name: "="%
 if !strip_file_name! NEQ !input_file_name! echo:striping input_file_name (!input_file_name!) =to= !strip_file_name!&echo|set/p=.&goto continue-to-strip
+set input_file_name=%input_file_name:/=%
+set input_file_name=%input_file_name:\=%
+set input_file_name=%input_file_name::=%
+set input_file_name=%input_file_name:^*=%
+set input_file_name=%input_file_name:<=%
+set input_file_name=%input_file_name:>=%
+set input_file_name=%input_file_name:|=%
 if !input_file_name! NEQ "00.txt" (echo Press a key to save !input_file_name!) else (echo:File will not be saved. No name mentioned.&pause&set juice=1&goto input)
 pause >NUL
 (if exist !input_file_name! echo: File name already exists.& set filename=!input_file_name!& call :check_file_name_exist & set input_file_name=!filename!& if exist !filename! goto skip_check_file_status2)
@@ -784,6 +791,13 @@ pause >NUL
 set found_ip=%found_ip: =%
 set found_ip=%found_ip:~0,-1%
 if !input_file_name! == "00" echo:Please set default filename from menu options.&pause >NUL&goto skip_check_file_status2
+set input_file_name=%input_file_name:/=%
+set input_file_name=%input_file_name:\=%
+set input_file_name=%input_file_name::=%
+set input_file_name=%input_file_name:^*=%
+set input_file_name=%input_file_name:<=%
+set input_file_name=%input_file_name:>=%
+set input_file_name=%input_file_name:|=%
 if %powershellavlable%==1 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" powershell -c "$ipString = \"%found_ip%\";$ipAddresses = $ipString -split ',\s*';function Get-LastOctet { param ( [string]$ip ) return [int]($ip.Split('.')[3]) };$sortedIpAddresses = $ipAddresses | Sort-Object { Get-LastOctet $_ };$sortedIpAddresses">"%%i" & echo:>>"%%i"&echo:          -  I.P Scan requested : %start_time%>>"%%i"&echo:          -  Generated @         : %date% %time%>>"%%i"&echo:              ^>^>^>   Subnet %prefix_range%.x, Upto %pings% ^<^<^<>>"%%i"&echo:%computer_string%>>"%%i"
 if %powershellavlable%==0 for /f "tokens=*" %%i in (%input_file_name%) do if "%%i" NEQ "" echo WRITING to FILE...&(echo|set/p=>"%%i"&for %%a in (%found_ip%) do echo %%a >>"%%i")&echo:>>"%%i"&echo:         -  I.P Scan requested : %start_time%>>"%%i"&echo:         -  Generated @         : %date% %time%>>"%%i"&echo:              ^>^>^>   Subnet %prefix_range%.x, Upto %pings% ^<^<^<>>"%%i"&echo:%computer_string%>>"%%i"
 if %scripT_execute% == 1 echo Script Execute Complete & timeout 4 >NUL & goto :eof
