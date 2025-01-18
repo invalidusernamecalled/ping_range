@@ -361,7 +361,7 @@ echo:     Filename: (!filename!)
 echo:     Press C to Change filename
 echo:  (D) Delete settings file, Reset settings
 for /l %%i in (1,1,11) do CALL set highlight%%i=    &echo: >NUL
-if "%pingspeednote%" NEQ "" echo %pingspeednote%&set pingspeednote=
+if "%pingspeednote%" NEQ "" echo %pingspeednote%&set pingspeednote=&call :set_ping_speed
 :choice_options
 if %error% == 17 call :backup
 set notreally=0
@@ -379,7 +379,7 @@ if %error% == 8 goto enter_subnet
 if %error% == 13 set error=6
 if %error% == 6 if %error% == 0 goto options
 if %error% == 11 goto input
-if %error%==6 if %last_error% GTR 0 if %last_error% == 16 call :set_ping_speed
+REM if %error%==6 if %last_error% GTR 0 if %last_error% == 16 call :set_ping_speed
 if %error%==6 if %last_error% GTR 0 if %last_error% == 1 call :addfile 2&set notchange=1&goto reprintoptions
 if %error%==6 if %last_error% GTR 0 if %last_error% == 2 call :addfile 1&set notchange=1&goto reprintoptions
 if %error%==6 if %last_error% GTR 0 if %last_error% == 3 call :saverange&set notchange=1&goto reprintoptions
@@ -610,10 +610,10 @@ echo:. . . .  ,.. .. ..
 echo:===================================================:::^>     
 echo:S to continue to Scanning I.P Addresses..^|         
 echo:E = Edit Subnet ------------------------^>^|%prefix_range%            
-echo:o Additional options     H:-change range ^|____________
-echo:-----------------------------------------^|h=go back:::
+echo:o Additional options     B:-change range ^|____________
+echo:-----------------------------------------^|B=go back:::
 
-choice /c seOh /m "" /n
+choice /c seOb /m "" /n
 if %errorlevel%==1 goto loop
 if %errorlevel%==3 goto options
 if %errorlevel%==4 set juice=1&goto after_profiles
