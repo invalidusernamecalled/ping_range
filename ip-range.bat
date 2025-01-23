@@ -239,7 +239,7 @@ Exit /b
 set progress_bar=
 set /a real=%1/2
 set /a mid=Real/2
-for /l %%i in (1,1,%mid%) do set progress_bar=!progress_bar!``
+for /l %%i in (1,1,%mid%) do set progress_bar=!progress_bar!`
 exit /b
 
 
@@ -541,18 +541,18 @@ if %profile_status%==1 (set label5=P Profiles  &echo:>NUL) else (set label5=    
 
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 if %options_file_exists%==1 echo:                                                                                {%options_file%}
-echo: !labelx!       
-echo: ###                                                ^(4^)+one  ^(5^)+five  [6]+ten%label8%^> increase
-echo: ###                                       decrease  ^<%label7%[1]-   ^(2^)-   ^(3^)-   
+for /f "delims=" %%i in ("!labelx!") do echo %%i
+echo: #[keys]#                                             ^(4^)     ^(5^)+five  [6]+ten increase%label8%^>
+for /f "delims=" %%i in ("!label7!") do echo:                                  %%i decrease [1]-    ^(2^)-      ^(3^)-   
 echo:                                                                   
-echo: ping FROM %prefix-label%1                   to                     %prefix-label%{%pings%}   
+echo: ping FROM %prefix-label%1              to             %prefix-label%{%pings%}   
 echo: set up scan                       
 echo: 1^|:!progress_bar!-!pings!!labely!!progress_bar!:^|254            
 echo:
 if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: %label5%                     %label6%                                    
 echo: :
-if %options_file_exists%==1 (echo:Subnet:%prefix_range%.x   S-Start,O-Optional Settings) else (echo:S-Start,O-Optional Settings)
+if %options_file_exists%==1 (echo:Subnet:%prefix_range%.x   [S]tart---^(O^)Optional Settings) else (echo:[S]tart---^(O^)Optional Settings)
 echo: _
 echo: _
 if !cchar! GTR 24 call :flash F
@@ -570,15 +570,15 @@ Set juice=0
 choice /c s0635241oePUyD /n /t 3 /d y >nul
 set error_of=%errorlevel%
 set label1=
-if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] o0.. INCREASING &set label7=&set label8=---
-if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] Oo.. DECREASING &set label7=---&set label8=
-if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] o0.. INCREASING &set label7=&set label8=---
-if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] 0o.. DECREASING &set label7=---&set label8=
-if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] oO.. INCREASING &set label7=&set label8=---
-if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] Oo.. DECREASING &set label7=---&set label8=
+if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] INCREASING:!pings! &set label7=          &set label8=---
+if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] DECREASING:!pings! &set label7=^<---&set label8=
+if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] INCREASING:!pings! &set label7=          &set label8=---
+if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] DECREASING:!pings! &set label7=^<---&set label8=
+if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] INCREASING:!pings! &set label7=          &set label8=---
+if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] DECREASING:!pings! &set label7=^<---&set label8=
 if %errorlevel%==14 set pings=254&set juice=1
 set /a struffof=error_of %% 2
-if %error_of% LEQ 8 if %struffof% == 0 (set labelx=OOo_) else (set labelx=_oOO)
+if %error_of% LEQ 8 if %struffof% == 0 (set labelx=^<--_) else (set labelx=_--^>)
 if %error_of%==1 goto scan
 if %error_of%==2 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
 if %error_of%==9 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
