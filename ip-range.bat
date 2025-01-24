@@ -542,11 +542,11 @@ if %profile_status%==1 (set label5=P Profiles  &echo:>NUL) else (set label5=    
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 if %options_file_exists%==1 echo:                                                                                {%options_file%}
 for /f "delims=" %%i in ("!labelx!") do echo %%i
-echo: #[keys]#                                             ^(4^)     ^(5^)+five  [6]+ten increase%label8%^>
-for /f "delims=" %%i in ("!label7!") do echo:                                  %%i decrease [1]-    ^(2^)-      ^(3^)-   
+echo: #[keys]#     ^(4^) ^(5^)+five [6]+ten    increase%label8%^>
+for /f "delims=" %%i in ("!label7!") do echo:                                  %%i decrease [1]- ^(2^)-five ^(3^)-ten
 echo:                                                                   
 echo: ping FROM %prefix-label%1              to             %prefix-label%{%pings%}   
-echo: set up scan                       
+echo: set up scan addresses                      
 echo: 1^|:!progress_bar!-!pings!!labely!!progress_bar!:^|254            
 echo:
 if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
