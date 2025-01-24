@@ -524,7 +524,7 @@ if %gotrange%==0 set pings=254
 set ping_batch=2
 if %gotsubnet%==0 for /f "tokens=2 delims=:(" %%i in ('ipconfig /all ^| find "IPv4"') do for /f "tokens=1,2,3 delims=. " %%a in ("%%i") do echo %%a.%%b.%%c|findstr /r "^[0-9]*[.][0-9]*[.][0-9]*$" >NUL&&set prefix_range=%%a.%%b.%%c
 set diff=5
-
+set label7= 
 :input
 set /a perc=pings*100/254
 call :progress %perc%
@@ -542,10 +542,10 @@ if %profile_status%==1 (set label5=P Profiles  &echo:>NUL) else (set label5=    
 if %juice%==1 (cls) else (title  !label1!&goto skip_labels)
 if %options_file_exists%==1 echo:                                                                                {%options_file%}
 for /f "delims=" %%i in ("!labelx!") do echo %%i
-echo: #[keys]#     ^(4^) ^(5^)+five [6]+ten    increase%label8%^>
-for /f "delims=" %%i in ("!label7!") do echo:                                  %%i decrease [1]- ^(2^)-five ^(3^)-ten
+echo: #[keys]#   ^(4^) ^(5^) [6] to increase %label8%^>
+for /f "delims=" %%i in ("!label7!") do echo: %%i^(1^)- ^(2^)- ^(3^)- to decrease
 echo:                                                                   
-echo: ping FROM %prefix-label%1              to             %prefix-label%{%pings%}   
+echo: ping FROM %prefix-label%1  to  %prefix-label%{%pings%}   
 echo: set up scan addresses                      
 echo: 1^|:!progress_bar!-!pings!!labely!!progress_bar!:^|254            
 echo:
@@ -570,15 +570,15 @@ Set juice=0
 choice /c s0635241oePUyD /n /t 3 /d y >nul
 set error_of=%errorlevel%
 set label1=
-if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] INCREASING:!pings! &set label7=          &set label8=---
-if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] DECREASING:!pings! &set label7=^<---&set label8=
-if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] INCREASING:!pings! &set label7=          &set label8=---
-if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] DECREASING:!pings! &set label7=^<---&set label8=
-if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] INCREASING:!pings! &set label7=          &set label8=---
-if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] DECREASING:!pings! &set label7=^<---&set label8=
+if %errorlevel%==3 set /a pings +=10&set label1=[ +10 ] INCREASING:!pings! &set label7=           &set label8=---
+if %errorlevel%==4 set /a pings -=10&set label1=[ -10 ] DECREASING:!pings! &set label7=^<---       &set label8=
+if %errorlevel%==5 set /a pings +=5&set label1=[ +5 ] INCREASING:!pings! &set label7=           &set label8=---
+if %errorlevel%==6 set /a pings -=5&set label1=[ -5 ] DECREASING:!pings! &set label7=^<---       &set label8=
+if %errorlevel%==7 set /a pings +=1&set label1=[ +1 ] INCREASING:!pings! &set label7=           &set label8=---
+if %errorlevel%==8 set /a pings -=1&set label1=[ -1 ] DECREASING:!pings! &set label7=^<---       &set label8=
 if %errorlevel%==14 set pings=254&set juice=1
 set /a struffof=error_of %% 2
-if %error_of% LEQ 8 if %struffof% == 0 (set labelx=^<--_) else (set labelx=_--^>)
+if %error_of% LEQ 8 if %struffof% == 0 (set labelx= ^<--_) else (set labelx= _--^>)
 if %error_of%==1 goto scan
 if %error_of%==2 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
 if %error_of%==9 cls&(for /l %%i in (1,1,20) do echo:)&echo:    Opening Options..&goto options
