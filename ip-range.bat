@@ -237,9 +237,8 @@ Exit /b
 
 :progress
 set progress_bar=
-set /a real=%1/2
-set /a mid=Real/2
-for /l %%i in (1,1,%mid%) do set progress_bar=!progress_bar!`
+set /a real=%1*1000/260
+for /l %%i in (1,10,%real%) do set progress_bar=!progress_bar!.
 exit /b
 
 
@@ -546,12 +545,12 @@ echo: #[keys]#   ^(4^) ^(5^) [6] to increase %label8%^>
 for /f "delims=" %%i in ("!label7!") do echo: %%i^(1^)- ^(2^)- ^(3^)- to decrease
 echo:                                                                   
 echo: ping FROM %prefix-label%1  to  %prefix-label%{%pings%}   
-echo: set up scan addresses                      
+echo:::SCAN_addresses::            
 echo: 1^|:!progress_bar!-!pings!!labely!!progress_bar!:^|254            
 echo:
 if "!label1!" NEQ "" title  !label1!  & REM echo %perc% %diff%
 echo: %label5%                     %label6%                                    
-echo: :
+echo:
 if %options_file_exists%==1 (echo:Subnet:%prefix_range%.x   [S]tart---^(O^)Optional Settings) else (echo:[S]tart---^(O^)Optional Settings)
 echo: _
 echo: _
@@ -608,9 +607,10 @@ echo:, , ,          .
 echo:. . ..    .   ..
 echo:. . . .  ,.. .. ..
 echo:===================================================:::^>     
-echo:S to continue to Scanning I.P Addresses..^|         
-echo:E = Edit Subnet ------------------------^>^|%prefix_range%            
-echo:o Additional options     B:-change range ^|____________
+echo:S _to_continue_Scanning_I.P_Addresses...................
+echo:E = Edit Subnet --------------------------------------^>^|
+echo:^(%prefix_range%^)
+echo:o Additional options     B:-change range _____________
 echo:-----------------------------------------^|B=go back:::
 
 choice /c seOb /m "" /n
@@ -833,7 +833,33 @@ set no_save=0
 :save_me_from_this
 REM echo:you got saved
 exit /b
+:colors
 
+Set Black1=[40m
+
+Set Red1=[41m
+
+Set Green1=[42m
+Set Yellow1=[43m
+
+Set Blue1=[44m
+
+Set Magenta1=[45m
+Set white1=[107m
+Set Cyan1=[46m
+
+Set Black=[30m
+Set Red=[31m
+Set Green=[32m
+Set Blue=[34m
+Set Yellow=[33m
+Set Magenta=[35m
+Set Cyan=[36m
+Set white=[37m
+
+for /f "delims=" %%i in (%3) do echo|set/p=!%~11!!%~2!%%~i[0m
+REM powershell -c "write-host -nonewline -backgroundcolor %first% -foregroundcolor %second% \"%~3\""
+exit /b
 :flash
 color %1
 ping -n 1 localhost >NUL
